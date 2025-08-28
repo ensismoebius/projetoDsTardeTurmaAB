@@ -2,7 +2,7 @@
 
 ## 📌 Introdução
 O **SingerSwipe** é um aplicativo inspirado na dinâmica do Tinder, mas voltado para a **descoberta de artistas independentes e pouco reconhecidos**.  
-A proposta é oferecer uma experiência envolvente e intuitiva, ajudando os usuários a conhecerem novos talentos e, ao mesmo tempo, dando mais **visibilidade para artistas emergentes**.
+A proposta é oferecer uma experiência envolvente e intuitiva, ajudando os usuários a conhecerem novos talentos e, ao mesmo tempo, dando mais **visibilidade para artistas emergentes**. 
 
 ## 🎯 Objetivos
 - Criar uma plataforma interativa para conectar fãs a artistas independentes.  
