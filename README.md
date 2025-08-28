@@ -10,7 +10,7 @@ João Paulo - github.com/joaopauloolt
 André Furlan - github.com/ensismoebius
 
 # Our status site
-
+ 
 [`Status site`](https://ensismoebius.github.io/projetoDsTardeTurmaAB/participacao.html)
 
 # Para acessar a documentação 👋
