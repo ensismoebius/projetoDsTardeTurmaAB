@@ -9,6 +9,7 @@ João Pedro - https://github.com/joao-pedro291
 João Paulo - https://github.com/joaopauloolt  
 André Furlan - https://github.com/ensismoebius
 Allix Lemos - https://github.com/4ll14ng3l
+Nicole Martins - https://github.com/nicorice-png
 
 # Our status site
 
