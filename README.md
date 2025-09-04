@@ -25,10 +25,19 @@ A proposta é oferecer uma experiência envolvente e intuitiva, ajudando os usu�
 - **Outros:** Integrações com APIs externas (ex.: Spotify API)  
 
 ## ⚙️ Instalação e Execução
+
 ### 🔹 Backend (FastAPI)
+
 1. Clone o repositório:
   git clone https://github.com/ensismoebius/projetoDsTardeTurmaAB.git
   cd singerswipe/backend
+
+2. Ative o ambiente virtual:
+  python -m venv venv
+  ./venv/Scripts/Activate.ps1
+
+3. Instale as dependências:
+  pip install -r requirements.txt
 
 ### 🔹 Frontend (React Native + Expo)
 
