@@ -27,8 +27,39 @@ A proposta é oferecer uma experiência envolvente e intuitiva, ajudando os usu�
 ## ⚙️ Instalação e Execução
 ### 🔹 Backend (FastAPI)
 1. Clone o repositório:
-  git clone https://github.com/ensismoebius/projetoDsTardeTurmaAB.git
-  cd singerswipe/backend
+  ```cmd
+  $ git clone https://github.com/ensismoebius/projetoDsTardeTurmaAB.git
+  
+  $ cd projetoDsTardeTurmaAB/backend
+  ```
+<br>
+
+2. Ative o ambiente virtual:
+
+  ```cmd
+  $ python -m venv venv
+
+  $ ./venv/Scripts/Activate.ps1
+  ```
+
+<br>
+
+3. Instale as dependências:
+
+  ```cmd
+  $ pip install -r requirements.txt
+  ```
+
+<br>
+
+4. Ativando o Database
+- no seguinte diretório: `projetoDsTardeTurmaAB/backend/`, rode o comando abaixo
+
+```cmd
+$ docker compose up
+``` 
+
+<br>
 
 ### 🔹 Frontend (React Native + Expo)
 

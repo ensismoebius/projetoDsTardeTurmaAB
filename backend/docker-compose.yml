@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+  backend-db:
+    image: bitnami/postgresql:latest
+    ports: 
+      - '2222:5432'
+    environment:
+      - POSTGRESQL_PASSWORD=postgres
+      - POSTGRESQL_DB=api
