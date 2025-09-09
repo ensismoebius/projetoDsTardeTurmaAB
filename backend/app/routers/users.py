@@ -1,24 +1,12 @@
 """
-Este módulo define rotas para operações CRUD de usuários usando FastAPI.
 
-Rotas:
-- GET /: Retorna a lista de usuários do banco de dados falso.
-- GET /{user_id}: Retorna um usuário específico pelo ID.
-- POST /: Cria um novo usuário e o adiciona ao banco de dados falso.
-- PUT /{user_id}: Atualiza o nome de um usuário existente pelo ID.
-- DELETE /{user_id}: Remove um usuário do banco de dados falso pelo ID.
+Este módulo define rotas para operações CRUD de usuários usando FastAPI.
 
 Variáveis:
 - fake_db: Lista simulando um banco de dados de usuários, cada usuário é um dicionário com 'id' e 'name'.
 
-Funções:
-- get_users(): Retorna todos os usuários.
-- get_user(user_id): Retorna um usuário pelo ID, ou None se não encontrado.
-- create_user(user): Cria um novo usuário com nome fornecido.
-- update_user(user_id, user): Atualiza o nome do usuário pelo ID.
-- delete_user(user_id): Remove o usuário pelo ID.
-
 Nota: Este código utiliza um banco de dados em memória apenas para fins de demonstração.
+
 """
 
 from fastapi import APIRouter
