@@ -14,7 +14,7 @@ Aqui você encontra instruções para rodar o ambiente localmente e detalhes sob
 - [Python 3.11+](https://www.python.org/)
 - [Git](https://git-scm.com/)
 
-### 2. Clonar o repositório
+### 2. Clonar o repositório a
 
 ```bash
 git clone https://github.com/ensismoebius/projetoDsTardeTurmaAB
