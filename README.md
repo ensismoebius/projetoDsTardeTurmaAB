@@ -24,11 +24,27 @@ A proposta é oferecer uma experiência envolvente e intuitiva, ajudando os usu�
 
 - **Backend:** [Python](https://www.python.org/) + [FastAPI](https://fastapi.tiangolo.com/)  
 - **Frontend Mobile:** [React Native](https://reactnative.dev/) com [Expo](https://expo.dev/)  
-- **Banco de Dados:** a definir (ex.: MongoDB, PostgreSQL)  
+- **Banco de Dados:** [PostgreSQL](https://postgresql.org/)  
 - **Autenticação:** JWT ou OAuth2 (planejado)  
 - **Outros:** Integrações com APIs externas (ex.: Spotify API)  
 
 ## ⚙️ Instalação e Execução
+
+## 🗄️ Banco de Dados (PostgreSQL)
+
+Por enquanto está sendo utilizado localmente utilizando o docker.
+
+1. Instale o arquivo do banco de dados [aqui](https://github.com/ensismoebius/projetoDsTardeTurmaAB/tree/main/backend)
+
+2. Extraia para a ferramenta que estiver utilizando.
+
+3. Configurações:
+  POSTGRES_USER=postgres
+  POSTGRES_PASSWORD=postgres
+  POSTGRES_DB=SingerSwipe
+  POSTGRES_PORT=2222
+
+<br>
 
 ### 🔹 Backend (FastAPI)
 
