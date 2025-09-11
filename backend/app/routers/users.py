@@ -17,7 +17,7 @@ router = APIRouter()
 
 @router.get("/")
 def get_users():
-    return fake_db
+    return fake_db.users
 
 @router.get("/{user_id}")
 def get_user(user_id: int):
@@ -28,19 +28,19 @@ def get_user(user_id: int):
 @router.post("/")
 def create_user(user: User):
     new_user = {"id": len(fake_db) + 1, "name": user.name}
-    fake_db.append(new_user)
+    fake_db.users.append(new_user)
     return new_user
 
 @router.put("/{user_id}")
 def update_user(user_id: int, user: User):
     if user_id > len(fake_db):
         return {"error": "User not found"}
-    fake_db[user_id - 1] = {"id": user_id, "name": user.name}
+    fake_db.users[user_id - 1] = {"id": user_id, "name": user.name}
     return {"message": "User updated"}
 
 @router.delete("/{user_id}")
 def delete_user(user_id: int):
     if user_id > len(fake_db):
         return {"error": "User not found"}
-    del fake_db[user_id - 1]
+    del fake_db.users[user_id - 1]
     return {"message": "User deleted"}
