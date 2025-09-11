@@ -1,11 +1,14 @@
-import { Text, TouchableOpacity, TextInput, View, StyleSheet } from "react-native";
-import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 
 export default function Index() {
   function cadastro() {
     roteador.push('/cadastrar');
+  }
+  function perfil() {
+    roteador.push('/telaPerfil');
   }
 
   const roteador = useRouter();
@@ -48,7 +51,7 @@ export default function Index() {
         </View>
       </View>
 
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={perfil}>
         <Text style={styles.buttonText}>Entrar</Text>
       </TouchableOpacity>
 
