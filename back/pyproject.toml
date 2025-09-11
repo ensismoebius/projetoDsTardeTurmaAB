@@ -5,7 +5,9 @@ description = ""
 authors = [
     {name = "NatanRib12",email = "natansantosribeiro241@gmail.com"},
     {name = "freit4sdev",email = "chelmizinho@gmail.com"},
-    {name = "gkfgis",email = "matheusdapoia@gmail.com"}
+    {name = "gkfgis",email = "matheusdapoia@gmail.com"},
+    {name = "1sec-git",email = "felipegithub18@gmail.com"}
+
 ]
 readme = "README.md"
 requires-python = ">=3.12"
