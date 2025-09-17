@@ -37,8 +37,21 @@ O projeto utiliza **PostgreSQL** rodando em um container Docker.
 ### 📦 Instalação
 
 1. Baixe o arquivo do banco de dados [aqui](https://github.com/ensismoebius/projetoDsTardeTurmaAB/tree/main/backend).
+
+<br>
+
 2. Extraia para a ferramenta que estiver utilizando.
+
+<br>
+
 3. Configure as variáveis de ambiente no arquivo `.env` (ou diretamente no `docker-compose.yml`):
+
+  ```env
+  POSTGRES_USER=postgres
+  POSTGRES_PASSWORD=postgres
+  POSTGRES_DB=SingerSwipe
+  POSTGRES_PORT=2222 
+  ``` 
 
 ### 🔹 Backend (FastAPI)
 
