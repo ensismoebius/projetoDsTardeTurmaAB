@@ -40,7 +40,7 @@ O projeto utiliza **PostgreSQL** rodando em um container Docker.
 
 <br>
 
-2. Extraia para a ferramenta que estiver utilizando.
+2. Extraia para a ferramenta que estiver utilizando(pgAdmin, DBeaver, ou CLI).
 
 <br>
 
