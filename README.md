@@ -32,19 +32,12 @@ A proposta é oferecer uma experiência envolvente e intuitiva, ajudando os usu�
 
 ## 🗄️ Banco de Dados (PostgreSQL)
 
-Por enquanto está sendo utilizado localmente utilizando o docker.
+O projeto utiliza **PostgreSQL** rodando em um container Docker.  
 
-1. Instale o arquivo do banco de dados [aqui](https://github.com/ensismoebius/projetoDsTardeTurmaAB/tree/main/backend)
+### 📦 Instalação
 
-2. Extraia para a ferramenta que estiver utilizando.
-
-3. Configurações:
-  POSTGRES_USER=postgres
-  POSTGRES_PASSWORD=postgres
-  POSTGRES_DB=SingerSwipe
-  POSTGRES_PORT=2222
-
-<br>
+1. Baixe o arquivo do banco de dados [aqui](https://github.com/ensismoebius/projetoDsTardeTurmaAB/tree/main/backend).  
+2. Extraia para a ferramenta que estiver utilizando.  
 
 ### 🔹 Backend (FastAPI)
 
