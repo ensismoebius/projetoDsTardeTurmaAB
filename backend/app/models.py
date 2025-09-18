@@ -30,3 +30,11 @@ class Music(BaseModel):
 class Styles(BaseModel):
     id: int
     name: str
+
+class User_music_ratings(BaseModel):
+    id: int
+    user_id: int
+    music_id: int
+    rating: int
+    created_at: date
+    
