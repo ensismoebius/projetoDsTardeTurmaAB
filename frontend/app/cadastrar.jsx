@@ -109,13 +109,13 @@ const styles = StyleSheet.create({
   titulo: {
     fontSize: 26,
     fontFamily: 'negrito',
-    color: '#000',
+    color: '#ffffff',
     textAlign: 'center',
   },
   label: {
     fontSize: 14,
     fontFamily: 'normal',
-    color: '#333',
+    color: '#fffdfd',
     marginBottom: 6,
   },
   input: {
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'normal',
     borderWidth: 1,
-    borderColor: '#000',
+    borderColor: '#ffe8e8',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   botao: {
-    backgroundColor: '#000',
+    backgroundColor: '#ffe02e',
     paddingVertical: 14,
     borderRadius: 8,
     alignItems: 'center',
