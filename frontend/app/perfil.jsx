@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffd3e8',
   },
   header: {
-    backgroundColor: '#f7e6f0',
+    backgroundColor: '#e0e0e0',
     paddingTop: 20,
     paddingBottom: 10,
     borderRadius: 15,
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#441b34',
+    color: '#ffffff',
   },
   profileHeader: {
     flexDirection: 'row',
@@ -119,14 +119,16 @@ const styles = StyleSheet.create({
   statNumber: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#F1A7D5',
+    color: '#fdfafc',
   },
   statLabel: {
     fontSize: 12,
-    color: '#D9A6C4',
+    color: '#fff5fb',
   },
   logoutButton: {
-    backgroundColor: '#F1A7D5',
+    backgroundColor: '#ffffff',
+    borderColor: '#ffc5b4',
+    borderWidth: 2,
     padding: 10,
     marginTop: 40,
     borderRadius: 10,
@@ -134,7 +136,7 @@ const styles = StyleSheet.create({
   },
   logoutText: {
     fontSize: 16,
-    color: '#fff',
+    color: '#ffc5b4',
     fontWeight: 'bold',
   },
   footer: {
@@ -142,7 +144,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     padding: 10,
     marginTop: 10,
-    backgroundColor: '#f7e6f0',
+    backgroundColor: '#e0e0e0',
     borderRadius: 10,
   },
   footerItem: {
@@ -151,7 +153,7 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#441b34',
+    color: '#ffffff',
   },
 });
 
