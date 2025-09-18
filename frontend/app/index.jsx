@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontFamily: 'normal',
-    color: '#333',
+    color: '#ffffff',
     marginBottom: 6,
   },
   form: {
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'normal',
     borderWidth: 1,
-    borderColor: '#000',
+    borderColor: '#fdd4d4',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   button: {
-    backgroundColor: '#000',
+    backgroundColor: '#fff130',
     paddingVertical: 14,
     borderRadius: 8,
     alignItems: 'center',
@@ -117,24 +117,24 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontFamily: 'negrito',
-    color: '#000',
+    color: '#ffffff',
     textAlign: 'center',
   },
   subtitle:{
     fontSize:15,
     fontFamily: 'normal',
-    color: '#666',
+    color: '#fff7f7',
     textAlign: 'center',
     marginTop: 8,
   },
   footer: {
     fontSize: 14,
     textAlign: 'center',
-    color: '#666',
+    color: '#ffffff',
     fontFamily: 'normal',
   },
   footerLink: {
-    color: '#333',
+    color: '#ffffff',
     fontFamily: 'negrito',
     textDecorationLine: 'underline',
   },
