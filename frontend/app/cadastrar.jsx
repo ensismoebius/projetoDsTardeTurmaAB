@@ -1,21 +1,23 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import {
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { SafeAreaView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View, KeyboardAvoidingView, Platform, useWindowDimensions } from 'react-native';
 
 const Cadastro = () => {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
+
+  const roteador = useRouter();
+
+ const { width, height } = useWindowDimensions();
+  const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
+  const rf = (size) =>
+    Math.round(clamp(size * (width / 375), Math.max(12, size * 0.85), size * 1.6));
+
+  const containerPadding = Math.max(12, width * 0.06);
+  const maxContentWidth = Math.min(width * 0.94, 720);
 
   const handleCadastro = () => {
     console.log('Nome:', nome);
@@ -28,21 +30,24 @@ const Cadastro = () => {
     roteador.push('/');
   }
 
-  const roteador = useRouter();
+
 
   return (
     <LinearGradient
       colors={['#8000d5','#f910a3', '#fddf00']}
-      
       style={styles.container}
-      
     >
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={{ flex: 1 }}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+        >
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-      <View style={styles.formContainer}>
-        <Text style={styles.titulo}>Cadastro</Text>
+      <View style={[styles.formContainer,
+      { paddingHorizontal: containerPadding, maxWidth: maxContentWidth }, ]}>
+        <Text style={[styles.titulo, { fontSize: rf(26), marginBottom: clamp(height * 0.02, 8, 20) }]}>Cadastro</Text>
 
-        <Text style={styles.label}>Nome</Text>
+        <Text style={[styles.label, { fontSize: rf(14) }]}>Nome</Text>
         <TextInput
           style={styles.input}
           placeholder="Digite seu nome"
@@ -53,7 +58,7 @@ const Cadastro = () => {
 
         <Text style={styles.label}>Email</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { height: clamp(height * 0.065, 48, 68), fontSize: rf(16) }]}
           placeholder="Digite seu email"
           placeholderTextColor="#aaa"
           value={email}
@@ -61,9 +66,9 @@ const Cadastro = () => {
           keyboardType="email-address"
         />
 
-        <Text style={styles.label}>Senha</Text>
+        <Text style={[styles.label, { fontSize: rf(14) }]}>Senha</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { height: clamp(height * 0.065, 48, 68), fontSize: rf(16) }]}
           placeholder="Digite sua senha"
           placeholderTextColor="#aaa"
           value={senha}
@@ -71,9 +76,9 @@ const Cadastro = () => {
           secureTextEntry
         />
 
-        <Text style={styles.label}>WhatsApp</Text>
+        <Text style={[styles.label, { fontSize: rf(14) }]}>WhatsApp</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { height: clamp(height * 0.065, 48, 68), fontSize: rf(16) }]}
           placeholder="Digite seu número"
           placeholderTextColor="#aaa"
           value={whatsapp}
@@ -81,15 +86,16 @@ const Cadastro = () => {
           keyboardType="phone-pad"
         />
 
-        <TouchableOpacity style={styles.botao} onPress={handleCadastro}>
-          <Text style={styles.textoBotao}>Cadastrar</Text>
+        <TouchableOpacity style={[styles.botao, { paddingVertical: clamp(height * 0.02, 12, 20) }]} onPress={handleCadastro}>
+          <Text style={[styles.textoBotao, { fontSize: rf(16) }]}>Cadastrar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.botao} onPress={Inicio}>
-          <Text style={styles.textoBotao}>Voltar</Text>
+        <TouchableOpacity style={[styles.botao, { paddingVertical: clamp(height * 0.02, 12, 20) }]} onPress={Inicio}>
+          <Text style={[styles.textoBotao, { fontSize: rf(16) }]}>Voltar</Text>
         </TouchableOpacity>
 
       </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
     </LinearGradient>
   );

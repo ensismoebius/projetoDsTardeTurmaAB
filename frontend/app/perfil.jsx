@@ -1,36 +1,48 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, useWindowDimensions } from 'react-native';
 
 const ProfileScreen = () => {
+
+  const { width, height } = useWindowDimensions();
+
+  const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
+  const rf = (size) => Math.round(clamp(size * (width / 375), size * 0.85, size * 1.6));
+
+  const paddingHorizontal = Math.max(12, width * 0.05);
+
+
   return (
     <View style={styles.container}>
       
-      <View style={styles.header}>
+      <View style={[
+          styles.header,
+          { padding: paddingHorizontal, borderBottomLeftRadius: rf(20), borderBottomRightRadius: rf(20) },
+        ]}>
         {/* COLOCAR IMAGEM */}
         
         <View style={styles.profileInfo}>
-          <Text style={styles.username}>Usuário</Text>
-          <Text style={styles.email}>blabla@gmail.com</Text>
-          <Text style={styles.memberSince}>Membro desde xx/xx/xxxx</Text>
-          <Text style={styles.location}>São Paulo, SP</Text>
+          <Text style={[styles.username, { fontSize: rf(24) }]}>Usuário</Text>
+          <Text style={[styles.email, { fontSize: rf(14) }]}>blabla@gmail.com</Text>
+          <Text style={[styles.memberSince, { fontSize: rf(12) }]}>Membro desde xx/xx/xxxx</Text>
+          <Text style={[styles.location, { fontSize: rf(14) }]}>São Paulo, SP</Text>
         </View>
       </View>
 
       {/* Estatísticas do perfil */}
-      <View style={styles.stats}>
+      <View style={[styles.stats, { marginTop: rf(30) }]}>
         <View style={styles.statItem}>
-          <Text style={styles.statNumber}>0</Text>
-          <Text style={styles.statLabel}>Músicas Curtidas</Text>
+          <Text style={[styles.statNumber, { fontSize: rf(24) }]}>0</Text>
+          <Text style={[styles.statLabel, { fontSize: rf(12) }]}>Músicas Curtidas</Text>
         </View>
         <View style={styles.statItem}>
-          <Text style={styles.statNumber}>0</Text>
-          <Text style={styles.statLabel}>Artistas Descobertos</Text>
+          <Text style={[styles.statNumber, { fontSize: rf(24) }]}>0</Text>
+          <Text style={[styles.statLabel, { fontSize: rf(12) }]}>Artistas Descobertos</Text>
         </View>
       </View>
 
       {/* Botão de logout */}
-      <TouchableOpacity style={styles.logoutButton}>
-        <Text style={styles.logoutText}>Sair da Conta</Text>
+      <TouchableOpacity style={[styles.logoutButton, { paddingVertical: rf(12), marginTop: rf(40), borderRadius: rf(10) }]}>
+        <Text style={[styles.logoutText, { fontSize: rf(16) }]}>Sair da Conta</Text>
       </TouchableOpacity>
     </View>
   );

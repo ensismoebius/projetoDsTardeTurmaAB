@@ -1,146 +1,158 @@
-import { Text, TouchableOpacity, TextInput, View, StyleSheet, Button } from "react-native";
-import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import { Text, TouchableOpacity, TextInput, View, StyleSheet, KeyboardAvoidingView, Platform, SafeAreaView,useWindowDimensions} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 
+export default function LoginScreen() {
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
 
-export default function Index() {
-  function cadastro() {
-    roteador.push('/cadastrar');
-  }
+  const router = useRouter();
+
+  const { width, height } = useWindowDimensions();
+
+  const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
+
+  const rf = (size) =>
+    Math.round(clamp(size * (width / 375), Math.max(12, size * 0.85), size * 1.6));
+
+  const containerPadding = Math.max(12, width * 0.06);
+  const maxContentWidth = Math.min(width * 0.94, 720);
+
   function entrar() {
-    roteador.push('/uploadMusic');
+    router.push("/uploadMusic");
   }
 
-  const roteador = useRouter();
+    function cadastro() {
+    router.push("/cadastrar");
+  }
+  
 
   return (
     <LinearGradient
-          colors={['#fedea6','#fc7ea7', '#7466e6']}
-          start={{ x: 0, y: 0 }} 
-          end={{ x: 1, y: 1 }} 
-          style={styles.container}
+      colors={["#fedea6", "#fc7ea7", "#7466e6"]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={{ flex: 1 }}
+    >
+      <SafeAreaView style={{ flex: 1 }}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
         >
-    <View style={styles.container}>
+          <View
+            style={[
+              styles.innerContainer,
+              {
+                paddingHorizontal: containerPadding,
+                maxWidth: maxContentWidth,
+                alignSelf: "center",
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.title,
+                { fontSize: rf(26), marginBottom: Math.max(8, height * 0.01) },
+              ]}
+            >
+              Descubra Música Local
+            </Text>
+            <Text style={[styles.subtitle, { fontSize: rf(15) }]}>
+              Conecte-se com artistas da sua região
+            </Text>
 
+            <Text style={[styles.label, { fontSize: rf(14) }]}>Email</Text>
+            <TextInput
+              style={[
+                styles.input,
+                { height: clamp(height * 0.065, 48, 68), fontSize: rf(16) },
+              ]}
+              placeholder="email@exemplo.com"
+              placeholderTextColor="#666"
+              keyboardType="email-address"
+              value={email}
+              onChangeText={setEmail}
+            />
 
-      <Text style={styles.title}>Descubra Musica Local</Text>
-      <Text style={styles.subtitle}>Conecte-se com artistas sa sua região</Text>
+            <Text style={[styles.label, { fontSize: rf(14) }]}>Senha</Text>
+            <TextInput
+              style={[
+                styles.input,
+                { height: clamp(height * 0.065, 48, 68), fontSize: rf(16) },
+              ]}
+              placeholder="••••••••"
+              placeholderTextColor="#666"
+              secureTextEntry
+              value={senha}
+              onChangeText={setSenha}
+            />
 
+            <TouchableOpacity
+              style={[
+                styles.button,
+                { paddingVertical: clamp(height * 0.02, 12, 20) },
+              ]}
+              onPress={entrar}
+            >
+              <Text style={[styles.buttonText, { fontSize: rf(16) }]}>Entrar</Text>
+            </TouchableOpacity >
 
-      <View style={styles.form}>
-
-        <View style={styles.inputBlock}>
-          <Text style={styles.label}>E-mail</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="email@exemplo.com"
-            placeholderTextColor="#aaa"
-            keyboardType="email-address"
-          />
-        </View>
-
-
-        <View style={styles.inputBlock}>
-          <Text style={styles.label}>Senha</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="••••••••"
-            secureTextEntry={true}
-            placeholderTextColor="#aaa"
-          />
-        </View>
-      </View>
-
-      <TouchableOpacity style={styles.button} onPress={entrar}>
-        <Text style={styles.buttonText}>Entrar</Text>
-      </TouchableOpacity>
-
-
-      <TouchableOpacity onPress={cadastro}>
-        <Text style={styles.footer}>
-          Não tem uma conta?{' '}
-          <Text style={styles.footerLink}>Cadastre-se</Text>
-        </Text>
-      </TouchableOpacity>
-    </View>
+            <TouchableOpacity onPress={cadastro}>
+              <Text style={[styles.footer, { fontSize: rf(14) }]}>
+                Não tem uma conta? <Text style={styles.footerLink}>Cadastre-se</Text>
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  innerContainer: {
     flex: 1,
-    paddingHorizontal: 24,
-    justifyContent: 'center',
-
+    justifyContent: "center",
+    width: "100%",
   },
-  inputBlock: {
-    marginBottom: 20,
+  title: {
+    color: "#fff",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  subtitle: {
+    color: "#fff",
+    textAlign: "center",
+    marginBottom: 30,
   },
   label: {
-    fontSize: 14,
-    fontFamily: 'normal',
-    color: '#333',
+    color: "#fff",
     marginBottom: 6,
   },
-  form: {
-    marginTop: 150,
-  },
   input: {
-    height: 50,
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    borderWidth: 2,
+    backgroundColor: "rgba(255,255,255,0.9)",
+    borderRadius: 8,
     paddingHorizontal: 14,
-    fontSize: 16,
-    fontFamily: 'normal',
-    borderWidth: 1,
-    borderColor: '#000',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 3,
+    marginBottom: 16,
+    color: "#333",
   },
   button: {
-    backgroundColor: '#000',
-    paddingVertical: 14,
+    backgroundColor: "#5a4ae3",
     borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 10,
+    alignItems: "center",
     marginBottom: 20,
   },
   buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontFamily: 'negrito',
-  },
-  title: {
-    fontSize: 26,
-    fontFamily: 'negrito',
-    color: '#000',
-    textAlign: 'center',
-  },
-  subtitle:{
-    fontSize:15,
-    fontFamily: 'normal',
-    color: '#666',
-    textAlign: 'center',
-    marginTop: 8,
+    color: "#fff",
+    fontWeight: "600",
   },
   footer: {
-    fontSize: 14,
-    textAlign: 'center',
-    color: '#666',
-    fontFamily: 'normal',
+    color: "#fff",
+    textAlign: "center",
   },
   footerLink: {
-    color: '#333',
-    fontFamily: 'negrito',
-    textDecorationLine: 'underline',
+    fontWeight: "bold",
+    textDecorationLine: "underline",
   },
 });
