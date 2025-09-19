@@ -10,7 +10,15 @@ fake_db = {
     # created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     
   "users":[  
-    {"id": 1, "email": "gustavolima@gmail.com","username": "Gustavo Lima", "name": "Nivaldo Batista Lima", "password_hash": "123", "latitude": 35.5, "longitude": 40, "type": "artist", "created_at": "2025-08-15"},
+    {"id": 1,
+     "email": "gustavolima@gmail.com",
+     "username": "Gustavo Lima",
+     "name": "Nivaldo Batista Lima",
+     "password_hash": "123",
+     "latitude": 35.5,
+     "longitude": 40,
+     "type": "artist",
+     "created_at": "2025-08-15"},
     
     # {"id": 2, "name": "Bob"},
   ],
