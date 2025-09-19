@@ -1,7 +1,7 @@
-import { Text, TouchableOpacity, TextInput, View, StyleSheet, Button } from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+
 
 
 export default function Index() {
@@ -16,44 +16,42 @@ export default function Index() {
 
   return (
     <LinearGradient
-          colors={['#fedea6','#fc7ea7', '#7466e6']}
-          start={{ x: 0, y: 0 }} 
-          end={{ x: 1, y: 1 }} 
+         colors={['#8000d5','#f910a3', '#fddf00']}
+         
           style={styles.container}
         >
     <View style={styles.container}>
 
 
-      <Text style={styles.title}>Descubra Musica Local</Text>
-      <Text style={styles.subtitle}>Conecte-se com artistas sa sua região</Text>
+      <Text style={styles.title}>Login</Text>
+    
 
 
       <View style={styles.form}>
 
         <View style={styles.inputBlock}>
-          <Text style={styles.label}>E-mail</Text>
+          
           <TextInput
             style={styles.input}
-            placeholder="email@exemplo.com"
-            placeholderTextColor="#aaa"
+            placeholder="Email"
+            placeholderTextColor="#FFF"
             keyboardType="email-address"
           />
         </View>
 
 
         <View style={styles.inputBlock}>
-          <Text style={styles.label}>Senha</Text>
           <TextInput
             style={styles.input}
-            placeholder="••••••••"
+            placeholder="Senha"
             secureTextEntry={true}
-            placeholderTextColor="#aaa"
+            placeholderTextColor="#FFF"
           />
         </View>
       </View>
 
       <TouchableOpacity style={styles.button} onPress={entrar}>
-        <Text style={styles.buttonText}>Entrar</Text>
+        <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
 
 
@@ -78,40 +76,34 @@ const styles = StyleSheet.create({
   inputBlock: {
     marginBottom: 20,
   },
-  label: {
-    fontSize: 14,
-    fontFamily: 'normal',
-    color: '#333',
-    marginBottom: 6,
-  },
+ 
   form: {
     marginTop: 150,
   },
   input: {
-    height: 50,
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    borderWidth: 2,
-    paddingHorizontal: 14,
+    height: 35,
+    borderRadius: 30,
+    paddingHorizontal: 20,
     fontSize: 16,
-    fontFamily: 'normal',
-    borderWidth: 1,
-    borderColor: '#000',
-    justifyContent: 'center',
-    alignItems: 'center',
+    fontFamily: "normal",
+    borderWidth: 2,
+    borderColor: "#FFF",
     marginTop: 10,
     shadowColor: "#000",
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 3,
+    shadowRadius: 8,
+    elevation: 5,
+    textAlign: "center",
   },
   button: {
-    backgroundColor: '#000',
-    paddingVertical: 14,
-    borderRadius: 8,
+    backgroundColor: '#1d1436',
+    paddingVertical: 8,
+    borderRadius: 50,
+    borderWidth: 1,
+    borderColor: '#8000d5',
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 30,
     marginBottom: 20,
   },
   buttonText: {
@@ -122,7 +114,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontFamily: 'negrito',
-    color: '#000',
+    color: '#fff',
     textAlign: 'center',
   },
   subtitle:{
