@@ -9,14 +9,20 @@ import {
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
-const SQUARE_WIDTH = width * 0.8;
-const SQUARE_HEIGHT = height * 0.6;
+const SQUARE_WIDTH = width * 0.80;
+const SQUARE_HEIGHT = height * 0.60;
 
 const profiles = [
   { id: 1, name: 'Perfil 1' },
   { id: 2, name: 'Perfil 2' },
   { id: 3, name: 'Perfil 3' },
   { id: 4, name: 'Perfil 4' },
+  { id: 5, name: 'Perfil 5' },
+  { id: 6, name: 'Perfil 6' },
+  { id: 7, name: 'Perfil 7' },
+  { id: 8, name: 'Perfil 8' },
+  { id: 9, name: 'Perfil 9' },
+  { id: 10, name: 'Perfil 10' },
 ];
 
 export default function TinderSwipeSquare() {
