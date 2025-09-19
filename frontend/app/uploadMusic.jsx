@@ -17,7 +17,7 @@ export default function Upload() {
   };
 
   function voltarHome() {
-    roteador.push("/")
+    roteador.push("/Swipes");
   }
 
   return (

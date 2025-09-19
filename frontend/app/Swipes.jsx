@@ -6,12 +6,14 @@ import {
   StyleSheet,
   Text,
   View,
+  TouchableOpacity,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 
 const { width, height } = Dimensions.get('window');
 const SQUARE_WIDTH = width * 0.8;
 const SQUARE_HEIGHT = height * 0.6;
-
+const roteador = useRouter();
 const profiles = [
   { id: 1, name: 'Perfil 1' },
   { id: 2, name: 'Perfil 2' },
@@ -22,7 +24,12 @@ const profiles = [
 export default function TinderSwipeSquare() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const position = useRef(new Animated.ValueXY()).current;
-
+function uploadMusic() {
+    roteador.push('/uploadMusic');
+  }
+  function perfil() {
+    roteador.push('/perfil');
+  }
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -91,6 +98,12 @@ export default function TinderSwipeSquare() {
       {currentIndex >= profiles.length && (
         <Text style={styles.finished}>Não há mais perfis</Text>
       )}
+      <TouchableOpacity style={styles.button} onPress={uploadMusic}>
+              <Text style={styles.buttonText}>🎵Enviar sua música</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={perfil}>
+              <Text style={styles.buttonText}>👤Ir para o seu perfil</Text>
+            </TouchableOpacity>
     </View>
   );
 }
@@ -124,6 +137,17 @@ const styles = StyleSheet.create({
   instruction: {
     fontSize: 16,
     color: '#888',
+  },button: {
+    backgroundColor: '#000',
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 20,
+  },buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontFamily: 'negrito',
   },
   finished: {
     fontSize: 22,

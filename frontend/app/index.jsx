@@ -1,7 +1,7 @@
 import { Text, TouchableOpacity, TextInput, View, StyleSheet, Button } from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+
 
 
 export default function Index() {
@@ -9,7 +9,7 @@ export default function Index() {
     roteador.push('/cadastrar');
   }
   function entrar() {
-    roteador.push('/uploadMusic');
+    roteador.push('/Swipes');
   }
 
   const roteador = useRouter();
@@ -95,7 +95,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     fontSize: 16,
     fontFamily: 'normal',
-    borderWidth: 1,
     borderColor: '#000',
     justifyContent: 'center',
     alignItems: 'center',

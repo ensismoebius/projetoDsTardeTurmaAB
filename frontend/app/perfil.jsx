@@ -1,6 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-
+import { useRouter } from 'expo-router';
+function irParaindex() {
+  roteador.push('/');
+}
+const roteador = useRouter();
 const ProfileScreen = () => {
   return (
     <View style={styles.container}>
@@ -29,7 +33,7 @@ const ProfileScreen = () => {
       </View>
 
       {/* Botão de logout */}
-      <TouchableOpacity style={styles.logoutButton}>
+      <TouchableOpacity style={styles.logoutButton} onPress={irParaindex}>
         <Text style={styles.logoutText}>Sair da Conta</Text>
       </TouchableOpacity>
     </View>
