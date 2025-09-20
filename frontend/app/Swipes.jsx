@@ -1,26 +1,34 @@
-import React, { useRef, useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
-  Animated,
-  Dimensions,
-  PanResponder,
-  StyleSheet,
-  Text,
   View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  Animated,
+  PanResponder,
+  ScrollView,
+  SafeAreaView,
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
-const SQUARE_WIDTH = width * 0.8;
-const SQUARE_HEIGHT = height * 0.6;
 
 const profiles = [
   { id: 1, name: 'Perfil 1' },
   { id: 2, name: 'Perfil 2' },
   { id: 3, name: 'Perfil 3' },
   { id: 4, name: 'Perfil 4' },
+  { id: 5, name: 'Perfil 5' },
+  { id: 6, name: 'Perfil 6' },
+  { id: 7, name: 'Perfil 7' },
+  { id: 8, name: 'Perfil 8' },
+  { id: 9, name: 'Perfil 9' },
+  { id: 10, name: 'Perfil 10' },
 ];
 
 export default function TinderSwipeSquare() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [likedProfiles, setLikedProfiles] = useState([]);
+  const [dislikedProfiles, setDislikedProfiles] = useState([]);
   const position = useRef(new Animated.ValueXY()).current;
 
   const panResponder = useRef(
@@ -33,26 +41,22 @@ export default function TinderSwipeSquare() {
 
       onPanResponderRelease: (evt, gesture) => {
         if (gesture.dx > 120) {
-          // Swipe right - Like
           Animated.timing(position, {
             toValue: { x: width * 1.5, y: gesture.dy },
             duration: 250,
             useNativeDriver: false,
           }).start(() => {
-            nextCard();
+            handleSwipe('right');
           });
         } else if (gesture.dx < -120) {
-          // Swipe left - Dislike
           Animated.timing(position, {
             toValue: { x: -width * 1.5, y: gesture.dy },
             duration: 250,
             useNativeDriver: false,
           }).start(() => {
-            nextCard();
+            handleSwipe('left');
           });
-        }
-        else {
-          // Voltar para centro
+        } else {
           Animated.spring(position, {
             toValue: { x: 0, y: 0 },
             useNativeDriver: false,
@@ -62,9 +66,21 @@ export default function TinderSwipeSquare() {
     })
   ).current;
 
+  const handleSwipe = (direction) => {
+    const profile = profiles[currentIndex];
+
+    if (direction === 'right') {
+      setLikedProfiles((prev) => [...prev, profile]);
+    } else if (direction === 'left') {
+      setDislikedProfiles((prev) => [...prev, profile]);
+    }
+
+    nextCard();
+  };
+
   const nextCard = () => {
     position.setValue({ x: 0, y: 0 });
-    setCurrentIndex((prev) => (prev + 1) % profiles.length);
+    setCurrentIndex((prev) => prev + 1);
   };
 
   const rotate = position.x.interpolate({
@@ -74,37 +90,70 @@ export default function TinderSwipeSquare() {
 
   const animatedStyle = {
     transform: [...position.getTranslateTransform(), { rotate }],
-    marginHorizontal: 20, // Espaço nas laterais para garantir que não grude
+    marginHorizontal: '5%',
   };
 
   return (
-    <View style={styles.container}>
-      {currentIndex < profiles.length && (
-        <Animated.View
-          style={[styles.card, animatedStyle]}
-          {...panResponder.panHandlers}
-        >
-          <Text style={styles.profileName}>{profiles[currentIndex].name}</Text>
-          <Text style={styles.instruction}>Arraste para curtir ou rejeitar</Text>
-        </Animated.View>
-      )}
-      {currentIndex >= profiles.length && (
-        <Text style={styles.finished}>Não há mais perfis</Text>
-      )}
-    </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.container}>
+          {currentIndex < profiles.length ? (
+            <Animated.View
+              style={[styles.card, animatedStyle]}
+              {...panResponder.panHandlers}
+            >
+              <Text style={styles.profileName}>
+                {profiles[currentIndex].name}
+              </Text>
+              <Text style={styles.instruction}>
+                Arraste para curtir ou rejeitar
+              </Text>
+            </Animated.View>
+          ) : (
+            <View style={styles.resultsContainer}>
+              <Text style={styles.finished}>Não há mais perfis</Text>
+
+              <Text style={styles.sectionTitle}>👍 Curtidos:</Text>
+              {likedProfiles.map((profile) => (
+                <Text key={profile.id} style={styles.resultText}>
+                  {profile.name}
+                </Text>
+              ))}
+
+              <Text style={styles.sectionTitle}>👎 Rejeitados:</Text>
+              {dislikedProfiles.map((profile) => (
+                <Text key={profile.id} style={styles.resultText}>
+                  {profile.name}
+                </Text>
+              ))}
+            </View>
+          )}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingVertical: 40,
   },
   card: {
-    width: SQUARE_WIDTH,
-    height: SQUARE_HEIGHT,
+    width: width * 0.65, 
+    maxWidth: 400,       
+    minWidth: 250,      
+
+    height: height * 0.75, 
+    maxHeight: 650,
+    minHeight: 400,
+
     backgroundColor: '#f8f8f8',
     borderRadius: 20,
     elevation: 5,
@@ -113,20 +162,36 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 10 },
     shadowRadius: 20,
     padding: 20,
-    justifyContent: 'center', // centraliza conteúdo verticalmente
+    justifyContent: 'center',
     alignItems: 'center',
   },
   profileName: {
-    fontSize: 28,
+    fontSize: Math.min(width * 0.07, 28), 
     fontWeight: 'bold',
     marginBottom: 20,
+    textAlign: 'center',
   },
   instruction: {
-    fontSize: 16,
+    fontSize: Math.min(width * 0.045, 18),
     color: '#888',
+    textAlign: 'center',
   },
   finished: {
     fontSize: 22,
     color: '#999',
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 10,
+  },
+  resultText: {
+    fontSize: 16,
+    color: '#555',
+    marginTop: 4,
+  },
+  resultsContainer: {
+    alignItems: 'center',
   },
 });
