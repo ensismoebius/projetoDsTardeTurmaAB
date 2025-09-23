@@ -17,6 +17,8 @@ const Cadastro = () => {
   const [senha, setSenha] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
 
+  
+
   const handleCadastro = () => {
     console.log('Nome:', nome);
     console.log('Email:', email);
@@ -24,6 +26,21 @@ const Cadastro = () => {
     console.log('WhatsApp:', whatsapp);
   };
 
+const formatPhone = (value) => {
+    if (!value) return "";
+    const cleaned = value.replace(/[^0-9]/g, "").slice(0, 11);  
+if (cleaned.length <= 2) {
+      return `(${cleaned}`;
+    } else if (cleaned.length <= 7) {
+      return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2)}`;
+    } else {
+      return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7)}`;
+    }
+  };  const handleChange = (text) => {
+    // Sempre salva apenas os números
+    const numericValue = text.replace(/[^0-9]/g, "").slice(0, 11);
+    setWhatsapp(numericValue);
+  };
   function Inicio() {
     roteador.push('/');
   }
@@ -73,13 +90,14 @@ const Cadastro = () => {
 
         <Text style={styles.label}>WhatsApp</Text>
         <TextInput
-          style={styles.input}
-          placeholder="Digite seu número"
-          placeholderTextColor="#aaa"
-          value={whatsapp}
-          onChangeText={setWhatsapp}
-          keyboardType="phone-pad"
-        />
+        style={styles.input}
+        placeholder="Digite seu número"
+        placeholderTextColor="#aaa"
+        value={formatPhone(whatsapp)} // Mostra formatado
+        onChangeText={handleChange}   // Guarda só números
+        keyboardType="phone-pad"
+      />
+      <Text style={styles.debug}>📦 Salvo no estado: {whatsapp}</Text>
 
         <TouchableOpacity style={styles.botao} onPress={handleCadastro}>
           <Text style={styles.textoBotao}>Cadastrar</Text>
@@ -126,7 +144,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     fontSize: 16,
     fontFamily: 'normal',
-    borderWidth: 1,
     borderColor: '#000',
     justifyContent: 'center',
     alignItems: 'center',

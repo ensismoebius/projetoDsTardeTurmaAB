@@ -5,7 +5,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 
 export default function Index() {
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState(null);
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
