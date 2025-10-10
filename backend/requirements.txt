@@ -3,3 +3,7 @@ uvicorn
 pytest
 pytest-cov
 httpx
+requests
+python-dotenv
+supabase
+python-multipart
