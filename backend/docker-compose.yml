@@ -1,10 +1,11 @@
 version: '3.7'
 
 services:
-  backend-db:
-    image: bitnami/postgresql:latest
+  db:
+    image: postgres
+    restart: always
+    shm_size: 128mb    
     ports: 
-      - '2222:5432'
+    - 2222:5432
     environment:
-      - POSTGRESQL_PASSWORD=postgres
-      - POSTGRESQL_DB=api
+      POSTGRES_PASSWORD: postgres

@@ -1,153 +1,121 @@
-import React, { useState } from 'react';
-import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  SafeAreaView,
-  StatusBar,
-} from 'react-native';
+import React, { useState } from 'react';
+import { Image, SafeAreaView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 
 const Cadastro = () => {
+  const { width, height } = useWindowDimensions();
+
+  const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
+  const rf = (size) => Math.round(clamp(size * (width / 390), 12, 28)); // escala responsiva
+
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [whatsapp, setWhatsapp] = useState('');
 
   const handleCadastro = () => {
     console.log('Nome:', nome);
     console.log('Email:', email);
     console.log('Senha:', senha);
-    console.log('WhatsApp:', whatsapp);
   };
 
-  function Inicio() {
-    roteador.push('/');
-  }
-
-  const roteador = useRouter();
-
   return (
-    <LinearGradient
-      colors={['#fedea6','#fc7ea7', '#7466e6']}
-      start={{ x: 0, y: 0 }} 
-      end={{ x: 1, y: 1 }} 
-      style={styles.container}
-    >
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-      <View style={styles.formContainer}>
-        <Text style={styles.titulo}>Cadastro</Text>
+    <LinearGradient colors={['#8000d5', '#f910a3', '#fddf00']} style={styles.gradient}>
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="dark-content" backgroundColor="#fff" />
 
-        <Text style={styles.label}>Nome</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Digite seu nome"
-          placeholderTextColor="#aaa"
-          value={nome}
-          onChangeText={setNome}
-        />
+        {/* Logo */}
+        <View style={[styles.logoContainer, { marginTop: rf(-50), marginBottom: rf(30) }]}>
+          <Image style={[styles.Logo, { width: rf(130), height: rf(130) }]} source={require('../assets/images/Logofundo.png')} />
+        </View>
 
-        <Text style={styles.label}>Email</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Digite seu email"
-          placeholderTextColor="#aaa"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
+        {/* Form Container */}
+        <View style={[styles.formContainer, { paddingHorizontal: rf(20) }]}>
+          <Text style={[styles.titulo, { fontSize: rf(28), marginBottom: rf(20) }]}>Cadastro</Text>
 
-        <Text style={styles.label}>Senha</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Digite sua senha"
-          placeholderTextColor="#aaa"
-          value={senha}
-          onChangeText={setSenha}
-          secureTextEntry
-        />
+          <TextInput
+            style={[styles.input, { width: width * 0.9, height: rf(50), fontSize: rf(18), paddingHorizontal: rf(15) }]}
+            placeholder="Nome de usuário"
+            placeholderTextColor="#FFF"
+            value={nome}
+            onChangeText={setNome}
+          />
 
-        <Text style={styles.label}>WhatsApp</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Digite seu número"
-          placeholderTextColor="#aaa"
-          value={whatsapp}
-          onChangeText={setWhatsapp}
-          keyboardType="phone-pad"
-        />
+          <TextInput
+            style={[styles.input, { width: width * 0.9, height: rf(50), fontSize: rf(18), paddingHorizontal: rf(15) }]}
+            placeholder="Email"
+            placeholderTextColor="#FFF"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+          />
 
-        <TouchableOpacity style={styles.botao} onPress={handleCadastro}>
-          <Text style={styles.textoBotao}>Cadastrar</Text>
-        </TouchableOpacity>
+          <TextInput
+            style={[styles.input, { width: width * 0.9, height: rf(50), fontSize: rf(18), paddingHorizontal: rf(15) }]}
+            placeholder="Senha"
+            placeholderTextColor="#FFF"
+            value={senha}
+            onChangeText={setSenha}
+            secureTextEntry
+          />
 
-        <TouchableOpacity style={styles.botao} onPress={Inicio}>
-          <Text style={styles.textoBotao}>Voltar</Text>
-        </TouchableOpacity>
-
-      </View>
-    </SafeAreaView>
+          <TouchableOpacity
+            style={[styles.botao, { width: width * 0.9, paddingVertical: rf(12), borderRadius: rf(50), marginTop: rf(25) }]}
+            onPress={handleCadastro}
+          >
+            <Text style={[styles.textoBotao, { fontSize: rf(20) }]}>Login</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
     </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
+  gradient: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  logoContainer: {
+    alignSelf: 'center',
+  },
+  Logo: {
+    resizeMode: 'contain',
+  },
   formContainer: {
     width: '100%',
-    maxWidth: 400,
-    paddingHorizontal: 20,
+    maxWidth: 450, // limite para tablets e telas grandes
   },
   titulo: {
-    fontSize: 26,
     fontFamily: 'negrito',
-    color: '#000',
+    color: '#fff',
     textAlign: 'center',
   },
-  label: {
-    fontSize: 14,
-    fontFamily: 'normal',
-    color: '#333',
-    marginBottom: 6,
-  },
   input: {
-    height: 50,
-    backgroundColor: '#fff',
-    borderRadius: 20,
+    borderRadius: 25,
     borderWidth: 2,
-    paddingHorizontal: 14,
-    fontSize: 16,
+    borderColor: '#FFF',
+    textAlign: 'center',
+    marginTop: 20,
     fontFamily: 'normal',
-    borderWidth: 1,
-    borderColor: '#000',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 10,
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
-    elevation: 3,
+    elevation: 5,
   },
   botao: {
-    backgroundColor: '#000',
-    paddingVertical: 14,
-    borderRadius: 8,
+    backgroundColor: '#1d1436',
+    borderWidth: 1,
+    borderColor: '#8000D5',
     alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
+    marginBottom: rf(20),
   },
   textoBotao: {
-    color: '#fff',
-    fontSize: 16,
+    color: '#FFF',
     fontFamily: 'negrito',
   },
 });

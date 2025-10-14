@@ -1,1 +1,0 @@
-#Faca o setup do fast-api ou outra lib

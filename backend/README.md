@@ -58,6 +58,10 @@ A cada **push** em qualquer branch (`"**"`), a pipeline executa os seguintes pas
 pip install plotly requests
 ```
 
+### Testes Unitarios
+Rodar cobertura de testes
+```pytest --cov=app --cov-report=term-missing```
+
 ### 4. Geração do arquivo HTML
 
 🔹 Executa o script scripts/participacao.py para gerar o arquivo site/participacao.html.
