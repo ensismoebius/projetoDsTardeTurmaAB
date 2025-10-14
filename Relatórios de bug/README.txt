@@ -1,1 +1,0 @@
-Os arquivos que estão fora da pasta 'finalizados' estão em aberto e precisam ser resolvidos
