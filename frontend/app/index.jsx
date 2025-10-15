@@ -1,18 +1,31 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, SafeAreaView, KeyboardAvoidingView, Platform, Dimensions  } from "react-native";
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
 
 
 
 export default function Index() {
+  const roteador = useRouter();
+  const { height, width } = Dimensions.get("window");
+
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+
+  const containerPadding = 20;
+  const maxContentWidth = 400;
+
+  const rf = (size) => size;
+
+  function clamp(num, min, max) {
+    return Math.min(Math.max(num, min), max);
+}
+
   function cadastro() {
     roteador.push('/cadastrar');
   }
   function entrar() {
-    router.push("/uploadMusic");
-  }
-
-  function cadastro() {
-    router.push("/cadastrar");
+    roteador.push("/uploadMusic");
   }
 
 
