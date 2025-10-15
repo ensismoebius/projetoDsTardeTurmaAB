@@ -1,16 +1,14 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import {
   Animated,
   Image,
   SafeAreaView,
-  StatusBar,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
-  useWindowDimensions,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -20,10 +18,6 @@ import {
 } from 'react-native';
 
 const Cadastro = React.memo(() => {
-  const { width } = useWindowDimensions();
-
-  const clamp = useCallback((val, min, max) => Math.max(min, Math.min(max, val)), []);
-  const rf = useCallback((size) => Math.round(clamp(size * (width / 390), 12, 30)), [width, clamp]);
 
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -69,24 +63,6 @@ const Cadastro = React.memo(() => {
     }, 800);
   }, [nome, email, senha, loading, validateFields]);
 
-  const dynamicStyles = useMemo(
-    () => ({
-      logoContainer: { marginTop: rf(-40), marginBottom: rf(20) },
-      logo: { width: rf(110), height: rf(110) },
-      formPadding: { paddingHorizontal: rf(25) },
-      input: {
-        width: '100%',
-        height: rf(48),
-        fontSize: rf(17),
-        paddingHorizontal: rf(15),
-        marginVertical: rf(8),
-      },
-      botao: { width: '100%', paddingVertical: rf(12), borderRadius: rf(40), marginTop: rf(20) },
-      textoBotao: { fontSize: rf(19) },
-      titulo: { fontSize: rf(26), marginBottom: rf(20) },
-    }),
-    [width, rf]
-  );
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -106,17 +82,17 @@ const Cadastro = React.memo(() => {
             >
               <Animated.View style={{ opacity: fadeAnim, alignItems: 'center', width: '100%' }}>
                 {/* Logo */}
-                <View style={[styles.logoContainer, dynamicStyles.logoContainer]}>
+                <View style={[styles.logoContainer]}>
                   <Image
-                    style={[styles.Logo, dynamicStyles.logo]}
+                    style={[styles.Logo]}
                     source={require('../assets/images/Logofundo.png')}
                     accessibilityLabel="Logo do aplicativo"
                   />
                 </View>
 
                 {/* Form Container */}
-                <View style={[styles.formContainer, dynamicStyles.formPadding]}>
-                  <Text style={[styles.titulo, dynamicStyles.titulo]}>Cadastro</Text>
+                <View style={[styles.formContainer]}>
+                  <Text style={[styles.titulo]}>Cadastro</Text>
 
                   {/* Campos */}
                   {[
@@ -148,7 +124,6 @@ const Cadastro = React.memo(() => {
                       <TextInput
                         style={[
                           styles.input,
-                          dynamicStyles.input,
                           error && { borderColor: '#ff8080' },
                         ]}
                         placeholder={placeholder}
@@ -169,7 +144,6 @@ const Cadastro = React.memo(() => {
                     activeOpacity={0.85}
                     style={[
                       styles.botao,
-                      dynamicStyles.botao,
                       isPressing && { transform: [{ scale: 0.97 }], backgroundColor: '#26144d' },
                       loading && { opacity: 0.7 },
                     ]}
@@ -178,7 +152,7 @@ const Cadastro = React.memo(() => {
                     onPressOut={() => setIsPressing(false)}
                     onPress={handleCadastro}
                   >
-                    <Text style={[styles.textoBotao, dynamicStyles.textoBotao]}>
+                    <Text style={[styles.textoBotao]}>
                       {loading ? 'Enviando...' : 'Cadastrar'}
                     </Text>
                   </TouchableOpacity>
@@ -193,16 +167,39 @@ const Cadastro = React.memo(() => {
 });
 
 const styles = StyleSheet.create({
-  gradient: { flex: 1 },
-  safe: { flex: 1 },
-  flex: { flex: 1 },
-  logoContainer: { alignSelf: 'center' },
-  Logo: { resizeMode: 'contain' },
-  formContainer: { width: '90%', maxWidth: 450 },
-  titulo: { fontFamily: 'negrito', color: '#fff', textAlign: 'center' },
+  gradient: { 
+    flex: 1
+  },
+  safe: {
+    flex: 1 
+  },
+  flex: { 
+    flex: 1 
+  },
+  logoContainer: { 
+    alignSelf: 'center',
+    marginBottom: 50,
+  },
+  Logo: { 
+    resizeMode: 'contain', 
+    width: 150,
+    height: 150,
+  },
+  formContainer: { 
+    /*width: '90%',
+    maxWidth: 450 */
+  },
+  titulo: { 
+    fontFamily: 'negrito', 
+    color: '#fff', 
+    textAlign: 'center', 
+    fontSize: 20,
+  },
   input: {
+    width: 300,
+    height: 55,
     borderRadius: 25,
-    borderWidth: 2,
+    borderWidth: 3,
     borderColor: '#FFF',
     textAlign: 'center',
     fontFamily: 'normal',
@@ -211,14 +208,29 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     elevation: 5,
+    backgroundColor: '#1D143642',
+    marginTop: 15,
+    color: '#fff',
+    fontSize: 20,
   },
   botao: {
     backgroundColor: '#1d1436',
-    borderWidth: 1,
+    //borderWidth: 1,
     borderColor: '#8000D5',
     alignItems: 'center',
+    justifyContent: 'center',
+    width: 200,
+    height: 55,
+    marginTop: 50,
+    marginBottom: -50,
+    alignSelf: 'center',
+    borderRadius: 25,
   },
-  textoBotao: { color: '#FFF', fontFamily: 'negrito' },
+  textoBotao: { 
+    color: '#FFF', 
+    fontFamily: 'negrito', 
+    fontSize: 20,
+  },
   error: {
     color: '#ff8080',
     textAlign: 'center',
