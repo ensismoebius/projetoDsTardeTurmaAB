@@ -1,18 +1,22 @@
 from fastapi import APIRouter
 from app.models import Music
 from app.db.fake_db import fake_db
+from app.db.supabase_client import get_supabase
 
 router = APIRouter()
 
-@router.get("/get_music")
-def get_music():
-    return fake_db['musics']
+@router.get("/selectmusic")
+def get_musics():
+    supabase = get_supabase()
+    response = supabase.table("musics").select("*").execute()
+    return response.data 
 
 @router.get("/{music_id}")
 def get_music(music_id: int):
     music = next((music for music in fake_db if music["id"] == music_id), None)
     if music:
         return music
+    
 
 @router.post("/")
 def create_music(music: Music):
