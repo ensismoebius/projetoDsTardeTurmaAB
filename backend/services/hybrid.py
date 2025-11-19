@@ -79,7 +79,6 @@ async def recommend_hybrid(
   w_geo /= total
 
   combined = defaultdict(float)
-
   for mid, s in pop_norm.items():
     combined[mid] += w_pop * s
   for mid, s in geo_norm.items():
@@ -97,11 +96,12 @@ async def recommend_hybrid(
   score_lookup = dict(sorted_top)
 
   # Busca das músicas no Supabase
-
-  response = supabase.table("musics") \
-    .select("id, title, artist_id") \
-    .in_("id", ids) \
+  response = (
+    supabase.table("musics")
+    .select("id, title, artist_id")
+    .in_("id", ids)
     .execute()
+  )
 
   musics = response.data or []
 
