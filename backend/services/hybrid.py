@@ -6,7 +6,6 @@ Este módulo implementa um sistema de recomendação híbrido que combina difere
 
 from typing import List, Dict, Any
 from collections import defaultdict
-from utils.ramos_helper import try_import_models
 from popular import recommend_popular
 from geo import recommend_geo
 from app.db.supabase_client import get_supabase
