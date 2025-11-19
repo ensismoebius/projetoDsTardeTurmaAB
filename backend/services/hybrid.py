@@ -1,8 +1,7 @@
 """
-Este módulo implementa um sistema de recomendação híbrido que combina diferentes abordagens
-(popularidade, geolocalização) para fornecer recomendações de música mais abrangentes.
+Módulo de recomendação híbrida que combina popularidade e geolocalização,
+utilizando dados armazenados no Supabase.
 """
-# Traduzindo o código de peewee para ser utilizado com supabase.
 
 from typing import List, Dict, Any
 from collections import defaultdict
@@ -14,13 +13,7 @@ from app.db.supabase_client import get_supabase
 
 def _normalize_score_map(m: dict) -> dict:
   """
-  Normaliza os valores numéricos em um dicionário para uma escala de 0 a 1.
-
-  Args:
-      m (dict): Um dicionário onde as chaves são IDs e os valores são pontuações numéricas.
-
-  Returns:
-      dict: Um novo dicionário com as pontuações normalizadas.
+    Normaliza valores para a faixa [0, 1], preservando relações relativas.
   """
   if not m:
     return {}
