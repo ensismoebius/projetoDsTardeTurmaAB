@@ -53,11 +53,7 @@ async def recommend_hybrid(
 
   # Recomendações individuais
 
-  pop = await recommend_popular(
-    user_id=user_id,
-    limit=limit * 3
-  )
-
+  pop = await recommend_popular(user_id=user_id, limit=limit * 3)
   geo = await recommend_geo(
     user_id=user_id,
     radius_km=20.0,
