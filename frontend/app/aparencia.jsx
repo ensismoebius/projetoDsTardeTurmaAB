@@ -1,11 +1,40 @@
-import { View,Text, TouchableOpacity, StyleSheet } from "react-native";
-
+import { View,Text, TouchableOpacity, StyleSheet,KeyboardAvoidingView, Platform, Animated } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { AntDesign } from "@expo/vector-icons";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 
 
 
 export default function HomeScreen() {
+
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 600,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+  
+  const navigation = useMemo(() => {
+    return {
+      goBack: () => {
+        console.log('Go back pressed');
+      },
+    };
+  }, []);
+
   return (
+    <LinearGradient colors={["#8000d5", "#f910a3", "#fdff00"]} style={{ flex: 1 }}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+          <TouchableOpacity style={styles.backCircle} onPress={() => navigation.goBack()}>
+                        <AntDesign name="arrowleft" size={20} color="#fff" />
+                      </TouchableOpacity>
+              <Animated.View style={{ opacity: fadeAnim, alignItems: 'center', width: '100%' }}></Animated.View>
     <View style={styles.container}>
       <View>
         <Text style={styles.titulo}>Aparência</Text>
@@ -20,6 +49,8 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
     </View>
+    </KeyboardAvoidingView>
+    </LinearGradient>
   );
 }
 
