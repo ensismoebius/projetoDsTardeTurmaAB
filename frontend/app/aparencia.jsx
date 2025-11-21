@@ -1,7 +1,8 @@
-import { View,Text, TouchableOpacity, StyleSheet,KeyboardAvoidingView, Platform, Animated } from "react-native";
+import { View,Text, TouchableOpacity, StyleSheet,KeyboardAvoidingView, Platform, Animated, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { AntDesign } from "@expo/vector-icons";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
 
 
 
@@ -35,6 +36,14 @@ export default function HomeScreen() {
                         <AntDesign name="arrowleft" size={20} color="#fff" />
                       </TouchableOpacity>
               <Animated.View style={{ opacity: fadeAnim, alignItems: 'center', width: '100%' }}></Animated.View>
+
+              <View style={[styles.logoContainer]}>
+                  <Image
+                    style={[styles.Logo]}
+                    source={require('../assets/images/Logofundo.png')}
+                    accessibilityLabel="Logo do aplicativo"
+                  />
+                </View>
     <View style={styles.container}>
       <View>
         <Text style={styles.titulo}>Aparência</Text>
@@ -59,6 +68,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  logoContainer: {
+    alignSelf: 'center' 
+  },
+  Logo: { 
+    resizeMode: 'contain',
+    width: 200, 
+    height: 200 
   },
   row: {
     flexDirection: 'row',
