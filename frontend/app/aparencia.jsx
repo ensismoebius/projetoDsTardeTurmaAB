@@ -2,6 +2,7 @@ import { View,Text, TouchableOpacity, StyleSheet,KeyboardAvoidingView, Platform,
 import { LinearGradient } from "expo-linear-gradient";
 import { AntDesign } from "@expo/vector-icons";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useRouter } from "expo-router";
 
 
 
@@ -10,6 +11,11 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 export default function HomeScreen() {
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const roteador = useRouter();
+
+  function voltar() {
+    roteador.push('/Configuracoes');
+  }
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -32,7 +38,7 @@ export default function HomeScreen() {
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-          <TouchableOpacity style={styles.backCircle} onPress={() => navigation.goBack()}>
+          <TouchableOpacity style={styles.backCircle} onPress={() => voltar()}>
                         <AntDesign name="arrowleft" size={20} color="#fff" />
                       </TouchableOpacity>
               <Animated.View style={{ opacity: fadeAnim, alignItems: 'center', width: '100%' }}></Animated.View>
@@ -76,6 +82,16 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     width: 200, 
     height: 200 
+  },
+  backCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.18)",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 12,
+    marginLeft: -2,
   },
   row: {
     flexDirection: 'row',

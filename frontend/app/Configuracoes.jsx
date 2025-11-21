@@ -63,11 +63,11 @@ const Configuracoes = React.memo(() => {
 
             {/* Botões */}
             <View style={styles.botoesContainer} >
-              <TouchableOpacity style={styles.botao}onPress={() => goTo('privacidade')}>
+              <TouchableOpacity style={styles.botao} onPress={() => goTo('privacidade')}>
                 <Text style={styles.textoBotao}>Privacidade</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.botao}>
+              <TouchableOpacity style={styles.botao} onPress={() => goTo('aparencia')}>
                 <Text style={styles.textoBotao}>Aparência</Text>
               </TouchableOpacity>
             </View>
