@@ -3,6 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { AntDesign } from "@expo/vector-icons";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from "expo-router";
+import * as Font from "expo-font";
 
 
 
@@ -10,12 +11,22 @@ import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
 
+  const [fontsLoaded, setFontsLoaded] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const roteador = useRouter();
 
   function voltar() {
     roteador.push('/Configuracoes');
   }
+
+  const loadFonts = async () => {
+    await Font.loadAsync({
+      normal: require("../assets/fonts/Inter_18pt-Regular.ttf"),
+      negrito: require("../assets/fonts/Inter_18pt-Bold.ttf"),
+      fino: require("../assets/fonts/Inter_18pt-Thin.ttf"),
+    });
+    setFontsLoaded(true);
+  };
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -24,6 +35,11 @@ export default function HomeScreen() {
       useNativeDriver: true,
     }).start();
   }, []);
+
+  useEffect(() => {
+    loadFonts();
+  }, []);
+
   
   const navigation = useMemo(() => {
     return {
@@ -32,7 +48,14 @@ export default function HomeScreen() {
       },
     };
   }, []);
-
+  
+  if (!fontsLoaded) {
+    return (
+      <View style={styles.container}>
+        <Text>Carregando fontes...</Text>
+      </View>
+    );
+  }
   return (
     <LinearGradient colors={["#8000d5", "#f910a3", "#fdff00"]} style={{ flex: 1 }}>
       <KeyboardAvoidingView
@@ -53,6 +76,8 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <View>
         <Text style={styles.titulo}>Aparência</Text>
+
+        <Text style={styles.subtitulo}>Cor do perfil</Text>
       </View>
       <View style={styles.row}>
         <TouchableOpacity style={styles.button1}>
@@ -83,6 +108,13 @@ const styles = StyleSheet.create({
     width: 200, 
     height: 200 
   },
+  subtitulo:{
+    fontSize: 20,
+    marginBottom: 10,
+    alignSelf: 'center',
+    fontFamily: 'normal',
+    color: '#fff',
+  },
   backCircle: {
     width: 40,
     height: 40,
@@ -91,7 +123,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginTop: 12,
-    marginLeft: -2,
+    marginLeft: 2,
   },
   row: {
     flexDirection: 'row',
@@ -99,8 +131,10 @@ const styles = StyleSheet.create({
   },
   titulo:{
     fontSize: 24,
-    fontWeight: 'bold',
+    fontFamily: 'negrito',
     marginBottom: 20,
+    alignSelf: 'center', 
+    color: '#fff',
   },
   button1:{
     backgroundColor: '#FDDF00',
