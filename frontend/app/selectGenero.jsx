@@ -1,141 +1,190 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  FlatList,
   SafeAreaView,
-} from 'react-native';
+  Image,
+  View,
+  ScrollView,
+} from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native"; 
+import { LinearGradient } from "expo-linear-gradient";
+import { useNavigation } from "@react-navigation/native";
 
 const GENEROS = [
-  'Funk', 'Sertanejo', 'Rap', 'Trap', 'Jerk', 'Drill',
-  'Samba', 'Axé', 'Soul', 'Blues', 'Rock', 'Gospel',
+  "Pop", "Rock industrial", "Metal", "MPB",
+  "Sertanejo", "Hip Hop", "Hyperpop",
+  "Forró", "Trap", "Gospel", "EDM", "Indie",
+  "Blues", "Soul", "Funk", "Pagode"
 ];
 
 const GeneroSelector = () => {
   const [selecionados, setSelecionados] = useState([]);
-  const navigation = useNavigation(); 
+  const navigation = useNavigation();
 
   const toggleGenero = (genero) => {
-    if (selecionados.includes(genero)) {
-      setSelecionados(selecionados.filter((g) => g !== genero));
-    } else {
-      setSelecionados([...selecionados, genero]);
-    }
-  };
-
-  const renderGenero = ({ item }) => {
-    const isSelected = selecionados.includes(item);
-    return (
-      <TouchableOpacity
-        onPress={() => toggleGenero(item)}
-        style={[
-          styles.generoBotao,
-          isSelected && styles.generoBotaoSelecionado,
-        ]}
-      >
-        <Text
-          style={[
-            styles.generoTexto,
-            isSelected && styles.generoTextoSelecionado,
-          ]}
-        >
-          {item}
-        </Text>
-      </TouchableOpacity>
+    setSelecionados((prev) =>
+      prev.includes(genero)
+        ? prev.filter((g) => g !== genero)
+        : [...prev, genero]
     );
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      
-      <TouchableOpacity style={styles.backCircle} onPress={() => navigation.goBack()}>
-        <AntDesign name="arrowleft" size={20} color="#fff" />
-      </TouchableOpacity>
+    <LinearGradient
+      colors={["#8A00D4", "#E60073", "#FF7A00"]}
+      style={styles.container}
+      start={{ x: 0.5, y: 0 }}
+      end={{ x: 0.5, y: 1 }}
+    >
+      <SafeAreaView style={{ flex: 1 }}>
+        <ScrollView contentContainerStyle={styles.scrollBox}>
 
-      <Text style={styles.titulo}>Selecione seus Gêneros Musicais Preferidos:</Text>
+          {/* Botão voltar */}
+          <TouchableOpacity
+            style={styles.backCircle}
+            onPress={() => navigation.goBack()}
+          >
+            <AntDesign name="arrowleft" size={20} color="#fff" />
+          </TouchableOpacity>
 
-      <FlatList
-        data={GENEROS}
-        keyExtractor={(item) => item}
-        renderItem={renderGenero}
-        numColumns={3}
-        contentContainerStyle={styles.lista}
-      />
+          {/* Ícone ilustrativo */}
+          <Image
+            source={require("../assets/images/Logofundo.png")}
+            accessibilityLabel="Logo do aplicativo"
+            style={styles.icone}
+          />
 
-      <TouchableOpacity
-        style={[
-          styles.botaoContinuar,
-          selecionados.length === 0 && styles.botaoDesativado,
-        ]}
-        disabled={selecionados.length === 0}
-        onPress={() => console.log('Selecionados:', selecionados)}
-      >
-        <Text style={styles.textoContinuar}>Continuar</Text>
-      </TouchableOpacity>
-    </SafeAreaView>
+          <Text style={styles.titulo}>
+            Selecione seus gêneros{"\n"}musicais preferidos:
+          </Text>
+
+          {/* Chips */}
+          <View style={styles.generosContainer}>
+            {GENEROS.map((genero) => {
+              const selected = selecionados.includes(genero);
+              return (
+                <TouchableOpacity
+                  key={genero}
+                  onPress={() => toggleGenero(genero)}
+                  style={[
+                    styles.generoBotao,
+                    selected && styles.generoSelecionado,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.generoTexto,
+                      selected && styles.generoTextoSelecionado,
+                    ]}
+                  >
+                    {genero}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
+          {/* Botão Prosseguir sem cor + borda branca */}
+          <TouchableOpacity
+            style={[
+              styles.botaoContinuar,
+            ]}
+            disabled={selecionados.length === 0}
+            onPress={() => console.log("Selecionados:", selecionados)}
+          >
+            <Text style={styles.textoContinuar}>Prosseguir</Text>
+          </TouchableOpacity>
+
+        </ScrollView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
+  container: { flex: 1 },
+
+  scrollBox: {
+    alignItems: "center",
+    paddingBottom: 40,
   },
-  titulo: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
+
   backCircle: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "rgba(150, 47, 191, 0.8)",
+    backgroundColor: "#ffffff33",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 15,
+    marginTop: 10,
+    marginRight: "auto",
+    marginLeft: 15,
   },
-  lista: {
+
+  icone: {
+    width: 90,
+    height: 90,
+    marginTop: 10,
+  },
+
+  titulo: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#fff",
+    textAlign: "center",
+    marginVertical: 20,
+  },
+
+  generosContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    width: "90%",
     gap: 10,
   },
+
   generoBotao: {
-    paddingVertical: 10,
+    paddingVertical: 8,
     paddingHorizontal: 16,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    margin: 5,
+    borderRadius: 30,
+    borderWidth: 2,
+    borderColor: "#ffffff88",
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
   },
-  generoBotaoSelecionado: {
-    backgroundColor: '#962fbf',
-    borderColor: '#962fbf',
+
+  generoSelecionado: {
+    backgroundColor: "#ffffff33",
+    borderColor: "#ff40b3",
   },
+
   generoTexto: {
-    fontSize: 16,
-    color: '#333',
+    color: "#fff",
+    fontSize: 15,
   },
+
   generoTextoSelecionado: {
-    color: '#fff',
-    fontWeight: 'bold',
+    fontWeight: "bold",
+    color: "#fff",
   },
+
   botaoContinuar: {
-    backgroundColor: '#962fbf',
+    width: "80%",
     paddingVertical: 14,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 'auto',
+    borderRadius: 30,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 25,
+    borderWidth: 1,
+    borderColor: "#fff",
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
-  botaoDesativado: {
-    backgroundColor: '#ccc',
-  },
+
   textoContinuar: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 
