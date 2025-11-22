@@ -85,6 +85,7 @@ const App = () => {
           <TouchableOpacity style={styles.navItem} onPress={() => goTo('uploadMusic')}>
             <Text style={styles.navText1}>UploadMusic</Text>
           </TouchableOpacity>
+            
         </View>
       </SafeAreaView>
     </LinearGradient>
