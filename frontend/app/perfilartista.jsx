@@ -31,7 +31,6 @@ export default function ArtistProfile() {
       end={{ x: 0.5, y: 1 }}
     >
       <ScrollView showsVerticalScrollIndicator={false}>
-        
         <View style={styles.header}>
           <TouchableOpacity style={styles.backButton}>
             <Ionicons name="chevron-back" size={28} color="#fff" />
