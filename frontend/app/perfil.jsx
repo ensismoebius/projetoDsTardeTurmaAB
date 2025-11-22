@@ -1,176 +1,323 @@
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { useMemo, useState, memo, useCallback } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native';
-import { AntDesign } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native"; 
+import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
+import React from "react";
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 
-const ProfileScreen = memo(() => {
-  const { width } = useWindowDimensions();
-  const [pressingLogout, setPressingLogout] = useState(false);
-   const navigation = useNavigation(); 
+const Perfil = () => {
+  const rout = useRouter();
 
-  
-  const rf = useMemo(
-    () => (size) =>
-      Math.round(Math.max(size * 0.9, Math.min(size * 1.6, size * (width / 390)))),
-    [width]
-  );
-
-  const isSmallScreen = width < 360;
-
- 
-  const statsData = useMemo(
-    () => [
-      { number: 0, label: 'Músicas Curtidas' },
-      { number: 0, label: 'Artistas Descobertos' },
-      { number: 0, label: 'Playlists Criadas' },
-    ],
-    []
-  );
-
- 
-  const handlePressIn = useCallback(() => setPressingLogout(true), []);
-  const handlePressOut = useCallback(() => setPressingLogout(false), []);
+  const goTo = (path) => rout.push(`/${path}`);
 
   return (
-    <View style={styles.container}>
-     
-    
-       <LinearGradient colors={['#8000d5', '#f910a3', '#fddf00']} style={styles.gradient}>
-        <Image
-          source={{ uri: 'https://cdn-icons-png.flaticon.com/512/149/149071.png' }}
-          style={{
-            width: rf(100),
-            height: rf(100),
-            borderRadius: rf(50),
-            marginBottom: rf(5),
-            borderWidth: 2,
-            borderColor: '#fff',
-          }}
-          resizeMode="cover"
-        />
-
-        <View style={{ alignItems: 'center', gap: rf(3) }}>
-          <Text style={[styles.username, { fontSize: rf(22 + (isSmallScreen ? -2 : 0)) }]}>Usuário</Text>
-          <Text style={[styles.email, { fontSize: rf(13) }]}>0 seguidores - 4 seguindo</Text>
-          <Text style={[styles.memberSince, { fontSize: rf(12) }]}>YRCAP     Naosouiphone</Text>
-          <Text style={[styles.location, { fontSize: rf(13) }]}>São Paulo, SP</Text>
-        </View>
-      
-      <TouchableOpacity style={styles.backCircle} onPress={() => navigation.goBack()}>
-                <AntDesign name="arrowleft" size={20} color="#fff" />
-              </TouchableOpacity>
-
-     
-      
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'center',
-          marginTop: rf(35),
-          gap: rf(30),
-          flexWrap: 'wrap',
-          width: '100%',
-          paddingHorizontal: width * 0.1,
-        }}
-      >
-        {statsData.map((item, i) => (
-          <View key={i} style={{ alignItems: 'center', minWidth: rf(100) }}>
-            <Text style={[styles.statNumber, { fontSize: rf(26) }]}>{item.number}</Text>
-            <Text style={[styles.statLabel, { fontSize: rf(13) }]}>{item.label}</Text>
-          </View>
-        ))}
-      </View>
-
-     
-      <TouchableOpacity
-        activeOpacity={0.9}
-        style={[
-          styles.logoutButton,
-          {
-            backgroundColor: pressingLogout ? '#d99ac1' : '#F1A7D5',
-            transform: [{ scale: pressingLogout ? 0.97 : 1 }],
-            paddingVertical: rf(14),
-            marginTop: rf(55),
-            borderRadius: rf(14),
-            width: width * 0.7,
-            elevation: 3,
-          },
-        ]}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-      >
-        <Text style={[styles.logoutText, { fontSize: rf(17) }]}>Sair da Conta</Text>
-      </TouchableOpacity>
-      
-
-  
-      <View style={styles.footer}>
-        {['Player', 'Curtidas', 'Perfil'].map((label, i) => (
-          <TouchableOpacity
-            key={i}
-            style={styles.footerItem}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.footerText}>{label}</Text>
+    <LinearGradient
+      colors={["#8a00d4", "#e60073", "#ff7a00"]}
+      style={styles.container}
+      start={{ x: 0.5, y: 0 }}
+      end={{ x: 0.5, y: 1 }}
+    >
+      <SafeAreaView style={{ flex: 1 }}>
+        
+        {/* SCROLLVIEW ADICIONADO AQUI */}
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 40 }}
+        >
+          {/* BOTÃO DE VOLTAR */}
+          <TouchableOpacity style={styles.backButton} onPress={() => goTo("home")}>
+            <Image
+              source={{
+                uri: "https://cdn-icons-png.flaticon.com/512/271/271220.png",
+              }}
+              style={styles.backIcon}
+            />
           </TouchableOpacity>
-        ))}
-         
-      </View>
-      </LinearGradient>
-    </View>
-   
-  );
-});
 
-ProfileScreen.displayName = 'ProfileScreen';
+          {/* FOTO + NOME */}
+          <View style={styles.headerBox}>
+            <Image
+              source={{
+                uri: "https://cdn-icons-png.flaticon.com/512/847/847969.png",
+              }}
+              style={styles.profileImage}
+            />
+
+            {/* Botão editar foto */}
+            <TouchableOpacity style={styles.editPhotoBtn}>
+              <Image
+                source={{
+                  uri: "https://cdn-icons-png.flaticon.com/512/1250/1250615.png",
+                }}
+                style={styles.editPhotoIcon}
+              />
+            </TouchableOpacity>
+
+            <Text style={styles.nome}>Nome-User</Text>
+            <Text style={styles.seguidores}>?? seguidores • ?? seguindo</Text>
+
+            {/* Tags */}
+            <View style={styles.deviceRow}>
+              <View style={styles.deviceTag}>
+                <Text style={styles.deviceText}>@INSTA</Text>
+              </View>
+
+              <View style={styles.deviceTag}>
+                <Text style={styles.deviceText}>@NAOSEI</Text>
+              </View>
+            </View>
+          </View>
+
+          {/* BIO */}
+          <View style={styles.bioBox}>
+            <Text style={styles.bioText}>
+              biografia {"\n"}do usuario
+            </Text>
+
+            <TouchableOpacity style={styles.bioEditBtn}>
+              <Image
+                source={{
+                  uri: "https://cdn-icons-png.flaticon.com/512/1250/1250615.png",
+                }}
+                style={styles.editPhotoIcon}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* GÊNEROS */}
+          <View style={styles.generosContainer}>
+            <View style={styles.generoTag}>
+              <Text style={styles.generoText}>Rock</Text>
+            </View>
+
+            <View style={styles.generoTag}>
+              <Text style={styles.generoText}>Metal industrial</Text>
+            </View>
+
+            <View style={styles.generoTag}>
+              <Text style={styles.generoText}>Forró</Text>
+            </View>
+
+            <View style={styles.generoTag}>
+              <Text style={styles.generoText}>Glam Rock</Text>
+            </View>
+
+            <TouchableOpacity style={styles.editGenerosBtn}>
+              <Text style={styles.editGenerosText}>Editar gêneros..</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* ARTISTAS */}
+          <Text style={styles.artistasTitulo}>Artistas mais ouvidos</Text>
+
+          <View style={styles.artistList}>
+            <View style={styles.artistItem}>
+              <Image
+                source={{ uri: "https://i.ibb.co/4Sk4G0M/person-placeholder.png" }}
+                style={styles.artistImage}
+              />
+              <Text style={styles.artistName}>Jackson do Pandeiro</Text>
+            </View>
+
+            <View style={styles.artistItem}>
+              <Image
+                source={{ uri: "https://i.ibb.co/4Sk4G0M/person-placeholder.png" }}
+                style={styles.artistImage}
+              />
+              <Text style={styles.artistName}>Nirvana</Text>
+            </View>
+
+            <View style={styles.artistItem}>
+              <Image
+                source={{ uri: "https://i.ibb.co/4Sk4G0M/person-placeholder.png" }}
+                style={styles.artistImage}
+              />
+              <Text style={styles.artistName}>Marilyn Manson</Text>
+            </View>
+          </View>
+
+        </ScrollView>
+      </SafeAreaView>
+    </LinearGradient>
+  );
+};
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#ffd3e8', alignItems: 'center' },
-  header: {
-    width: '80%',
-    height: '80%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+  container: { flex: 1 },
+
+  backButton: {
+    padding: 15,
+    marginTop: 10,
   },
-    backCircle: {
+  backIcon: {
+    width: 28,
+    height: 28,
+    tintColor: "#fff",
+  },
+
+  headerBox: {
+    alignItems: "center",
+    marginTop: -5,
+  },
+
+  profileImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 70,
+  },
+
+  editPhotoBtn: {
+    backgroundColor: "#ff2fb1",
+    width: 34,
+    height: 34,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    top: 90,
+    right: 130,
+  },
+
+  editPhotoIcon: {
+    width: 18,
+    height: 18,
+    tintColor: "#fff",
+  },
+
+  nome: {
+    marginTop: 10,
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#fff",
+  },
+
+  seguidores: {
+    color: "#eee",
+    fontSize: 14,
+    marginTop: 2,
+  },
+
+  deviceRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginTop: 10,
+  },
+
+  deviceTag: {
+    backgroundColor: "#ffffff33",
+    paddingVertical: 5,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#fff",
+  },
+
+  deviceText: {
+    color: "#fff",
+    fontSize: 13,
+  },
+
+  bioBox: {
+    backgroundColor: "#ffffff33",
+    marginTop: 20,
+    marginHorizontal: 15,
+    padding: 15,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: "#fff",
+    position: "relative",
+  },
+
+  bioText: {
+    color: "#fff",
+    fontSize: 15,
+    lineHeight: 20,
+  },
+
+  bioEditBtn: {
+    position: "absolute",
+    right: 10,
+    bottom: 10,
+  },
+
+  generosContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginTop: 15,
+    paddingHorizontal: 15,
+    gap: 8,
+  },
+
+  generoTag: {
+    backgroundColor: "#ffffff33",
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#fff",
+  },
+
+  generoText: {
+    color: "#fff",
+    fontSize: 14,
+  },
+
+  editGenerosBtn: {
+    backgroundColor: "#ffffff55",
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#fff",
+    marginTop: 5,
+  },
+
+  editGenerosText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+
+  artistasTitulo: {
+    fontSize: 18,
+    color: "#fff",
+    fontWeight: "bold",
+    marginTop: 25,
+    paddingHorizontal: 15,
+  },
+
+  artistList: {
+    marginTop: 10,
+    paddingHorizontal: 15,
+    gap: 10,
+  },
+
+  artistItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    backgroundColor: "#ffffff22",
+    padding: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#fff",
+  },
+
+  artistImage: {
     width: 40,
     height: 40,
-    borderRadius: 20,
-    backgroundColor: "rgba(255,255,255,0.18)",
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 12,
-    marginLeft: -2,
+    borderRadius: 25,
   },
-  username: { 
-    fontWeight: 'bold',
-     color: '#441b34' 
-    },
-  email: { color: '#380d26' },
-  memberSince: { color: '#2c2c2c' },
-  location: { color: '#6b4b63' },
-  statNumber: { fontWeight: 'bold', color: '#F1A7D5' },
-  statLabel: { color: '#D9A6C4', textAlign: 'center' },
-  logoutButton: { alignItems: 'center' },
-  logoutText: { color: '#fff', fontWeight: 'bold' },
-  
-  
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 12,
-    backgroundColor: '#f7e6f0',
-    width: '100%',
-    borderTopWidth: 1,
-    borderTopColor: '#e5c7da',
+
+  artistName: {
+    color: "#fff",
+    fontSize: 16,
   },
-  footerItem: { padding: 10 },
-  footerText: { fontSize: 14, fontWeight: 'bold', color: '#441b34' },
 });
 
-export default ProfileScreen;
+export default Perfil;
