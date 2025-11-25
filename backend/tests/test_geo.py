@@ -29,9 +29,16 @@ def test_haversine_km_known_distance():
 
 
 def test_haversine_km_antipodal_points():
-    half_circle = 6371 * 3.14159
-    d = _haversine_km(0.0, 0.0, 0.0, 180.0)
-    assert abs(d - half_circle) < 0.1
+    """
+    Pontos exatamente opostos no globo (antípodas) devem ter ~20015 km.
+    """
+    earth_radius_km = 6371
+    expected = earth_radius_km * 3.14159
+    result = _haversine_km(0.0, 0.0, 0.0, 180.0)
+
+    assert abs(result - expected) < 0.1, \
+        f"Esperado ~{expected:.2f} km, obtido {result:.2f} km"
+
 
 
 # -----------------------------
