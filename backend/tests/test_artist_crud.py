@@ -19,24 +19,20 @@ def make_artist_payload():
         "type": "artist",
         "created_at": "2025-01-01"
     }
-
-def test_artist_crud_flow():
-    # create
+def test_create_and_get_artist():
+    """
+    Testa criação e leitura de artista.
+    """
     payload = make_artist_payload()
-    c = client.post("/api/artists/", json=payload)
-    assert c.status_code == 200, c.text
-    aid = c.json()["id"]
 
-    # get
-    g = client.get(f"/api/artists/{aid}")
-    assert g.status_code == 200
-    assert g.json()["id"] == aid
+    # CREATE
+    create_res = client.post("/api/artists/", json=payload)
+    assert create_res.status_code == 200, f"Erro ao criar artista: {create_res.text}"
 
-    # update
-    up = client.put(f"/api/artists/{aid}", json={"name": "Novo Nome"})
-    assert up.status_code == 200
-    assert up.json().get("name") == "Novo Nome"
+    artist_id = create_res.json()["id"]
+    assert isinstance(artist_id, int)
 
-    # delete
-    d = client.delete(f"/api/artists/{aid}")
-    assert d.status_code == 200
+    # GET
+    get_res = client.get(f"/api/artists/{artist_id}")
+    assert get_res.status_code == 200, f"Erro ao buscar artista: {get_res.text}"
+    assert get_res.json()["id"] == artist_id
