@@ -97,32 +97,40 @@ def create_artist(artist: dict):
         )
 
 
-
 @router.put("/{artist_id}")
 def update_artist(artist_id: int, artist: dict):
     """
     Atualiza um artista existente.
-
-    Args:
-        artist_id (int): O ID do artista a ser atualizado.
-        artist (dict): Os dados do artista para atualização.
-
-    Returns:
-        dict: Os dados do artista atualizado.
-
-    Raises:
-        HTTPException: Se o artista não for encontrado.
     """
-    response = (
-        supabase.table("users")
-        .update(artist)
-        .eq("id", artist_id)
-        .eq("type", "artist")
-        .execute()
-    )
-    if not response.data:
-        raise HTTPException(status_code=404, detail="Artist not found")
-    return response.data[0]
+    try:
+        response = (
+            supabase.table("users")
+            .update(artist)
+            .eq("id", artist_id)
+            .eq("type", "artist")
+            .execute()
+        )
+
+        if hasattr(response, "error") and response.error:
+            raise HTTPException(
+                status_code=500,
+                detail="Erro ao atualizar artista no banco de dados."
+            )
+
+        if not response.data:
+            raise HTTPException(status_code=404, detail="Artist not found")
+
+        return response.data[0]
+
+    except HTTPException:
+        raise
+
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="Erro interno ao atualizar o artista."
+        )
+
 
 
 @router.delete("/{artist_id}")
