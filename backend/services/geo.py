@@ -63,6 +63,15 @@ def recommend_geo(User=None, Music=None, UserMusicRating=None, user_id: int = No
     return recommend_popular(User=User, Music=Music, UserMusicRating=UserMusicRating, user_id=user_id, limit=limit)
 
   q_limit = 1000
+  # normalize inputs
+  method = (method or "haversine").lower()
+  limit = max(1, int(limit or 10))
+  if limit > 100:
+    limit = 100
+  if radius_km is None:
+    radius_km = 20.0
+  radius_km = float(radius_km)
+  sample_limit = 1000
 
   rated_subq = (
     UserMusicRating
