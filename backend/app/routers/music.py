@@ -136,27 +136,33 @@ def update_music(music_id: int, music: dict):
             detail="Erro interno ao atualizar a música."
         )
 
-
-
 @router.delete("/{music_id}")
 def delete_music(music_id: int):
     """
     Deleta uma música existente pelo seu ID.
-
-    Args:
-        music_id (int): O ID da música a ser deletada.
-
-    Returns:
-        dict: Uma mensagem de sucesso.
-
-    Raises:
-        HTTPException: Se a música não for encontrada.
     """
     supabase = get_supabase()
+
     try:
         response = supabase.table("musics").delete().eq("id", music_id).execute()
+
+        if hasattr(response, "error") and response.error:
+            raise HTTPException(
+                status_code=500,
+                detail="Erro ao deletar a música no banco de dados."
+            )
+
         if not response.data:
             raise HTTPException(status_code=404, detail="Music not found")
+
         return {"message": "Music deleted successfully"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+
+    except HTTPException:
+        raise
+
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="Erro interno ao deletar a música."
+        )
+
