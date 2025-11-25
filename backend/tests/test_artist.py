@@ -33,9 +33,16 @@ def make_artist(**overrides):
 # ---------------------------
 
 def test_get_artists():
+    """
+    Testa a listagem de todos os artistas.
+    """
     response = client.get("/api/artists/")
-    assert response.status_code == 200
-    assert isinstance(response.json(), list), "O retorno deve ser uma lista"
+    assert response.status_code == 200, "A rota GET /artists deve responder 200"
+
+    data = response.json()
+    assert isinstance(data, list), "O retorno da listagem deve ser uma lista"
+
+
 
 
 def test_create_artist():
