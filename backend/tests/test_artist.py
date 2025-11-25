@@ -60,18 +60,22 @@ def test_create_artist():
 
 
 def test_get_artist_by_id():
+    """
+    Testa a recuperação de um artista pelo ID.
+    """
     artist = make_artist(name="Artista Get ID")
 
-    create_response = client.post("/api/artists/", json=artist)
-    assert create_response.status_code == 200
-    artist_id = create_response.json()["id"]
+    create = client.post("/api/artists/", json=artist)
+    assert create.status_code == 200, f"Erro ao criar artista: {create.text}"
+    artist_id = create.json()["id"]
 
     response = client.get(f"/api/artists/{artist_id}")
-    assert response.status_code == 200
+    assert response.status_code == 200, f"Erro ao buscar artista ID {artist_id}"
 
     data = response.json()
     assert data["id"] == artist_id
     assert data["name"] == "Artista Get ID"
+
 
 
 def test_update_artist():
