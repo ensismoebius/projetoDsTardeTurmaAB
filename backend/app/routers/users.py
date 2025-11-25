@@ -8,14 +8,31 @@ from app.db.supabase_client import get_supabase
 router = APIRouter()
 supabase = get_supabase()
 
-
 @router.get("/")
 def get_users():
     """
     Retorna uma lista de todos os usuários.
     """
-    response = supabase.table("users").select("*").execute()
-    return response.data
+    try:
+        response = supabase.table("users").select("*").execute()
+
+        if hasattr(response, "error") and response.error:
+            raise HTTPException(
+                status_code=500,
+                detail="Erro ao buscar usuários no banco de dados."
+            )
+
+        return response.data or []
+
+    except HTTPException:
+        raise
+
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="Erro interno ao tentar recuperar usuários."
+        )
+
 
 
 @router.get("/{user_id}")
