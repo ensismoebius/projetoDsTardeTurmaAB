@@ -77,17 +77,23 @@ def test_get_artist_by_id():
     assert data["name"] == "Artista Get ID"
 
 
-
 def test_update_artist():
+    """
+    Testa a atualização de dados de um artista.
+    """
     artist = make_artist(name="Artista Update")
-    create_response = client.post("/api/artists/", json=artist)
-    artist_id = create_response.json()["id"]
+    create = client.post("/api/artists/", json=artist)
+    assert create.status_code == 200
+    artist_id = create.json()["id"]
 
-    update_data = {"name": "Artista Atualizado"}
+    update_payload = {"name": "Artista Atualizado"}
 
-    response = client.put(f"/api/artists/{artist_id}", json=update_data)
-    assert response.status_code == 200
-    assert response.json()["name"] == "Artista Atualizado"
+    response = client.put(f"/api/artists/{artist_id}", json=update_payload)
+    assert response.status_code == 200, f"Erro ao atualizar artista ID {artist_id}"
+
+    updated = response.json()
+    assert updated["name"] == "Artista Atualizado"
+
 
 
 def test_delete_artist():
