@@ -102,13 +102,34 @@ def create_user(data: dict):
         )
 
 
-
 @router.put("/{user_id}")
 def update_user(user_id: int, data: dict):
-    response = supabase.table("users").update(data).eq("id", user_id).execute()
-    if not response.data:
-        raise HTTPException(status_code=404, detail="User not found")
-    return response.data[0]
+    """
+    Atualiza um usuário existente.
+    """
+    try:
+        response = supabase.table("users").update(data).eq("id", user_id).execute()
+
+        if hasattr(response, "error") and response.error:
+            raise HTTPException(
+                status_code=500,
+                detail="Erro ao atualizar usuário no banco de dados."
+            )
+
+        if not response.data:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        return response.data[0]
+
+    except HTTPException:
+        raise
+
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="Erro interno ao atualizar o usuário."
+        )
+
 
 
 @router.delete("/{user_id}")
