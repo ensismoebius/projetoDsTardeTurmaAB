@@ -76,7 +76,7 @@ export default function SwipeMusic() {
         keyExtractor={(item) => item.id}
         pagingEnabled
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ height }}  // garante tela cheia
+        contentContainerStyle={{ height }}  
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: true }
@@ -87,9 +87,9 @@ export default function SwipeMusic() {
 
             <LinearGradient
               colors={["#8000d5", "#f910a3", "#fddf00"]}
-              style={styles.gradient}   // agora ocupa toda a tela
+              style={styles.gradient}   
             >
-              {/* Botão Play */}
+             
               <TouchableOpacity style={styles.playButton}>
                 <LinearGradient
                   colors={["#fddf00", "#f910a3"]}
@@ -99,7 +99,7 @@ export default function SwipeMusic() {
                 </LinearGradient>
               </TouchableOpacity>
 
-              {/* Botão Like */}
+             
               <TouchableOpacity
                 onPress={() => setLiked(!liked)}
                 style={styles.likeButton}
@@ -111,7 +111,7 @@ export default function SwipeMusic() {
                 />
               </TouchableOpacity>
 
-              {/* Share */}
+             
               <TouchableOpacity
                 onPress={() => shareMusic(item)}
                 style={styles.shareButton}
@@ -119,7 +119,7 @@ export default function SwipeMusic() {
                 <Ionicons name="share-social" size={35} color="#fff" />
               </TouchableOpacity>
 
-              {/* Barra de Progresso */}
+             
               <View style={styles.progressBar}>
                 <Animated.View
                   style={[styles.progressFill, { width: progressWidth }]}
@@ -128,7 +128,7 @@ export default function SwipeMusic() {
 
               <Text style={styles.musicTitle}>{item.music}</Text>
 
-              {/* Card do Artista */}
+              
               <LinearGradient
                 colors={["#ff00cc", "#ffcc00"]}
                 style={styles.artistCard}
@@ -146,7 +146,7 @@ export default function SwipeMusic() {
                 </View>
               </LinearGradient>
 
-              {/* Ver Letra */}
+              
               <TouchableOpacity
                 onPress={() => {
                   setSelectedItem(item);
@@ -160,7 +160,7 @@ export default function SwipeMusic() {
         )}
       />
 
-      {/* Modal da Letra */}
+      
       <Modal visible={showLyrics} animationType="slide" transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalBox}>
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
   },
 
-  // AGORA OCUPA A TELA TODA
+  
   card: {
     width,
     height,
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
 
-  // AGORA O GRADIENT FICA FULLSCREEN
+  
   gradient: {
     flex: 1,
     width: "100%",
@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
 
   modalContainer: {
     flex: 1,
-    backgroundColor: "#000a",
+    backgroundColor: '#fff',
     justifyContent: "flex-end",
   },
   modalBox: {
