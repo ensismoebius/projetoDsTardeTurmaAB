@@ -2,12 +2,20 @@
 Este módulo fornece funcionalidades para recomendar músicas com base na localização geográfica dos usuários e artistas.
 Ele utiliza diferentes métodos de cálculo de distância, como Haversine e earth_distance, para encontrar músicas relevantes.
 """
-from typing import List, Dict, Any, Tuple
+
+from typing import List, Dict, Any, Tuple, Optional
 from peewee import fn
 import logging
 from services.popular import recommend_popular
 from utils.ramos_helper import try_import_models
 import backend.utils.geo
+
+try:
+    # prefer public API if available
+  from backend.utils.geo import haversine_km
+except Exception:
+  # fallback to module (may expose private name)
+  haversine_km = getattr(backend.utils.geo, "_haversine_km", None)
 
 logger = logging.getLogger(__name__)
 
