@@ -69,23 +69,33 @@ def get_artist_by_id(artist_id: int):
             status_code=500,
             detail="Erro interno ao tentar buscar o artista."
         )
-
-
-
 @router.post("/")
 def create_artist(artist: dict):
     """
     Cria um novo artista.
-
-    Args:
-        artist (dict): Os dados do artista a ser criado.
-
-    Returns:
-        dict: Os dados do artista criado.
     """
-    artist["type"] = "artist"
-    response = supabase.table("users").insert(artist).execute()
-    return response.data[0]
+    try:
+        artist["type"] = "artist"
+
+        response = supabase.table("users").insert(artist).execute()
+
+        if hasattr(response, "error") and response.error:
+            raise HTTPException(
+                status_code=500,
+                detail="Erro ao inserir artista no banco de dados."
+            )
+
+        return response.data[0]
+
+    except HTTPException:
+        raise
+
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="Erro interno ao criar artista."
+        )
+
 
 
 @router.put("/{artist_id}")
