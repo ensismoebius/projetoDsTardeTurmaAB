@@ -19,6 +19,19 @@ except Exception:
 
 logger = logging.getLogger(__name__)
 
+def _serialize_music(row, distance_km=None) -> Dict[str, Any]:
+  artist_id = getattr(row, "artist_id", None)
+  if artist_id is None:
+    artist = getattr(row, "artist", None)
+    artist_id = getattr(artist, "id", None) if artist is not None else None
+  return {
+    "id": getattr(row, "id", None),
+    "title": getattr(row, "title", None),
+    "artist_id": artist_id,
+    "distance_km": float(distance_km) if distance_km is not None else None,
+    "posted_at": getattr(row, "posted_at", None)
+  }
+
 def recommend_geo(User=None, Music=None, UserMusicRating=None, user_id: int = None, radius_km: float = 20.0, limit: int = 10, method: str = "haversine") -> List[Dict[str, Any]]:
   """
   Recomenda músicas com base na localização geográfica do usuário.
