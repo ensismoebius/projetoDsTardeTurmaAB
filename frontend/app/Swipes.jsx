@@ -90,7 +90,7 @@ export default function SwipeMusic() {
               style={styles.gradient}
             >
 
-              
+              {/* 📸 MOLDURA DE FOTO ATRÁS DO BOTÃO PLAY */}
               <View style={styles.photoFrame} />
 
               
