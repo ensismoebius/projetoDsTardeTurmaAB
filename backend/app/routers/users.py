@@ -61,33 +61,46 @@ def get_user_by_id(user_id: int):
             detail="Erro interno ao tentar buscar o usuário."
         )
 
-
 @router.post("/")
 def create_user(data: dict):
     """
     Cria um novo usuário.
-
-    Args:
-        data (dict): Os dados do usuário a ser criado.
-
-    Returns:
-        dict: Os dados do usuário criado.
-
-    Raises:
-        HTTPException: Se o e-mail já estiver registrado ou se o usuário não puder ser criado.
     """
-    # Evita duplicação de e-mails
-    existing = supabase.table("users").select("*").eq("email", data.get("email")).execute()
-    if existing.data:
-        raise HTTPException(status_code=400, detail="Email already registered")
+    try:
+        # Verifica duplicação de e-mail
+        existing = supabase.table("users").select("*").eq("email", data.get("email")).execute()
 
-    response = supabase.table("users").insert(data).execute()
+        if hasattr(existing, "error") and existing.error:
+            raise HTTPException(
+                status_code=500,
+                detail="Erro ao verificar e-mail no banco de dados."
+            )
 
-    if not response.data:
-        raise HTTPException(status_code=400, detail="User not created")
+        if existing.data:
+            raise HTTPException(status_code=400, detail="Email already registered")
 
-    # Retorna o usuário criado (necessário pro teste)
-    return response.data[0]
+        response = supabase.table("users").insert(data).execute()
+
+        if hasattr(response, "error") and response.error:
+            raise HTTPException(
+                status_code=500,
+                detail="Erro ao criar usuário no banco de dados."
+            )
+
+        if not response.data:
+            raise HTTPException(status_code=400, detail="User not created")
+
+        return response.data[0]
+
+    except HTTPException:
+        raise
+
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="Erro interno ao criar usuário."
+        )
+
 
 
 @router.put("/{user_id}")
