@@ -40,26 +40,36 @@ def get_artists():
 def get_artist_by_id(artist_id: int):
     """
     Retorna um artista específico pelo seu ID.
-
-    Args:
-        artist_id (int): O ID do artista a ser retornado.
-
-    Returns:
-        dict: Os dados do artista.
-
-    Raises:
-        HTTPException: Se o artista não for encontrado.
     """
-    response = (
-        supabase.table("users")
-        .select("*")
-        .eq("id", artist_id)
-        .eq("type", "artist")
-        .execute()
-    )
-    if not response.data:
-        raise HTTPException(status_code=404, detail="Artist not found")
-    return response.data[0]
+    try:
+        response = (
+            supabase.table("users")
+            .select("*")
+            .eq("id", artist_id)
+            .eq("type", "artist")
+            .execute()
+        )
+
+        if hasattr(response, "error") and response.error:
+            raise HTTPException(
+                status_code=500,
+                detail="Erro ao consultar o banco de dados."
+            )
+
+        if not response.data:
+            raise HTTPException(status_code=404, detail="Artist not found")
+
+        return response.data[0]
+
+    except HTTPException:
+        raise
+
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="Erro interno ao tentar buscar o artista."
+        )
+
 
 
 @router.post("/")
