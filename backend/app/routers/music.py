@@ -41,24 +41,32 @@ def get_all_musics():
 def get_music_by_id(music_id: int):
     """
     Retorna uma música específica pelo seu ID.
-
-    Args:
-        music_id (int): O ID da música a ser retornada.
-
-    Returns:
-        dict: Os dados da música.
-
-    Raises:
-        HTTPException: Se a música não for encontrada.
     """
     supabase = get_supabase()
+
     try:
         response = supabase.table("musics").select("*").eq("id", music_id).execute()
+
+        if hasattr(response, "error") and response.error:
+            raise HTTPException(
+                status_code=500, 
+                detail="Erro ao consultar o banco de dados."
+            )
+
         if not response.data:
             raise HTTPException(status_code=404, detail="Music not found")
+
         return response.data[0]
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+
+    except HTTPException:
+        raise
+
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="Erro interno ao tentar buscar a música."
+        )
+
 
 
 @router.post("/")
