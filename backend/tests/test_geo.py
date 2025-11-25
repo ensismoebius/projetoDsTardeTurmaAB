@@ -47,10 +47,13 @@ def test_haversine_km_antipodal_points():
 
 @pytest.fixture
 def mock_models():
-    User = MagicMock()
-    Music = MagicMock()
-    UserMusicRating = MagicMock()
-    return User, Music, UserMusicRating
+    """
+    Mocka modelos User, Music e UserMusicRating para uso em testes.
+    """
+    User = MagicMock(name="UserModel")
+    Music = MagicMock(name="MusicModel")
+    Rating = MagicMock(name="UserMusicRatingModel")
+    return User, Music, Rating
 
 
 @pytest.fixture
