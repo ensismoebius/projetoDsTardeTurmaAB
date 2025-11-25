@@ -106,31 +106,36 @@ def create_music(music: dict):
             detail="Erro interno ao criar a música."
         )
 
-
-
 @router.put("/{music_id}")
 def update_music(music_id: int, music: dict):
     """
     Atualiza uma música existente.
-
-    Args:
-        music_id (int): O ID da música a ser atualizada.
-        music (dict): Os dados da música para atualização.
-
-    Returns:
-        dict: Os dados da música atualizada.
-
-    Raises:
-        HTTPException: Se a música não for encontrada.
     """
     supabase = get_supabase()
+
     try:
         response = supabase.table("musics").update(music).eq("id", music_id).execute()
+
+        if hasattr(response, "error") and response.error:
+            raise HTTPException(
+                status_code=500,
+                detail="Erro ao atualizar a música no banco de dados."
+            )
+
         if not response.data:
             raise HTTPException(status_code=404, detail="Music not found")
+
         return response.data[0]
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+
+    except HTTPException:
+        raise
+
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="Erro interno ao atualizar a música."
+        )
+
 
 
 @router.delete("/{music_id}")
