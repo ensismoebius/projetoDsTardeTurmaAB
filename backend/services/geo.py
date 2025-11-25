@@ -87,12 +87,16 @@ def recommend_geo(User=None, Music=None, UserMusicRating=None, user_id: int = No
   elif method == "earth_distance":
     try:
       meter_limit = int(radius_km * 1000.0)
+      earth_expr = fn.earth_distance(
+        fn.ll_to_earth(User.latitude, User.longitude),
+        fn.ll_to_earth(user.latitude, user.longitude)
+      )
       q = (
         Music
-          .select(Music, fn.earth_distance(fn.ll_to_earth(User.latitude, User.longitude), fn.ll_to_earth(user.latitude, user.longitude)).alias("dist_m"))
+          .select(Music, earth_expr.alias("dist_m"))
           .join(User, on=(Music.artist == User.id))
-          .where((fn.earth_distance(fn.ll_to_earth(User.latitude, User.longitude), fn.ll_to_earth(user.latitude, user.longitude)) < meter_limit) & (Music.id.not_in(rated_subq)))
-          .order_by(fn.earth_distance(fn.ll_to_earth(User.latitude, User.longitude), fn.ll_to_earth(user.latitude, user.longitude)), Music.posted_at.desc())
+          .where((earth_expr < meter_limit) & (Music.id.not_in(rated_subq)))
+          .order_by(earth_expr, Music.posted_at.desc())
           .limit(limit)
       )
       
