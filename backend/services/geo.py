@@ -111,8 +111,8 @@ def recommend_geo(User=None, Music=None, UserMusicRating=None, user_id: int = No
         })
 
     except Exception as exc:
-      logger.warning("earth_distance approach failed (%s). Falling back to haversine.", exc)
-      method = "haversine" # Fallback to haversine if earth_distance fails
+      logger.exception("earth_distance approach failed — falling back to haversine.")
+      method = "haversine"
   
   if method == "haversine" and not out: # Only run haversine if earth_distance didn't already provide results or failed
     sample_q = (
