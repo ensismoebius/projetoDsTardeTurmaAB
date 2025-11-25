@@ -7,9 +7,13 @@ from backend.services.geo import recommend_geo
 # -----------------------------
 #   UNIT TESTS – HAVERSINE
 # -----------------------------
-
 def test_haversine_km_same_location():
-    assert _haversine_km(0.0, 0.0, 0.0, 0.0) == 0.0
+    """
+    Distância entre coordenadas iguais deve ser zero.
+    """
+    d = _haversine_km(0.0, 0.0, 0.0, 0.0)
+    assert d == 0.0, f"Distância esperada: 0.0 km, obtida: {d}"
+
 
 
 def test_haversine_km_known_distance():
