@@ -97,12 +97,22 @@ def test_update_artist():
 
 
 def test_delete_artist():
+    """
+    Testa a exclusão de um artista.
+    """
     artist = make_artist(name="Artista Delete")
-    create_response = client.post("/api/artists/", json=artist)
-    artist_id = create_response.json()["id"]
+    create = client.post("/api/artists/", json=artist)
+    assert create.status_code == 200
+    artist_id = create.json()["id"]
 
-    response = client.delete(f"/api/artists/{artist_id}")
-    assert response.status_code == 200
-    json_data = response.json()
-    assert "message" in json_data
-    assert "excluído" in json_data["message"].lower()
+    delete = client.delete(f"/api/artists/{artist_id}")
+    assert delete.status_code == 200, f"Erro ao excluir artista ID {artist_id}"
+
+    data = delete.json()
+    assert "message" in data
+    assert "excluído" in data["message"].lower()
+
+    # Confirma que foi removido
+    verify = client.get(f"/api/artists/{artist_id}")
+    assert verify.status_code == 404, "O artista deveria estar excluído"
+
