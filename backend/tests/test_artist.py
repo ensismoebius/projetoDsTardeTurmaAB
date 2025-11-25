@@ -10,6 +10,9 @@ client = TestClient(app)
 #  Helper: Factory de artista
 # ---------------------------
 def make_artist(**overrides):
+    """
+    Gera um payload de artista com dados únicos.
+    """
     base = {
         "email": f"artist_{uuid.uuid4().hex[:6]}@gmail.com",
         "username": f"art_{uuid.uuid4().hex[:4]}",
@@ -22,6 +25,7 @@ def make_artist(**overrides):
     }
     base.update(overrides)
     return base
+
 
 
 # ---------------------------
