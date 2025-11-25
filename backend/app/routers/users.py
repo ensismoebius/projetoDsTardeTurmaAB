@@ -134,7 +134,28 @@ def update_user(user_id: int, data: dict):
 
 @router.delete("/{user_id}")
 def delete_user(user_id: int):
-    response = supabase.table("users").delete().eq("id", user_id).execute()
-    if not response.data:
-        raise HTTPException(status_code=404, detail="User not found")
-    return {"message": "User deleted successfully", "id": user_id}
+    """
+    Deleta um usuário existente pelo seu ID.
+    """
+    try:
+        response = supabase.table("users").delete().eq("id", user_id).execute()
+
+        if hasattr(response, "error") and response.error:
+            raise HTTPException(
+                status_code=500,
+                detail="Erro ao deletar usuário no banco de dados."
+            )
+
+        if not response.data:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        return {"message": "User deleted successfully", "id": user_id}
+
+    except HTTPException:
+        raise
+
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="Erro interno ao deletar o usuário."
+        )
