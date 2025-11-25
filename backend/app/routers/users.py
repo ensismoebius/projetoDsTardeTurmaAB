@@ -32,27 +32,34 @@ def get_users():
             status_code=500,
             detail="Erro interno ao tentar recuperar usuários."
         )
-
-
-
+    
 @router.get("/{user_id}")
 def get_user_by_id(user_id: int):
     """
     Retorna um usuário específico pelo seu ID.
-
-    Args:
-        user_id (int): O ID do usuário a ser retornado.
-
-    Returns:
-        dict: Os dados do usuário.
-
-    Raises:
-        HTTPException: Se o usuário não for encontrado.
     """
-    response = supabase.table("users").select("*").eq("id", user_id).execute()
-    if not response.data:
-        raise HTTPException(status_code=404, detail="User not found")
-    return response.data[0]
+    try:
+        response = supabase.table("users").select("*").eq("id", user_id).execute()
+
+        if hasattr(response, "error") and response.error:
+            raise HTTPException(
+                status_code=500,
+                detail="Erro ao consultar o banco de dados."
+            )
+
+        if not response.data:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        return response.data[0]
+
+    except HTTPException:
+        raise
+
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="Erro interno ao tentar buscar o usuário."
+        )
 
 
 @router.post("/")
