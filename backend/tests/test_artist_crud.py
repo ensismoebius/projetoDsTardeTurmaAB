@@ -4,7 +4,11 @@ from backend.app.main import app
 
 client = TestClient(app)
 
+
 def make_artist_payload():
+    """
+    Gera um payload válido e único para criação de artista.
+    """
     return {
         "email": f"artist_{uuid.uuid4().hex[:6]}@example.com",
         "username": f"art_{uuid.uuid4().hex[:4]}",
