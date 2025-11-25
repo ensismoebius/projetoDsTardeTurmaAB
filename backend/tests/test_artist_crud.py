@@ -36,3 +36,27 @@ def test_create_and_get_artist():
     get_res = client.get(f"/api/artists/{artist_id}")
     assert get_res.status_code == 200, f"Erro ao buscar artista: {get_res.text}"
     assert get_res.json()["id"] == artist_id
+
+def test_update_and_delete_artist():
+    """
+    Testa atualização e exclusão de artista.
+    """
+    payload = make_artist_payload()
+
+    # CREATE for update/delete flow
+    create_res = client.post("/api/artists/", json=payload)
+    assert create_res.status_code == 200
+    artist_id = create_res.json()["id"]
+
+    # UPDATE
+    update_res = client.put(f"/api/artists/{artist_id}", json={"name": "Novo Nome"})
+    assert update_res.status_code == 200, update_res.text
+    assert update_res.json().get("name") == "Novo Nome"
+
+    # DELETE
+    delete_res = client.delete(f"/api/artists/{artist_id}")
+    assert delete_res.status_code == 200, delete_res.text
+
+    # CHECK DELETED
+    verify_res = client.get(f"/api/artists/{artist_id}")
+    assert verify_res.status_code == 404
