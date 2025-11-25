@@ -53,6 +53,15 @@ def recommend_geo(User=None, Music=None, UserMusicRating=None, user_id: int = No
   if not user or getattr(user, "latitude", None) is None or getattr(user, "longitude", None) is None:
     return recommend_popular(User=User, Music=Music, UserMusicRating=UserMusicRating, user_id=user_id, limit=limit)
 
+  if user_id is None:
+    logger.debug("No user_id provided — returning popular recommendations.")
+    return recommend_popular(User=User, Music=Music, UserMusicRating=UserMusicRating, user_id=None, limit=limit)
+
+  user = User.get_or_none(User.id == user_id)
+  if not user or getattr(user, "latitude", None) is None or getattr(user, "longitude", None) is None:
+    logger.debug("User missing or without coordinates — falling back to popular.")
+    return recommend_popular(User=User, Music=Music, UserMusicRating=UserMusicRating, user_id=user_id, limit=limit)
+
   q_limit = 1000
 
   rated_subq = (
