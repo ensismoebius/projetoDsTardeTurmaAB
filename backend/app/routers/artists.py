@@ -132,28 +132,36 @@ def update_artist(artist_id: int, artist: dict):
         )
 
 
-
 @router.delete("/{artist_id}")
 def delete_artist(artist_id: int):
     """
     Deleta um artista existente pelo seu ID.
-
-    Args:
-        artist_id (int): O ID do artista a ser deletado.
-
-    Returns:
-        dict: Uma mensagem de sucesso.
-
-    Raises:
-        HTTPException: Se o artista não for encontrado.
     """
-    response = (
-        supabase.table("users")
-        .delete()
-        .eq("id", artist_id)
-        .eq("type", "artist")
-        .execute()
-    )
-    if not response.data:
-        raise HTTPException(status_code=404, detail="Artist not found")
-    return {"message": "Artist deleted successfully"}
+    try:
+        response = (
+            supabase.table("users")
+            .delete()
+            .eq("id", artist_id)
+            .eq("type", "artist")
+            .execute()
+        )
+
+        if hasattr(response, "error") and response.error:
+            raise HTTPException(
+                status_code=500,
+                detail="Erro ao deletar artista no banco de dados."
+            )
+
+        if not response.data:
+            raise HTTPException(status_code=404, detail="Artist not found")
+
+        return {"message": "Artist deleted successfully"}
+
+    except HTTPException:
+        raise
+
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="Erro interno ao deletar o artista."
+        )
