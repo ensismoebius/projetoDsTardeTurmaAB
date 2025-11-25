@@ -58,10 +58,21 @@ def mock_models():
 
 @pytest.fixture
 def mock_user(mock_models):
+    """
+    Mocka um usuário fixo com coordenadas definidas e injeta no método User.get_or_none().
+    """
     User, _, _ = mock_models
-    u = MagicMock(id=1, latitude=34.052235, longitude=-118.243683)
-    User.get_or_none.return_value = u
-    return u
+
+    mocked_user = MagicMock(
+        id=1,
+        latitude=34.052235,
+        longitude=-118.243683,
+        name="Mocked User"
+    )
+
+    User.get_or_none.return_value = mocked_user
+    return mocked_user
+
 
 
 @pytest.fixture
