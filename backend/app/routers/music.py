@@ -14,11 +14,27 @@ def get_all_musics():
     Retorna uma lista de todas as músicas.
     """
     supabase = get_supabase()
+
     try:
         response = supabase.table("musics").select("*").execute()
-        return response.data
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+
+        if hasattr(response, "error") and response.error:
+            raise HTTPException(
+                status_code=500,
+                detail="Erro ao buscar músicas no banco de dados."
+            )
+
+        return response.data or []
+
+    except HTTPException:
+        raise
+
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="Erro interno ao tentar recuperar as músicas."
+        )
+
 
 
 @router.get("/{music_id}")
