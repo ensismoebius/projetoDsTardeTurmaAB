@@ -76,7 +76,7 @@ export default function SwipeMusic() {
         keyExtractor={(item) => item.id}
         pagingEnabled
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ height }}  
+        contentContainerStyle={{ height }}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: true }
@@ -87,9 +87,13 @@ export default function SwipeMusic() {
 
             <LinearGradient
               colors={["#8000d5", "#f910a3", "#fddf00"]}
-              style={styles.gradient}   
+              style={styles.gradient}
             >
-             
+
+              
+              <View style={styles.photoFrame} />
+
+              
               <TouchableOpacity style={styles.playButton}>
                 <LinearGradient
                   colors={["#fddf00", "#f910a3"]}
@@ -99,7 +103,7 @@ export default function SwipeMusic() {
                 </LinearGradient>
               </TouchableOpacity>
 
-             
+              
               <TouchableOpacity
                 onPress={() => setLiked(!liked)}
                 style={styles.likeButton}
@@ -111,7 +115,7 @@ export default function SwipeMusic() {
                 />
               </TouchableOpacity>
 
-             
+              
               <TouchableOpacity
                 onPress={() => shareMusic(item)}
                 style={styles.shareButton}
@@ -128,7 +132,7 @@ export default function SwipeMusic() {
 
               <Text style={styles.musicTitle}>{item.music}</Text>
 
-              
+             
               <LinearGradient
                 colors={["#ff00cc", "#ffcc00"]}
                 style={styles.artistCard}
@@ -138,7 +142,6 @@ export default function SwipeMusic() {
                     source={{ uri: item.artistImage }}
                     style={styles.artistImage}
                   />
-
                   <View style={{ flex: 1 }}>
                     <Text style={styles.artistName}>{item.artist}</Text>
                     <Text style={styles.artistDesc}>{item.description}</Text>
@@ -146,7 +149,7 @@ export default function SwipeMusic() {
                 </View>
               </LinearGradient>
 
-              
+             
               <TouchableOpacity
                 onPress={() => {
                   setSelectedItem(item);
@@ -157,12 +160,10 @@ export default function SwipeMusic() {
               </TouchableOpacity>
             </LinearGradient>
           </View>
-
-          
         )}
       />
 
-      
+     
       <Modal visible={showLyrics} animationType="slide" transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalBox}>
@@ -186,22 +187,12 @@ export default function SwipeMusic() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#000",
-  },
+  container: { flex: 1, backgroundColor: "#000" },
 
-  
-  card: {
-    width,
-    height,
-  },
+  card: { width, height },
 
-  background: {
-    ...StyleSheet.absoluteFillObject,
-  },
+  background: { ...StyleSheet.absoluteFillObject },
 
-  
   gradient: {
     flex: 1,
     width: "100%",
@@ -211,9 +202,26 @@ const styles = StyleSheet.create({
     paddingBottom: 60,
   },
 
+ 
+  photoFrame: {
+    position: "absolute",
+    top: height * 0.05,
+    width: width * 0.80,
+    height: height * 0.55,
+    backgroundColor: "#000",
+    borderRadius: 20,
+    borderWidth: 4,
+    borderColor: "#000",
+    alignSelf: "center",
+    zIndex: 1,
+    opacity: 0.8,
+  },
+
+ 
   playButton: {
     position: "absolute",
-    top: height * 0.3,
+    top: height * 0.25,
+    zIndex: 2,
   },
   playCircle: {
     width: 120,
@@ -223,15 +231,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     elevation: 10,
   },
+
   likeButton: {
     position: "absolute",
-    top: height * 0.35,
-    right: 25,
+    top: height * 0.63,
+    right: 350,
+    zIndex: 3,
   },
   shareButton: {
     position: "absolute",
-    top: height * 0.42,
-    right: 25,
+    top: height * 0.63,
+    right: 5,
+    zIndex: 3,
   },
 
   progressBar: {
@@ -240,6 +251,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff40",
     borderRadius: 10,
     marginBottom: 20,
+    marginTop: 20,
   },
   progressFill: {
     height: 4,
@@ -260,26 +272,24 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 12,
   },
-  artistRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
+
+  artistRow: { flexDirection: "row", alignItems: "center" },
+
   artistImage: {
     width: 50,
     height: 50,
     borderRadius: 25,
     marginRight: 12,
   },
+
   artistName: {
     fontSize: 16,
     fontWeight: "bold",
     color: "#fff",
     marginBottom: 5,
   },
-  artistDesc: {
-    color: "#fff",
-    fontSize: 12,
-  },
+
+  artistDesc: { color: "#fff", fontSize: 12 },
 
   lyricsText: {
     marginTop: 20,
@@ -290,7 +300,7 @@ const styles = StyleSheet.create({
 
   modalContainer: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#000a",
     justifyContent: "flex-end",
   },
   modalBox: {
@@ -300,15 +310,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 25,
     maxHeight: height * 0.7,
   },
-  bottomBanner: {
-    width: "100%",
-    height: height * 0.23, // ocupa o restante da tela
-    backgroundColor: "rgba(255, 255, 255, 0.15)",
-    backdropFilter: "blur(10px)",
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 24,
-  },
-
   modalTitle: {
     color: "#fff",
     fontSize: 22,
