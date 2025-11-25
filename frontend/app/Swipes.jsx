@@ -48,7 +48,6 @@ export default function SwipeMusic() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [liked, setLiked] = useState(false);
 
- 
   useEffect(() => {
     Animated.loop(
       Animated.timing(progress, {
@@ -77,6 +76,7 @@ export default function SwipeMusic() {
         keyExtractor={(item) => item.id}
         pagingEnabled
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ height }}  // garante tela cheia
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: true }
@@ -87,9 +87,9 @@ export default function SwipeMusic() {
 
             <LinearGradient
               colors={["#8000d5", "#f910a3", "#fddf00"]}
-              style={styles.gradient}
+              style={styles.gradient}   // agora ocupa toda a tela
             >
-              
+              {/* Botão Play */}
               <TouchableOpacity style={styles.playButton}>
                 <LinearGradient
                   colors={["#fddf00", "#f910a3"]}
@@ -99,7 +99,7 @@ export default function SwipeMusic() {
                 </LinearGradient>
               </TouchableOpacity>
 
-             
+              {/* Botão Like */}
               <TouchableOpacity
                 onPress={() => setLiked(!liked)}
                 style={styles.likeButton}
@@ -111,7 +111,7 @@ export default function SwipeMusic() {
                 />
               </TouchableOpacity>
 
-              
+              {/* Share */}
               <TouchableOpacity
                 onPress={() => shareMusic(item)}
                 style={styles.shareButton}
@@ -119,7 +119,7 @@ export default function SwipeMusic() {
                 <Ionicons name="share-social" size={35} color="#fff" />
               </TouchableOpacity>
 
-              
+              {/* Barra de Progresso */}
               <View style={styles.progressBar}>
                 <Animated.View
                   style={[styles.progressFill, { width: progressWidth }]}
@@ -128,7 +128,7 @@ export default function SwipeMusic() {
 
               <Text style={styles.musicTitle}>{item.music}</Text>
 
-              
+              {/* Card do Artista */}
               <LinearGradient
                 colors={["#ff00cc", "#ffcc00"]}
                 style={styles.artistCard}
@@ -146,7 +146,7 @@ export default function SwipeMusic() {
                 </View>
               </LinearGradient>
 
-              
+              {/* Ver Letra */}
               <TouchableOpacity
                 onPress={() => {
                   setSelectedItem(item);
@@ -160,7 +160,7 @@ export default function SwipeMusic() {
         )}
       />
 
-      
+      {/* Modal da Letra */}
       <Modal visible={showLyrics} animationType="slide" transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalBox}>
@@ -188,15 +188,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#000",
   },
+
+  // AGORA OCUPA A TELA TODA
   card: {
     width,
     height,
-    alignItems: "center",
-    justifyContent: "center",
   },
+
   background: {
     ...StyleSheet.absoluteFillObject,
   },
+
+  // AGORA O GRADIENT FICA FULLSCREEN
   gradient: {
     flex: 1,
     width: "100%",
@@ -205,9 +208,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingBottom: 60,
   },
-  
 
-  
   playButton: {
     position: "absolute",
     top: height * 0.3,
@@ -231,7 +232,6 @@ const styles = StyleSheet.create({
     right: 25,
   },
 
-  
   progressBar: {
     width: "80%",
     height: 4,
@@ -253,7 +253,6 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
 
-  
   artistCard: {
     width: "87%",
     borderRadius: 20,
@@ -274,7 +273,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#fff",
     marginBottom: 5,
-    
   },
   artistDesc: {
     color: "#fff",
@@ -288,7 +286,6 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
 
- 
   modalContainer: {
     flex: 1,
     backgroundColor: "#000a",
