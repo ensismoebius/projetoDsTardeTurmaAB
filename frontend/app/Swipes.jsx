@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.15)",
     backdropFilter: "blur(10px)",
     borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
+    borderTopRightRadius: 24,
   },
 
   modalTitle: {
