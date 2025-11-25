@@ -132,8 +132,13 @@ def recommend_geo(User=None, Music=None, UserMusicRating=None, user_id: int = No
         continue
       
       try:
-        dist_km = backend.utils.geo._haversine_km(float(user.latitude), float(user.longitude), float(row.latitude), float(row.longitude))
+        if haversine_km:
+          dist_km = float(haversine_km(float(user.latitude), float(user.longitude), float(row.latitude), float(row.longitude)))
+        else:
+          # last resort: call module private function
+          dist_km = float(backend.utils.geo._haversine_km(float(user.latitude), float(user.longitude), float(row.latitude), float(row.longitude)))
       except Exception:
+        logger.debug("Skipping candidate %s due to haversine conversion error.", getattr(row, "id", None))
         continue
       
       if dist_km <= float(radius_km):
