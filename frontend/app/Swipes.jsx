@@ -157,6 +157,8 @@ export default function SwipeMusic() {
               </TouchableOpacity>
             </LinearGradient>
           </View>
+
+          
         )}
       />
 
@@ -298,6 +300,15 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 25,
     maxHeight: height * 0.7,
   },
+  bottomBanner: {
+    width: "100%",
+    height: height * 0.23, // ocupa o restante da tela
+    backgroundColor: "rgba(255, 255, 255, 0.15)",
+    backdropFilter: "blur(10px)",
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+  },
+
   modalTitle: {
     color: "#fff",
     fontSize: 22,
