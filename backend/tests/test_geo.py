@@ -17,8 +17,15 @@ def test_haversine_km_same_location():
 
 
 def test_haversine_km_known_distance():
-    d = _haversine_km(0.0, 0.0, 0.0, 1.0)
-    assert abs(d - 111.319) < 0.2
+    """
+    Distância esperada entre 0° e 1° de longitude no equador ≈ 111.319 km.
+    """
+    result = _haversine_km(0.0, 0.0, 0.0, 1.0)
+    expected = 111.319  # distância conhecida
+    tolerance = 0.2
+    assert abs(result - expected) < tolerance, \
+        f"Distância esperada ~{expected} km, obtida {result:.4f} km"
+
 
 
 def test_haversine_km_antipodal_points():
