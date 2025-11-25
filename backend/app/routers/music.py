@@ -67,38 +67,45 @@ def get_music_by_id(music_id: int):
             detail="Erro interno ao tentar buscar a música."
         )
 
-
-
 @router.post("/")
 def create_music(music: dict):
     """
     Cria uma nova música.
-
-    Args:
-        music (dict): Os dados da música a ser criada.
-
-    Returns:
-        dict: Os dados da música criada.
     """
     supabase = get_supabase()
+
     try:
         music_data = {
             "title": music.get("title"),
             "description": music.get("description"),
             "artist_id": music.get("artist_id"),
             "duration": music.get("duration"),
-            "audio_url": music.get("audio_url"),  # ✅ Corrigido
-            "posted_at": music.get("posted_at"),  # ✅ Corrigido
+            "audio_url": music.get("audio_url"),
+            "posted_at": music.get("posted_at"),
             "lyric": music.get("lyric"),
             "genre": music.get("genre"),
             "file_name": music.get("file_name"),
         }
 
         response = supabase.table("musics").insert(music_data).execute()
+
+        if hasattr(response, "error") and response.error:
+            raise HTTPException(
+                status_code=500,
+                detail="Erro ao inserir música no banco de dados."
+            )
+
         return response.data[0]
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except HTTPException:
+        raise
+
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="Erro interno ao criar a música."
+        )
+
 
 
 @router.put("/{music_id}")
