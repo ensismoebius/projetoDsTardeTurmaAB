@@ -199,10 +199,13 @@ const styles = StyleSheet.create({
   },
   gradient: {
     flex: 1,
+    width: "100%",
+    height: "100%",
     justifyContent: "flex-end",
     alignItems: "center",
     paddingBottom: 60,
   },
+  
 
   
   playButton: {
