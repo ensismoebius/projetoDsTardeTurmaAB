@@ -136,6 +136,7 @@ def update_music(music_id: int, music: dict):
             detail="Erro interno ao atualizar a música."
         )
 
+
 @router.delete("/{music_id}")
 def delete_music(music_id: int):
     """

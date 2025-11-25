@@ -14,8 +14,26 @@ def get_artists():
     """
     Retorna uma lista de todos os artistas.
     """
-    response = supabase.table("users").select("*").eq("type", "artist").execute()
-    return response.data
+    try:
+        response = supabase.table("users").select("*").eq("type", "artist").execute()
+
+        if hasattr(response, "error") and response.error:
+            raise HTTPException(
+                status_code=500,
+                detail="Erro ao buscar artistas no banco de dados."
+            )
+
+        return response.data or []
+
+    except HTTPException:
+        raise
+
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="Erro interno ao tentar recuperar artistas."
+        )
+
 
 
 @router.get("/{artist_id}")
