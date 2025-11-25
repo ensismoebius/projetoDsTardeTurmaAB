@@ -43,18 +43,20 @@ def test_get_artists():
     assert isinstance(data, list), "O retorno da listagem deve ser uma lista"
 
 
-
-
 def test_create_artist():
+    """
+    Testa a criação de um novo artista.
+    """
     artist = make_artist()
 
     response = client.post("/api/artists/", json=artist)
-    assert response.status_code == 200, response.text
+    assert response.status_code == 200, f"Erro ao criar artista: {response.text}"
 
     data = response.json()
-    assert "id" in data
+    assert "id" in data, "O retorno deve incluir o ID do artista criado"
     assert data["email"] == artist["email"]
     assert data["username"] == artist["username"]
+
 
 
 def test_get_artist_by_id():
