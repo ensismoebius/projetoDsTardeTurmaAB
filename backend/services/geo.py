@@ -130,11 +130,11 @@ def recommend_geo(User=None, Music=None, UserMusicRating=None, user_id: int = No
   if method == "haversine" and not out: # Only run haversine if earth_distance didn't already provide results or failed
     sample_q = (
       Music
-        .select(Music, User.latitude, User.longitude)
+        .select(Music.id, Music.title, Music.posted_at, User.latitude, User.longitude, Music.artist)
         .join(User, on=(Music.artist == User.id))
         .where((User.latitude.is_null(False)) & (User.longitude.is_null(False)) & (Music.id.not_in(rated_subq)))
         .order_by(Music.posted_at.desc())
-        .limit(q_limit)
+        .limit(sample_limit)
     )
 
     candidates: List[Tuple[float, Any]] = []
