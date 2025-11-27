@@ -122,15 +122,16 @@ export default function SwipeMusic() {
                 <Ionicons name="share-social" size={35} color="#fff" />
               </TouchableOpacity>
 
-              <View style={styles.progressBar}>
+              {/* Barra de progresso maior acima dos botões */}
+              <View style={styles.progressContainer}>
                 <Animated.View
                   style={[styles.progressFill, { width: progressWidth }]}
                 />
               </View>
 
-              
+              {/* BANNER DA MÚSICA */}
               <LinearGradient
-                colors={["#8000d5", "#f910a3"]} 
+                colors={["#8000d5", "#f910a3"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 1 }}
                 style={styles.musicBanner}
@@ -224,14 +225,21 @@ const styles = StyleSheet.create({
   likeButton: { position: "absolute", top: height * 0.638, right: 320 },
   shareButton: { position: "absolute", top: height * 0.640, right: 25 },
 
-  progressBar: {
-    width: "80%",
-    height: 4,
+  
+  progressContainer: {
+    position: "absolute",
+    top: height * 0.60,
+    right: 25,
+    width: 330, 
+    height: 6, 
     backgroundColor: "#ffffff40",
     borderRadius: 10,
-    marginBottom: 20,
   },
-  progressFill: { height: 4, backgroundColor: "#fff", borderRadius: 10 },
+  progressFill: {
+    height: 6,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+  },
 
   musicBanner: {
     width: "110%",
