@@ -94,7 +94,7 @@ export default function SwipeMusic() {
               style={styles.gradient}
             >
 
-             
+              
               <View style={styles.playFrame} />
 
               
@@ -119,7 +119,7 @@ export default function SwipeMusic() {
                 />
               </TouchableOpacity>
 
-             
+              
               <TouchableOpacity
                 onPress={() => shareMusic(item)}
                 style={styles.shareButton}
@@ -136,7 +136,7 @@ export default function SwipeMusic() {
 
               <Text style={styles.musicTitle}>{item.music}</Text>
 
-              
+             
               <LinearGradient
                 colors={["#ff00cc", "#ffcc00"]}
                 style={styles.artistCard}
@@ -167,7 +167,7 @@ export default function SwipeMusic() {
         )}
       />
 
-    
+     
       <Modal visible={showLyrics} animationType="slide" transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalBox}>
@@ -214,11 +214,11 @@ const styles = StyleSheet.create({
   
   playFrame: {
     position: "absolute",
-    top:150,
+    top: 40,
     width: "90%",
-    height: height * 0.40,
+    height: height * 0.60,
     borderRadius: 30,
-    backgroundColor: "rgba(0,0,0,0.25)",
+    backgroundColor: "#000",   
     borderWidth: 4,
     borderColor: "#000",
     zIndex: -1,
@@ -239,12 +239,12 @@ const styles = StyleSheet.create({
   },
   likeButton: {
     position: "absolute",
-    top: height * 0.35,
-    right: 25,
+    top: height * 0.655,
+    right: 320,
   },
   shareButton: {
     position: "absolute",
-    top: height * 0.42,
+    top: height * 0.655,
     right: 25,
   },
 
