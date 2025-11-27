@@ -48,7 +48,6 @@ export default function SwipeMusic() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [liked, setLiked] = useState(false);
 
- 
   useEffect(() => {
     Animated.loop(
       Animated.timing(progress, {
@@ -77,6 +76,11 @@ export default function SwipeMusic() {
         keyExtractor={(item) => item.id}
         pagingEnabled
         showsVerticalScrollIndicator={false}
+        decelerationRate={0.98}
+        snapToInterval={height}
+        snapToAlignment="start"
+        removeClippedSubviews={true}
+        pagingeEnabled={false}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: true }
@@ -89,6 +93,10 @@ export default function SwipeMusic() {
               colors={["#8000d5", "#f910a3", "#fddf00"]}
               style={styles.gradient}
             >
+
+             
+              <View style={styles.playFrame} />
+
               
               <TouchableOpacity style={styles.playButton}>
                 <LinearGradient
@@ -111,7 +119,7 @@ export default function SwipeMusic() {
                 />
               </TouchableOpacity>
 
-              
+             
               <TouchableOpacity
                 onPress={() => shareMusic(item)}
                 style={styles.shareButton}
@@ -146,7 +154,6 @@ export default function SwipeMusic() {
                 </View>
               </LinearGradient>
 
-              
               <TouchableOpacity
                 onPress={() => {
                   setSelectedItem(item);
@@ -160,7 +167,7 @@ export default function SwipeMusic() {
         )}
       />
 
-      
+    
       <Modal visible={showLyrics} animationType="slide" transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalBox}>
@@ -205,6 +212,19 @@ const styles = StyleSheet.create({
   },
 
   
+  playFrame: {
+    position: "absolute",
+    top:150,
+    width: "90%",
+    height: height * 0.40,
+    borderRadius: 30,
+    backgroundColor: "rgba(0,0,0,0.25)",
+    borderWidth: 4,
+    borderColor: "#000",
+    zIndex: -1,
+    alignSelf: "center",
+  },
+
   playButton: {
     position: "absolute",
     top: height * 0.3,
@@ -228,7 +248,6 @@ const styles = StyleSheet.create({
     right: 25,
   },
 
-  
   progressBar: {
     width: "80%",
     height: 4,
@@ -250,7 +269,6 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
 
-  
   artistCard: {
     width: "87%",
     borderRadius: 20,
@@ -271,7 +289,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#fff",
     marginBottom: 5,
-    
   },
   artistDesc: {
     color: "#fff",
@@ -285,7 +302,6 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
 
- 
   modalContainer: {
     flex: 1,
     backgroundColor: "#000a",
