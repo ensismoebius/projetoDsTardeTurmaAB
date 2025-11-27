@@ -11,6 +11,7 @@ import {
   View,
   Modal,
   Share,
+  Pressable,
 } from "react-native";
 
 const { height, width } = Dimensions.get("window");
@@ -43,28 +44,51 @@ const DATA = [
 export default function SwipeMusic() {
   const scrollY = useRef(new Animated.Value(0)).current;
   const progress = useRef(new Animated.Value(0)).current;
+  const animationRef = useRef(null);
+  const hideButtonTimer = useRef(null);
 
   const [showLyrics, setShowLyrics] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [liked, setLiked] = useState(false);
-
- 
   const [hearts, setHearts] = useState([]);
-
-  useEffect(() => {
-    Animated.loop(
-      Animated.timing(progress, {
-        toValue: 1,
-        duration: 6000,
-        useNativeDriver: false,
-      })
-    ).start();
-  }, []);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [showPlayButton, setShowPlayButton] = useState(true);
 
   const progressWidth = progress.interpolate({
     inputRange: [0, 1],
     outputRange: ["0%", "100%"],
   });
+
+  const startProgress = () => {
+    animationRef.current = Animated.timing(progress, {
+      toValue: 1,
+      duration: (1 - progress._value) * 120000, 
+      useNativeDriver: false,
+    });
+    animationRef.current.start(({ finished }) => {
+      if (finished) {
+        setIsPlaying(false);
+        progress.setValue(0);
+      }
+    });
+  };
+
+  const togglePlay = () => {
+    if (isPlaying) {
+      animationRef.current?.stop();
+      setIsPlaying(false);
+    } else {
+      setIsPlaying(true);
+      startProgress();
+    }
+
+
+    setShowPlayButton(true);
+    hideButtonTimer.current && clearTimeout(hideButtonTimer.current);
+    hideButtonTimer.current = setTimeout(() => {
+      setShowPlayButton(false);
+    }, 3000);
+  };
 
   const shareMusic = async (music) => {
     await Share.share({
@@ -89,6 +113,19 @@ export default function SwipeMusic() {
     });
   };
 
+  const handlePressIn = () => {
+    setShowPlayButton(true);
+    hideButtonTimer.current && clearTimeout(hideButtonTimer.current);
+  };
+
+  const handlePressOut = () => {
+    if (isPlaying) {
+      hideButtonTimer.current = setTimeout(() => {
+        setShowPlayButton(false);
+      }, 3000);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Animated.FlatList
@@ -100,124 +137,135 @@ export default function SwipeMusic() {
         snapToInterval={height}
         snapToAlignment="start"
         removeClippedSubviews={true}
-        pagingeEnabled={false}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: true }
         )}
         renderItem={({ item }) => (
           <View style={styles.card}>
-            <Image source={{ uri: item.image }} style={styles.background} />
-
-            <LinearGradient
-              colors={["#8000d5", "#f910a3", "#fddf00"]}
-              style={styles.gradient}
+            <Pressable
+              onPressIn={handlePressIn}
+              onPressOut={handlePressOut}
+              style={{ flex: 1, width: "100%", alignItems: "center" }}
             >
-              <View style={styles.playFrame} />
+              <Image source={{ uri: item.image }} style={styles.background} />
 
-              <TouchableOpacity style={styles.playButton}>
-                <LinearGradient
-                  colors={["#fddf00", "#f910a3"]}
-                  style={styles.playCircle}
-                >
-                  <Ionicons name="play" size={50} color="#fff" />
-                </LinearGradient>
-              </TouchableOpacity>
-
-             
-              <TouchableOpacity
-                onPress={() => {
-                  setLiked(!liked);
-                  addHeart();
-                }}
-                style={styles.likeButton}
+              <LinearGradient
+                colors={["#8000d5", "#f910a3", "#fddf00"]}
+                style={styles.gradient}
               >
-                <Ionicons
-                  name={liked ? "heart" : "heart-outline"}
-                  size={40}
-                  color={liked ? "#ff0049" : "#fff"}
-                />
-              </TouchableOpacity>
+                <View style={styles.playFrame} />
 
-              <TouchableOpacity
-                onPress={() => shareMusic(item)}
-                style={styles.shareButton}
-              >
-                <Ionicons name="share-social" size={35} color="#fff" />
-              </TouchableOpacity>
-
-             
-              {hearts.map((heart) => {
-                const scale = heart.animation.interpolate({
-                  inputRange: [0, 0.5, 1],
-                  outputRange: [0, 1.2, 0],
-                });
-                const opacity = heart.animation.interpolate({
-                  inputRange: [0, 0.7, 1],
-                  outputRange: [1, 1, 0],
-                });
-                const translateY = heart.animation.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0, -80],
-                });
-
-                return (
-                  <Animated.View
-                    key={heart.id}
-                    style={{
-                      position: "absolute",
-                      top: height * 0.638,
-                      right: 320,
-                      transform: [{ scale }, { translateY }],
-                      opacity,
-                    }}
+                {showPlayButton && (
+                  <TouchableOpacity
+                    style={styles.playButton}
+                    onPress={togglePlay}
                   >
-                    <Ionicons name="heart" size={25} color="#ff0049" />
-                  </Animated.View>
-                );
-              })}
+                    <LinearGradient
+                      colors={["#fddf00", "#f910a3"]}
+                      style={styles.playCircle}
+                    >
+                      <Ionicons
+                        name={isPlaying ? "pause" : "play"}
+                        size={50}
+                        color="#fff"
+                      />
+                    </LinearGradient>
+                  </TouchableOpacity>
+                )}
 
-              <View style={styles.progressContainer}>
-                <Animated.View
-                  style={[styles.progressFill, { width: progressWidth }]}
-                />
-              </View>
-
-              
-              <LinearGradient
-                colors={["#8000d5", "#f910a3"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                style={styles.musicBanner}
-              >
-                <Text style={styles.musicTitle}>{item.music}</Text>
-              </LinearGradient>
-
-              <LinearGradient
-                colors={["#ff00cc", "#ffcc00"]}
-                style={styles.artistCard}
-              >
-                <View style={styles.artistRow}>
-                  <Image
-                    source={{ uri: item.artistImage }}
-                    style={styles.artistImage}
+                <TouchableOpacity
+                  onPress={() => {
+                    setLiked(!liked);
+                    addHeart();
+                  }}
+                  style={styles.likeButton}
+                >
+                  <Ionicons
+                    name={liked ? "heart" : "heart-outline"}
+                    size={40}
+                    color={liked ? "#ff0049" : "#fff"}
                   />
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.artistName}>{item.artist}</Text>
-                    <Text style={styles.artistDesc}>{item.description}</Text>
-                  </View>
-                </View>
-              </LinearGradient>
+                </TouchableOpacity>
 
-              <TouchableOpacity
-                onPress={() => {
-                  setSelectedItem(item);
-                  setShowLyrics(true);
-                }}
-              >
-                <Text style={styles.lyricsText}>Ver Letra ↑</Text>
-              </TouchableOpacity>
-            </LinearGradient>
+                <TouchableOpacity
+                  onPress={() => shareMusic(item)}
+                  style={styles.shareButton}
+                >
+                  <Ionicons name="share-social" size={35} color="#fff" />
+                </TouchableOpacity>
+
+                {hearts.map((heart) => {
+                  const scale = heart.animation.interpolate({
+                    inputRange: [0, 0.5, 1],
+                    outputRange: [0, 1.2, 0],
+                  });
+                  const opacity = heart.animation.interpolate({
+                    inputRange: [0, 0.7, 1],
+                    outputRange: [1, 1, 0],
+                  });
+                  const translateY = heart.animation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, -80],
+                  });
+
+                  return (
+                    <Animated.View
+                      key={heart.id}
+                      style={{
+                        position: "absolute",
+                        top: height * 0.638,
+                        right: 320,
+                        transform: [{ scale }, { translateY }],
+                        opacity,
+                      }}
+                    >
+                      <Ionicons name="heart" size={25} color="#ff0049" />
+                    </Animated.View>
+                  );
+                })}
+
+                <View style={styles.progressContainer}>
+                  <Animated.View
+                    style={[styles.progressFill, { width: progressWidth }]}
+                  />
+                </View>
+
+                <LinearGradient
+                  colors={["#8000d5", "#f910a3"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 0, y: 1 }}
+                  style={styles.musicBanner}
+                >
+                  <Text style={styles.musicTitle}>{item.music}</Text>
+                </LinearGradient>
+
+                <LinearGradient
+                  colors={["#ff00cc", "#ffcc00"]}
+                  style={styles.artistCard}
+                >
+                  <View style={styles.artistRow}>
+                    <Image
+                      source={{ uri: item.artistImage }}
+                      style={styles.artistImage}
+                    />
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.artistName}>{item.artist}</Text>
+                      <Text style={styles.artistDesc}>{item.description}</Text>
+                    </View>
+                  </View>
+                </LinearGradient>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    setSelectedItem(item);
+                    setShowLyrics(true);
+                  }}
+                >
+                  <Text style={styles.lyricsText}>Ver Letra ↑</Text>
+                </TouchableOpacity>
+              </LinearGradient>
+            </Pressable>
           </View>
         )}
       />
