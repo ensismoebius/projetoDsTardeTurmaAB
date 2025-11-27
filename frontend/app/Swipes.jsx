@@ -48,6 +48,9 @@ export default function SwipeMusic() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [liked, setLiked] = useState(false);
 
+ 
+  const [hearts, setHearts] = useState([]);
+
   useEffect(() => {
     Animated.loop(
       Animated.timing(progress, {
@@ -66,6 +69,23 @@ export default function SwipeMusic() {
   const shareMusic = async (music) => {
     await Share.share({
       message: `Estou ouvindo: ${music.music} - ${music.artist}`,
+    });
+  };
+
+  const addHeart = () => {
+    const id = Math.random().toString();
+    const newHeart = {
+      id,
+      animation: new Animated.Value(0),
+    };
+    setHearts((prev) => [...prev, newHeart]);
+
+    Animated.timing(newHeart.animation, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start(() => {
+      setHearts((prev) => prev.filter((h) => h.id !== id));
     });
   };
 
@@ -104,8 +124,12 @@ export default function SwipeMusic() {
                 </LinearGradient>
               </TouchableOpacity>
 
+             
               <TouchableOpacity
-                onPress={() => setLiked(!liked)}
+                onPress={() => {
+                  setLiked(!liked);
+                  addHeart();
+                }}
                 style={styles.likeButton}
               >
                 <Ionicons
@@ -122,14 +146,44 @@ export default function SwipeMusic() {
                 <Ionicons name="share-social" size={35} color="#fff" />
               </TouchableOpacity>
 
-              {/* Barra de progresso maior acima dos botões */}
+             
+              {hearts.map((heart) => {
+                const scale = heart.animation.interpolate({
+                  inputRange: [0, 0.5, 1],
+                  outputRange: [0, 1.2, 0],
+                });
+                const opacity = heart.animation.interpolate({
+                  inputRange: [0, 0.7, 1],
+                  outputRange: [1, 1, 0],
+                });
+                const translateY = heart.animation.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, -80],
+                });
+
+                return (
+                  <Animated.View
+                    key={heart.id}
+                    style={{
+                      position: "absolute",
+                      top: height * 0.638,
+                      right: 320,
+                      transform: [{ scale }, { translateY }],
+                      opacity,
+                    }}
+                  >
+                    <Ionicons name="heart" size={25} color="#ff0049" />
+                  </Animated.View>
+                );
+              })}
+
               <View style={styles.progressContainer}>
                 <Animated.View
                   style={[styles.progressFill, { width: progressWidth }]}
                 />
               </View>
 
-              {/* BANNER DA MÚSICA */}
+              
               <LinearGradient
                 colors={["#8000d5", "#f910a3"]}
                 start={{ x: 0, y: 0 }}
@@ -225,13 +279,12 @@ const styles = StyleSheet.create({
   likeButton: { position: "absolute", top: height * 0.638, right: 320 },
   shareButton: { position: "absolute", top: height * 0.640, right: 25 },
 
-  
   progressContainer: {
     position: "absolute",
     top: height * 0.60,
     right: 25,
-    width: 330, 
-    height: 6, 
+    width: 330,
+    height: 6,
     backgroundColor: "#ffffff40",
     borderRadius: 10,
   },
