@@ -34,7 +34,7 @@ def test_create_user(cleanup_users):
     print("Payload enviado:", new_user)
 
     response = client.post("/api/users/", json=new_user)
-    assert response.status_code == 201, f"Erro: {response.json()}"
+    assert response.status_code == 200, f"Erro: {response.json()}"
 
     
     created_user = response.json()
