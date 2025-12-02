@@ -118,6 +118,7 @@ const App = () => {
           <TouchableOpacity style={styles.footerButton} onPress={() => router.push("/perfilartista")}>
             <Text style={styles.footerIcon}>⚙️</Text>
           </TouchableOpacity>
+            
         </View>
       </SafeAreaView>
     </LinearGradient>
