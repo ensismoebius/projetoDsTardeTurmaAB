@@ -30,25 +30,23 @@ const Cadastro = () => {
   const navigation = useNavigation();
   const { width } = useWindowDimensions();
 
-  /** Responsividade refinada */
   const rf = useCallback(
     (size) => Math.round(size * (width / 390)),
     [width]
   );
 
-  /** Inputs */
+
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
 
-  /** UX */
+
   const [isPressing, setIsPressing] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  /** Erros */
+
   const [errors, setErrors] = useState({});
 
-  /** Fade-in */
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -59,7 +57,7 @@ const Cadastro = () => {
     }).start();
   }, []);
 
-  /** Validação */
+  
   const validateFields = useCallback(() => {
     const newErrors = {};
     if (!nome.trim()) newErrors.nome = "Informe um nome válido.";
@@ -71,7 +69,7 @@ const Cadastro = () => {
     return Object.keys(newErrors).length === 0;
   }, [nome, email, senha]);
 
-  /** Cadastro */
+
   const handleCadastro = async () => {
     if (loading) return;
     if (!validateFields()) return;
@@ -113,7 +111,7 @@ const Cadastro = () => {
     }
   };
 
-  /** Estilos responsivos calculados dinamicamente */
+ 
   const dyn = useMemo(
     () => ({
       logo: {
@@ -159,7 +157,7 @@ const Cadastro = () => {
               contentContainerStyle={styles.scrollArea}
               keyboardShouldPersistTaps="handled"
             >
-              {/* Botão voltar */}
+              
               <TouchableOpacity
                 style={styles.backCircle}
                 onPress={() => navigation.goBack()}
@@ -167,9 +165,9 @@ const Cadastro = () => {
                 <AntDesign name="arrowleft" size={22} color="#fff" />
               </TouchableOpacity>
 
-              {/* Fade-in geral */}
+              
               <Animated.View style={{ opacity: fadeAnim, width: "100%" }}>
-                {/* LOGO */}
+                
                 <View style={styles.logoWrap}>
                   <Image
                     source={require("../assets/images/Logofundo.png")}
@@ -177,7 +175,7 @@ const Cadastro = () => {
                   />
                 </View>
 
-                {/* FORM */}
+              
                 <View style={[styles.formContainer, dyn.containerPadding]}>
                   <Text style={[styles.title, dyn.title]}>Cadastro</Text>
 
@@ -232,7 +230,7 @@ const Cadastro = () => {
                     </React.Fragment>
                   ))}
 
-                  {/* BOTÃO */}
+                 
                   <TouchableOpacity
                     activeOpacity={0.85}
                     style={[
