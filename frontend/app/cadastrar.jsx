@@ -1,6 +1,12 @@
 import { AntDesign } from "@expo/vector-icons";
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { LinearGradient } from "expo-linear-gradient";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Alert,
   Animated,
@@ -16,26 +22,34 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  useWindowDimensions
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+  useWindowDimensions,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 const Cadastro = () => {
   const navigation = useNavigation();
   const { width } = useWindowDimensions();
 
-  const clamp = useCallback((val, min, max) => Math.max(min, Math.min(max, val)), []);
-  const rf = useCallback((size) => Math.round(clamp(size * (width / 390), 12, 30)), [width, clamp]);
+  /** Responsividade refinada */
+  const rf = useCallback(
+    (size) => Math.round(size * (width / 390)),
+    [width]
+  );
 
-  const [nome, setNome] = useState('');
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
+  /** Inputs */
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+
+  /** UX */
   const [isPressing, setIsPressing] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  /** Erros */
   const [errors, setErrors] = useState({});
 
+  /** Fade-in */
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const debounceRef = useRef(null);
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -43,176 +57,197 @@ const Cadastro = () => {
       duration: 600,
       useNativeDriver: true,
     }).start();
-  }, [fadeAnim]);
+  }, []);
 
+  /** Validação */
   const validateFields = useCallback(() => {
     const newErrors = {};
-    if (!nome.trim()) newErrors.nome = 'Informe um nome válido.';
-    if (!email.includes('@')) newErrors.email = 'Email inválido.';
-    if (senha.length < 6) newErrors.senha = 'A senha deve ter pelo menos 6 caracteres.';
+    if (!nome.trim()) newErrors.nome = "Informe um nome válido.";
+    if (!email.includes("@")) newErrors.email = "Email inválido.";
+    if (senha.length < 6)
+      newErrors.senha = "A senha deve ter pelo menos 6 caracteres.";
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }, [nome, email, senha]);
 
-  const handleCadastro = useCallback(async () => {
+  /** Cadastro */
+  const handleCadastro = async () => {
     if (loading) return;
-
     if (!validateFields()) return;
 
     setLoading(true);
-    clearTimeout(debounceRef.current);
 
     try {
-      const response = await fetch('http://localhost:8000/api/users/', {
-        method: 'POST',
+      const response = await fetch("http://localhost:8000/api/users/", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           id: Date.now(),
           email,
-          username: nome.replace(/\s+/g, '').toLowerCase(),
+          username: nome.replace(/\s+/g, "").toLowerCase(),
           name: nome,
           password_hash: senha,
           latitude: 0.0,
           longitude: 0.0,
-          type: 'normal',
-          created_at: new Date().toISOString().split('T')[0],
+          type: "normal",
+          created_at: new Date().toISOString().split("T")[0],
         }),
       });
 
       if (response.ok) {
-        const data = await response.json();
-        Alert.alert('Cadastro', 'Usuário cadastrado com sucesso!');
-        console.log('Usuário criado:', data);
+        Alert.alert("Cadastro", "Usuário cadastrado com sucesso!");
       } else {
         const errorData = await response.json();
-        Alert.alert('Erro', `Falha no cadastro: ${errorData.detail || 'Erro desconhecido'}`);
-        console.error('Erro no cadastro:', errorData);
+        Alert.alert(
+          "Erro",
+          `Falha no cadastro: ${errorData.detail || "Erro desconhecido"}`
+        );
       }
     } catch (error) {
-      Alert.alert('Erro', 'Erro de conexão com o servidor.');
-      console.error('Erro de rede:', error);
+      Alert.alert("Erro", "Erro de conexão com o servidor.");
     } finally {
       setLoading(false);
     }
-  }, [nome, email, senha, loading, validateFields]);
+  };
 
-  const dynamicStyles = useMemo(
+  /** Estilos responsivos calculados dinamicamente */
+  const dyn = useMemo(
     () => ({
-      logoContainer: { marginTop: rf(-40), marginBottom: rf(20) },
-      logo: { width: 200, height: 200 },
-      formPadding: { paddingHorizontal: rf(25) },
-      input: {
-        width: '100%',
-        minHeight: rf(70),
-        height: rf(70),
-        fontSize: rf(17),
-        paddingHorizontal: rf(15),
-        paddingVertical: rf(10),
-        marginVertical: rf(8),
+      logo: {
+        width: rf(180),
+        height: rf(180),
       },
-      botao: { width: '100%', paddingVertical: rf(12), borderRadius: rf(40), marginTop: rf(20) },
-      textoBotao: { fontSize: rf(19) },
-      titulo: { fontSize: rf(26), marginBottom: rf(20) },
+      input: {
+        height: rf(60),
+        borderRadius: rf(20),
+        paddingHorizontal: rf(15),
+        fontSize: rf(16),
+      },
+      title: {
+        fontSize: rf(28),
+        marginBottom: rf(20),
+      },
+      botao: {
+        height: rf(60),
+        borderRadius: rf(35),
+      },
+      botaoTexto: {
+        fontSize: rf(18),
+      },
+      containerPadding: {
+        paddingHorizontal: rf(25),
+      },
     }),
     [rf]
   );
 
   return (
     <Pressable onPress={Keyboard.dismiss} accessible={false}>
-      <LinearGradient colors={['#8000d5', '#f910a3', '#fddf00']} style={styles.gradient}>
+      <LinearGradient
+        colors={["#8000d5", "#f910a3", "#fddf00"]}
+        style={styles.gradient}
+      >
         <SafeAreaView style={styles.safe}>
           <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={styles.flex}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ flex: 1 }}
           >
             <ScrollView
-              contentContainerStyle={{
-                flexGrow: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
+              contentContainerStyle={styles.scrollArea}
               keyboardShouldPersistTaps="handled"
             >
-              <TouchableOpacity style={styles.backCircle} onPress={() => navigation.goBack()}>
-                <AntDesign name="arrowleft" size={20} color="#fff" />
+              {/* Botão voltar */}
+              <TouchableOpacity
+                style={styles.backCircle}
+                onPress={() => navigation.goBack()}
+              >
+                <AntDesign name="arrowleft" size={22} color="#fff" />
               </TouchableOpacity>
-              <Animated.View style={{ opacity: fadeAnim, alignItems: 'center', width: '100%' }}>
-                <View style={[styles.logoContainer, dynamicStyles.logoContainer]}>
+
+              {/* Fade-in geral */}
+              <Animated.View style={{ opacity: fadeAnim, width: "100%" }}>
+                {/* LOGO */}
+                <View style={styles.logoWrap}>
                   <Image
-                    style={[styles.Logo, dynamicStyles.logo]}
-                    source={require('../assets/images/Logofundo.png')}
-                    accessibilityLabel="Logo do aplicativo"
+                    source={require("../assets/images/Logofundo.png")}
+                    style={[styles.logo, dyn.logo]}
                   />
                 </View>
-                <View style={[styles.formContainer, dynamicStyles.formPadding]}>
-                  <Text style={[styles.titulo, dynamicStyles.titulo]}>Cadastro</Text>
+
+                {/* FORM */}
+                <View style={[styles.formContainer, dyn.containerPadding]}>
+                  <Text style={[styles.title, dyn.title]}>Cadastro</Text>
+
                   {[
                     {
-                      placeholder: 'Nome de usuário',
+                      key: "nome",
+                      placeholder: "Nome de usuário",
                       value: nome,
                       setter: setNome,
                       error: errors.nome,
-                      key: 'nome',
                     },
                     {
-                      placeholder: 'Email',
+                      key: "email",
+                      placeholder: "Email",
                       value: email,
                       setter: setEmail,
                       error: errors.email,
-                      key: 'email',
-                      props: { keyboardType: 'email-address', autoCapitalize: 'none' },
+                      props: {
+                        keyboardType: "email-address",
+                        autoCapitalize: "none",
+                      },
                     },
                     {
-                      placeholder: 'Senha',
+                      key: "senha",
+                      placeholder: "Senha",
                       value: senha,
                       setter: setSenha,
                       error: errors.senha,
-                      key: 'senha',
                       props: { secureTextEntry: true },
                     },
-                  ].map(({ placeholder, value, setter, error, key, props = {} }) => (
+                  ].map(({ key, placeholder, value, setter, error, props }) => (
                     <React.Fragment key={key}>
                       <TextInput
                         style={[
                           styles.input,
-                          dynamicStyles.input,
-                          error && { borderColor: '#ff8080' },
+                          dyn.input,
+                          error && { borderColor: "#ff8080" },
                         ]}
                         placeholder={placeholder}
                         placeholderTextColor="#FFF"
                         value={value}
-                        onChangeText={(text) => {
-                          setter(text);
-                          if (error) {
-                            setErrors((prevErrors) => ({
-                              ...prevErrors,
-                              [key]: null
-                            }));
-                          }
+                        onChangeText={(t) => {
+                          setter(t);
+                          if (error)
+                            setErrors((prev) => ({ ...prev, [key]: null }));
                         }}
-                        autoCorrect={false}
                         {...props}
                       />
-                      {error && <Text style={styles.error}>{error}</Text>}
+                      {error && (
+                        <Text style={styles.errorText}>{error}</Text>
+                      )}
                     </React.Fragment>
                   ))}
+
+                  {/* BOTÃO */}
                   <TouchableOpacity
                     activeOpacity={0.85}
                     style={[
                       styles.botao,
-                      dynamicStyles.botao,
-                      isPressing && { transform: [{ scale: 0.97 }], backgroundColor: '#26144d' },
-                      loading && { opacity: 0.7 },
+                      dyn.botao,
+                      isPressing && { transform: [{ scale: 0.98 }] },
+                      loading && { opacity: 0.6 },
                     ]}
-                    disabled={loading}
                     onPressIn={() => setIsPressing(true)}
                     onPressOut={() => setIsPressing(false)}
                     onPress={handleCadastro}
+                    disabled={loading}
                   >
-                    <Text style={[styles.textoBotao, dynamicStyles.textoBotao]}>
-                      {loading ? 'Enviando...' : 'Cadastrar'}
+                    <Text style={[styles.botaoTexto, dyn.botaoTexto]}>
+                      {loading ? "Enviando..." : "Cadastrar"}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -228,43 +263,75 @@ const Cadastro = () => {
 const styles = StyleSheet.create({
   gradient: { flex: 1 },
   safe: { flex: 1 },
-  flex: { flex: 1 },
-  logoContainer: { alignSelf: 'center' },
-  Logo: { resizeMode: 'contain' },
-  formContainer: { width: '90%', maxWidth: 450 },
-  titulo: { fontFamily: 'negrito', color: '#fff', textAlign: 'center' },
+  scrollArea: {
+    flexGrow: 1,
+    justifyContent: "center",
+    paddingBottom: 40,
+  },
+
+  backCircle: {
+    position: "absolute",
+    top: 10,
+    left: 15,
+    zIndex: 10,
+    width: 45,
+    height: 45,
+    borderRadius: 22,
+    backgroundColor: "rgba(255,255,255,0.18)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  logoWrap: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+
+  logo: {
+    resizeMode: "contain",
+  },
+
+  formContainer: {
+    width: "100%",
+    maxWidth: 450,
+    alignSelf: "center",
+  },
+
+  title: {
+    textAlign: "center",
+    color: "#fff",
+    fontFamily: "negrito",
+  },
+
   input: {
-    borderRadius: 25,
-    fontSize: 20,
-    borderWidth: 2,
-    borderColor: "#FFF",
+    width: "100%",
+    backgroundColor: "#ffffff30",
+    borderColor: "#fff",
+    borderWidth: 1.6,
+    marginVertical: 8,
+    color: "#fff",
     fontFamily: "normal",
-    color: "#FFF",
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 7 },
-    shadowRadius: 4,
-    elevation: 5,
-    margin: 10,
-    backgroundColor: "#1D143642",
-    minHeight: 70,
-    height: 70,
-    paddingVertical: 10,
-    textAlignVertical: 'center',
   },
+
+  errorText: {
+    color: "#ff8080",
+    marginTop: 3,
+    marginLeft: 8,
+    fontSize: 14,
+  },
+
   botao: {
-    height: 70,
-    backgroundColor: '#1d1436',
-    borderColor: '#8000D5',
-    alignItems: 'center',
-    textAlign: 'center',
+    marginTop: 18,
+    backgroundColor: "#1d1436",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#8000d5",
   },
-  textoBotao: { color: '#FFF', fontFamily: 'negrito' },
-  error: {
-    color: '#ff8080',
-    textAlign: 'center',
-    marginTop: 4,
-    fontFamily: 'normal',
+
+  botaoTexto: {
+    color: "#fff",
+    fontFamily: "negrito",
   },
 });
 
