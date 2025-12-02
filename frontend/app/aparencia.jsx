@@ -41,13 +41,7 @@ export default function HomeScreen() {
   }, []);
 
   
-  const navigation = useMemo(() => {
-    return {
-      goBack: () => {
-        console.log('Go back pressed');
-      },
-    };
-  }, []);
+  
   
   if (!fontsLoaded) {
     return (
@@ -101,16 +95,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logoContainer: {
-    alignSelf: 'center' 
+    alignSelf: 'center', 
+    marginTop: 30,
   },
   Logo: { 
     resizeMode: 'contain',
-    width: 200, 
-    height: 200 
+    width: 150, 
+    height: 150,
+    marginBottom: 30, 
   },
   subtitulo:{
     fontSize: 20,
-    marginBottom: 10,
+    marginBottom: 30,
     alignSelf: 'center',
     fontFamily: 'normal',
     color: '#fff',
@@ -128,6 +124,8 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
   },
   titulo:{
     fontSize: 24,
@@ -139,7 +137,7 @@ const styles = StyleSheet.create({
   button1:{
     backgroundColor: '#FDDF00',
     padding: 10,
-    margin: 10,
+    margin: 20,
     borderRadius: 15,
     height: 63,
     width: 63,
@@ -149,7 +147,7 @@ const styles = StyleSheet.create({
   button2:{
     backgroundColor: '#F910A3',
     padding: 10,
-    margin: 10,
+    margin: 20,
     borderRadius: 15,
     height: 63,
     width: 63,
@@ -159,7 +157,7 @@ const styles = StyleSheet.create({
   button3:{
     backgroundColor: '#8000D5',
     padding: 10,
-    margin: 10,
+    margin: 20,
     borderRadius: 15,
     height: 63,
     width: 63,
