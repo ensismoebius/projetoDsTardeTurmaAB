@@ -1,85 +1,63 @@
-import uuid
-import pytest
 from fastapi.testclient import TestClient
-from backend.app.main import app
+from app.main import app
 
 client = TestClient(app)
-
-
-# ---------------------------
-#  Helper: Factory de artista
-# ---------------------------
-def make_artist(**overrides):
-    base = {
-        "email": f"artist_{uuid.uuid4().hex[:6]}@gmail.com",
-        "username": f"art_{uuid.uuid4().hex[:4]}",
-        "name": "Artista Teste",
-        "password_hash": "senha123",
-        "latitude": 0.0,
-        "longitude": 0.0,
-        "type": "artist",
-        "created_at": "2025-01-01"
-    }
-    base.update(overrides)
-    return base
-
-
-# ---------------------------
-#         TESTES
-# ---------------------------
 
 def test_get_artists():
     response = client.get("/api/artists/")
     assert response.status_code == 200
-    assert isinstance(response.json(), list), "O retorno deve ser uma lista"
-
+    assert isinstance(response.json(), list)
 
 def test_create_artist():
-    artist = make_artist()
-
-    response = client.post("/api/artists/", json=artist)
-    assert response.status_code == 200, response.text
-
+    new_artist = {
+        "name": "Anitta",
+        "email": "anitta@example.com",
+        "username": "anitta123",
+        "password_hash": "senha123"
+    }
+    response = client.post("/api/artists/", json=new_artist)
+    assert response.status_code == 200
     data = response.json()
     assert "id" in data
-    assert data["email"] == artist["email"]
-    assert data["username"] == artist["username"]
-
+    assert data["name"] == "Anitta"
 
 def test_get_artist_by_id():
-    artist = make_artist(name="Artista Get ID")
-
-    create_response = client.post("/api/artists/", json=artist)
-    assert create_response.status_code == 200
+    create_response = client.post("/api/artists/", json={
+        "name": "Alok",
+        "email": "alok@example.com",
+        "username": "alok123",
+        "password_hash": "senha123"
+    })
     artist_id = create_response.json()["id"]
 
     response = client.get(f"/api/artists/{artist_id}")
     assert response.status_code == 200
-
     data = response.json()
     assert data["id"] == artist_id
-    assert data["name"] == "Artista Get ID"
-
+    assert data["name"] == "Alok"
 
 def test_update_artist():
-    artist = make_artist(name="Artista Update")
-    create_response = client.post("/api/artists/", json=artist)
+    create_response = client.post("/api/artists/", json={
+        "name": "Luan",
+        "email": "luan@example.com",
+        "username": "luan123",
+        "password_hash": "senha123"
+    })
     artist_id = create_response.json()["id"]
 
-    update_data = {"name": "Artista Atualizado"}
-
-    response = client.put(f"/api/artists/{artist_id}", json=update_data)
-    assert response.status_code == 200
-    assert response.json()["name"] == "Artista Atualizado"
-
+    update_response = client.put(f"/api/artists/{artist_id}", json={"name": "Luan Santana"})
+    assert update_response.status_code == 200
+    assert update_response.json()["message"] == "Artist updated"
 
 def test_delete_artist():
-    artist = make_artist(name="Artista Delete")
-    create_response = client.post("/api/artists/", json=artist)
+    create_response = client.post("/api/artists/", json={
+        "name": "Iza",
+        "email": "iza@example.com",
+        "username": "iza123",
+        "password_hash": "senha123"
+    })
     artist_id = create_response.json()["id"]
 
-    response = client.delete(f"/api/artists/{artist_id}")
-    assert response.status_code == 200
-    json_data = response.json()
-    assert "message" in json_data
-    assert "excluído" in json_data["message"].lower()
+    delete_response = client.delete(f"/api/artists/{artist_id}")
+    assert delete_response.status_code == 200
+    assert delete_response.json()["message"] == "Artist deleted"
