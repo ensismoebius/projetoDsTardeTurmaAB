@@ -1,6 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -9,236 +9,241 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Animated,
+  useWindowDimensions,
 } from "react-native";
 
 const Perfil = () => {
   const rout = useRouter();
 
-  const goTo = (path) => rout.push(`/${path}`);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(20)).current;
+
+  const { width } = useWindowDimensions();
+
+  const rf = (v) => Math.round(v * (width / 390)); // responsividade
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 550,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
+  const goTo = (p) => rout.push(`/${p}`);
 
   return (
     <LinearGradient
-      colors={["#8a00d4", "#e60073", "#ff7a00"]}
+      colors={["#8a00d5", "#e60073", "#ff7a00"]}
       style={styles.container}
       start={{ x: 0.5, y: 0 }}
       end={{ x: 0.5, y: 1 }}
     >
       <SafeAreaView style={{ flex: 1 }}>
-        
-        {/* SCROLLVIEW ADICIONADO AQUI */}
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 40 }}
-        >
-          {/* BOTÃO DE VOLTAR */}
-          <TouchableOpacity style={styles.backButton} onPress={() => goTo("home")}>
-            <Image
-              source={{
-                uri: "https://cdn-icons-png.flaticon.com/512/271/271220.png",
-              }}
-              style={styles.backIcon}
-            />
-          </TouchableOpacity>
-
-          {/* FOTO + NOME */}
-          <View style={styles.headerBox}>
-            <Image
-              source={{
-                uri: "https://cdn-icons-png.flaticon.com/512/847/847969.png",
-              }}
-              style={styles.profileImage}
-            />
-
-            {/* Botão editar foto */}
-            <TouchableOpacity style={styles.editPhotoBtn}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {/* ANIMATE VIEW */}
+          <Animated.View
+            style={{
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+              paddingBottom: 40,
+            }}
+          >
+            {/* Voltar */}
+            <TouchableOpacity style={styles.backButton} onPress={() => goTo("home")}>
               <Image
-                source={{
-                  uri: "https://cdn-icons-png.flaticon.com/512/1250/1250615.png",
-                }}
-                style={styles.editPhotoIcon}
+                source={{ uri: "https://cdn-icons-png.flaticon.com/512/271/271220.png" }}
+                style={[styles.backIcon, { width: rf(26), height: rf(26) }]}
               />
             </TouchableOpacity>
 
-            <Text style={styles.nome}>Nome-User</Text>
-            <Text style={styles.seguidores}>?? seguidores • ?? seguindo</Text>
+            {/* HEADER */}
+            <View style={styles.headerBox}>
+              <View style={styles.photoWrapper}>
+                <Image
+                  source={{ uri: "https://cdn-icons-png.flaticon.com/512/847/847969.png" }}
+                  style={[styles.profileImage, { width: rf(130), height: rf(130) }]}
+                />
 
-            {/* Tags */}
-            <View style={styles.deviceRow}>
-              <View style={styles.deviceTag}>
-                <Text style={styles.deviceText}>@INSTA</Text>
+                <TouchableOpacity style={styles.editPhotoBtn}>
+                  <Image
+                    source={{
+                      uri: "https://cdn-icons-png.flaticon.com/512/1250/1250615.png",
+                    }}
+                    style={styles.editPhotoIcon}
+                  />
+                </TouchableOpacity>
               </View>
 
-              <View style={styles.deviceTag}>
-                <Text style={styles.deviceText}>@NAOSEI</Text>
+              <Text style={[styles.nome, { fontSize: rf(24) }]}>Nome-User</Text>
+              <Text style={[styles.seguidores, { fontSize: rf(14) }]}>
+                ?? seguidores • ?? seguindo
+              </Text>
+
+              {/* TAGS */}
+              <View style={styles.deviceRow}>
+                {["@INSTA", "@NAOSEI"].map((t) => (
+                  <View style={styles.deviceTag} key={t}>
+                    <Text style={[styles.deviceText, { fontSize: rf(13) }]}>{t}</Text>
+                  </View>
+                ))}
               </View>
             </View>
-          </View>
 
-          {/* BIO */}
-          <View style={styles.bioBox}>
-            <Text style={styles.bioText}>
-              biografia {"\n"}do usuario
+            {/* BIO */}
+            <View style={styles.bioBox}>
+              <Text style={[styles.bioText, { fontSize: rf(15) }]}>
+                Biografia do usuário aqui...
+              </Text>
+
+              <TouchableOpacity style={styles.bioEditBtn}>
+                <Image
+                  source={{
+                    uri: "https://cdn-icons-png.flaticon.com/512/1250/1250615.png",
+                  }}
+                  style={[styles.editPhotoIcon, { width: rf(16), height: rf(16) }]}
+                />
+              </TouchableOpacity>
+            </View>
+
+            {/* GÊNEROS */}
+            <View style={styles.generosContainer}>
+              {["Rock", "Metal Industrial", "Forró", "Glam Rock"].map((g) => (
+                <View style={styles.generoTag} key={g}>
+                  <Text style={[styles.generoText, { fontSize: rf(14) }]}>{g}</Text>
+                </View>
+              ))}
+
+              <TouchableOpacity style={styles.editGenerosBtn}>
+                <Text style={styles.editGenerosText}>Editar gêneros</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* ARTISTAS */}
+            <Text style={[styles.artistasTitulo, { fontSize: rf(20) }]}>
+              Artistas mais ouvidos
             </Text>
 
-            <TouchableOpacity style={styles.bioEditBtn}>
-              <Image
-                source={{
-                  uri: "https://cdn-icons-png.flaticon.com/512/1250/1250615.png",
-                }}
-                style={styles.editPhotoIcon}
-              />
-            </TouchableOpacity>
-          </View>
-
-          {/* GÊNEROS */}
-          <View style={styles.generosContainer}>
-            <View style={styles.generoTag}>
-              <Text style={styles.generoText}>Rock</Text>
+            <View style={styles.artistList}>
+              {[
+                "Jackson do Pandeiro",
+                "Nirvana",
+                "Marilyn Manson",
+                "Iron Maiden",
+                "Queen",
+              ].map((a) => (
+                <View style={styles.artistItem} key={a}>
+                  <Image
+                    source={{
+                      uri: "https://i.ibb.co/4Sk4G0M/person-placeholder.png",
+                    }}
+                    style={[styles.artistImage, { width: rf(45), height: rf(45) }]}
+                  />
+                  <Text style={[styles.artistName, { fontSize: rf(16) }]}>{a}</Text>
+                </View>
+              ))}
             </View>
-
-            <View style={styles.generoTag}>
-              <Text style={styles.generoText}>Metal industrial</Text>
-            </View>
-
-            <View style={styles.generoTag}>
-              <Text style={styles.generoText}>Forró</Text>
-            </View>
-
-            <View style={styles.generoTag}>
-              <Text style={styles.generoText}>Glam Rock</Text>
-            </View>
-
-            <TouchableOpacity style={styles.editGenerosBtn}>
-              <Text style={styles.editGenerosText}>Editar gêneros..</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* ARTISTAS */}
-          <Text style={styles.artistasTitulo}>Artistas mais ouvidos</Text>
-
-          <View style={styles.artistList}>
-            <View style={styles.artistItem}>
-              <Image
-                source={{ uri: "https://i.ibb.co/4Sk4G0M/person-placeholder.png" }}
-                style={styles.artistImage}
-              />
-              <Text style={styles.artistName}>Jackson do Pandeiro</Text>
-            </View>
-
-            <View style={styles.artistItem}>
-              <Image
-                source={{ uri: "https://i.ibb.co/4Sk4G0M/person-placeholder.png" }}
-                style={styles.artistImage}
-              />
-              <Text style={styles.artistName}>Nirvana</Text>
-            </View>
-
-            <View style={styles.artistItem}>
-              <Image
-                source={{ uri: "https://i.ibb.co/4Sk4G0M/person-placeholder.png" }}
-                style={styles.artistImage}
-              />
-              <Text style={styles.artistName}>Marilyn Manson</Text>
-            </View>
-          </View>
-
+          </Animated.View>
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
   );
 };
 
+/* ---------------- ESTILOS MELHORADOS ---------------- */
+
 const styles = StyleSheet.create({
   container: { flex: 1 },
 
   backButton: {
     padding: 15,
+    marginLeft: 5,
     marginTop: 10,
+    width: 70,
   },
   backIcon: {
-    width: 28,
-    height: 28,
     tintColor: "#fff",
   },
 
+  /* HEADER */
   headerBox: {
     alignItems: "center",
-    marginTop: -5,
+    marginTop: -10,
+  },
+
+  photoWrapper: {
+    position: "relative",
   },
 
   profileImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 70,
+    borderRadius: 100,
+    borderWidth: 3,
+    borderColor: "#ffffff80",
   },
 
   editPhotoBtn: {
     backgroundColor: "#ff2fb1",
-    width: 34,
-    height: 34,
-    borderRadius: 20,
+    width: 38,
+    height: 38,
+    borderRadius: 22,
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
-    top: 90,
-    right: 130,
+    bottom: 0,
+    right: -5,
   },
 
-  editPhotoIcon: {
-    width: 18,
-    height: 18,
-    tintColor: "#fff",
-  },
+  editPhotoIcon: { width: 18, height: 18, tintColor: "#fff" },
 
   nome: {
-    marginTop: 10,
-    fontSize: 22,
-    fontWeight: "bold",
+    marginTop: 12,
     color: "#fff",
+    fontFamily: "negrito",
   },
 
   seguidores: {
-    color: "#eee",
-    fontSize: 14,
-    marginTop: 2,
+    color: "#f1f1f1",
+    marginTop: 3,
   },
 
+  /* TAGS */
   deviceRow: {
     flexDirection: "row",
-    gap: 8,
-    marginTop: 10,
+    gap: 10,
+    marginTop: 12,
   },
 
   deviceTag: {
     backgroundColor: "#ffffff33",
-    paddingVertical: 5,
-    paddingHorizontal: 12,
+    paddingVertical: 6,
+    paddingHorizontal: 14,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: "#fff",
   },
 
-  deviceText: {
-    color: "#fff",
-    fontSize: 13,
-  },
+  deviceText: { color: "#fff" },
 
+  /* BIO */
   bioBox: {
-    backgroundColor: "#ffffff33",
-    marginTop: 20,
-    marginHorizontal: 15,
-    padding: 15,
+    backgroundColor: "#ffffff22",
+    marginTop: 25,
+    marginHorizontal: 20,
+    padding: 18,
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: "#fff",
-    position: "relative",
+    borderColor: "#ffffff70",
   },
 
-  bioText: {
-    color: "#fff",
-    fontSize: 15,
-    lineHeight: 20,
-  },
+  bioText: { color: "#fff", lineHeight: 20 },
 
   bioEditBtn: {
     position: "absolute",
@@ -246,12 +251,13 @@ const styles = StyleSheet.create({
     bottom: 10,
   },
 
+  /* GENEROS */
   generosContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    marginTop: 15,
-    paddingHorizontal: 15,
-    gap: 8,
+    marginTop: 20,
+    paddingHorizontal: 20,
+    gap: 10,
   },
 
   generoTag: {
@@ -263,19 +269,15 @@ const styles = StyleSheet.create({
     borderColor: "#fff",
   },
 
-  generoText: {
-    color: "#fff",
-    fontSize: 14,
-  },
+  generoText: { color: "#fff" },
 
   editGenerosBtn: {
-    backgroundColor: "#ffffff55",
-    paddingVertical: 6,
+    backgroundColor: "#ffffff33",
+    paddingVertical: 7,
     paddingHorizontal: 14,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: "#fff",
-    marginTop: 5,
   },
 
   editGenerosText: {
@@ -283,41 +285,36 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 
+  /* ARTISTAS */
   artistasTitulo: {
-    fontSize: 18,
     color: "#fff",
-    fontWeight: "bold",
-    marginTop: 25,
-    paddingHorizontal: 15,
+    marginTop: 30,
+    marginBottom: 10,
+    paddingHorizontal: 20,
+    fontFamily: "negrito",
   },
 
   artistList: {
-    marginTop: 10,
-    paddingHorizontal: 15,
-    gap: 10,
+    paddingHorizontal: 20,
+    gap: 12,
   },
 
   artistItem: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
-    backgroundColor: "#ffffff22",
-    padding: 10,
-    borderRadius: 10,
+    gap: 12,
+    backgroundColor: "#ffffff25",
+    padding: 12,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#fff",
+    borderColor: "#ffffff70",
   },
 
   artistImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 25,
+    borderRadius: 30,
   },
 
-  artistName: {
-    color: "#fff",
-    fontSize: 16,
-  },
+  artistName: { color: "#fff" },
 });
 
 export default Perfil;
