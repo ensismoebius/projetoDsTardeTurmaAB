@@ -90,8 +90,7 @@ export default function SwipeMusic() {
     } else {
       setIsPlaying(true);
       startProgress();
-    }
-
+    }    
 
     setShowPlayButton(true);
     hideButtonTimer.current && clearTimeout(hideButtonTimer.current);
@@ -164,36 +163,6 @@ export default function SwipeMusic() {
               <LinearGradient
                 colors={["#8000d5", "#f910a3", "#fddf00"]}
                 style={styles.gradient}
-
-              {/* 📸 MOLDURA DE FOTO ATRÁS DO BOTÃO PLAY */}
-              <View style={styles.photoFrame} />
-
-              
-              <TouchableOpacity style={styles.playButton}>
-                <LinearGradient
-                  colors={["#fddf00", "#f910a3"]}
-                  style={styles.playCircle}
-                >
-                  <Ionicons name="play" size={50} color="#fff" />
-                </LinearGradient>
-              </TouchableOpacity>
-
-              
-              <TouchableOpacity
-                onPress={() => setLiked(!liked)}
-                style={styles.likeButton}
-              >
-                <Ionicons
-                  name={liked ? "heart" : "heart-outline"}
-                  size={40}
-                  color={liked ? "#ff0049" : "#fff"}
-                />
-              </TouchableOpacity>
-
-              
-              <TouchableOpacity
-                onPress={() => shareMusic(item)}
-                style={styles.shareButton}
               >
                 <View style={styles.playFrame} />
 
@@ -300,6 +269,31 @@ export default function SwipeMusic() {
                       <Text style={styles.artistName}>{item.artist}</Text>
                       <Text style={styles.artistDesc}>{item.description}</Text>
                     </View>
+                  />
+                </View>
+
+                <LinearGradient
+                  colors={["#8000d5", "#f910a3"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 0, y: 1 }}
+                  style={styles.musicBanner}
+                >
+                  <Text style={styles.musicTitle}>{item.music}</Text>
+                </LinearGradient>
+
+                <LinearGradient
+                  colors={["#ff00cc", "#ffcc00"]}
+                  style={styles.artistCard}
+                >
+                  <View style={styles.artistRow}>
+                    <Image
+                      source={{ uri: item.artistImage }}
+                      style={styles.artistImage}
+                    />
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.artistName}>{item.artist}</Text>
+                      <Text style={styles.artistDesc}>{item.description}</Text>
+                    </View>
              
               <LinearGradient
                 colors={["#ff00cc", "#ffcc00"]}
@@ -339,7 +333,6 @@ export default function SwipeMusic() {
           </View>
         )}
       />
-
      
       <Modal visible={showLyrics} animationType="slide" transparent>
         <View style={styles.modalContainer}>
@@ -362,6 +355,7 @@ export default function SwipeMusic() {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#000" },
