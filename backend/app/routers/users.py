@@ -4,6 +4,7 @@ from app.db.supabase_client import get_supabase
 router = APIRouter()
 supabase = get_supabase()
 
+
 @router.get("/")
 def get_users():
     """
@@ -48,7 +49,9 @@ def create_user(data: dict):
         HTTPException: Se o e-mail já estiver registrado ou se o usuário não puder ser criado.
     """
     # Evita duplicação de e-mails
-    existing = supabase.table("users").select("*").eq("email", data.get("email")).execute()
+    existing = (
+        supabase.table("users").select("*").eq("email", data.get("email")).execute()
+    )
     if existing.data:
         raise HTTPException(status_code=400, detail="Email already registered")
 

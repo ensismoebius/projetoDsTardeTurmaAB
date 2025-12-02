@@ -11,6 +11,6 @@ print("Diretório backend:", diretorio_backend)
 
 shutil.make_archive(
     base_name="backend_backup",
-    format='zip',
-    root_dir=diretorio_backend.replace("/", "\\")
+    format="zip",
+    root_dir=diretorio_backend.replace("/", "\\"),
 )

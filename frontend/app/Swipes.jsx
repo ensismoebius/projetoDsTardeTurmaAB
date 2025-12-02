@@ -198,6 +198,12 @@ export default function SwipeMusic() {
                 {showPlayButton && (
                   <PlayButton isPlaying={isPlaying} onPress={togglePlay} />
                 )}
+             
+                <View style={styles.progressBar}>
+                  <Animated.View
+                    style={[styles.progressFill, { width: progressWidth }]}
+                  />
+                </View>
 
                 
                 <View style={styles.progressContainer}>

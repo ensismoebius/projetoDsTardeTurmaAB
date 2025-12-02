@@ -4,6 +4,7 @@ from app.db.supabase_client import get_supabase
 router = APIRouter(prefix="/api/musics", tags=["musics"])
 supabase = get_supabase()
 
+
 @router.get("/")
 def get_all_musics():
     """

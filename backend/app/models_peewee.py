@@ -2,16 +2,14 @@ from peewee import *
 import datetime
 
 db = PostgresqlDatabase(
-    "postgres",
-    user="postgres",
-    password="postgres",
-    host="localhost",
-    port=2222
+    "postgres", user="postgres", password="postgres", host="localhost", port=2222
 )
+
 
 class BaseModel(Model):
     class Meta:
         database = db
+
 
 class User(BaseModel):
     name = CharField()
@@ -43,6 +41,7 @@ class Music(BaseModel):
 
     class Meta:
         table_name = "music"
+
 
 class UserMusicRating(BaseModel):
     id: int

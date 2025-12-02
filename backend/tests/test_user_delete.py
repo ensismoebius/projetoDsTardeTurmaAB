@@ -3,13 +3,14 @@ from app.main import app
 
 client = TestClient(app)
 
+
 def test_delete_user():
     user = {
         "email": "ana@example.com",
         "username": "ana123",
         "name": "Ana",
         "password_hash": "senha123",
-        "type": "normal"
+        "type": "normal",
     }
     create_response = client.post("/api/users/", json=user)
     user_id = create_response.json()["id"]

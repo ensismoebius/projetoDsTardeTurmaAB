@@ -1,23 +1,19 @@
-import { View,Text, TouchableOpacity, StyleSheet,KeyboardAvoidingView, Platform, Animated, Image } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Animated, Image, Dimensions } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { AntDesign } from "@expo/vector-icons";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from "expo-router";
 import * as Font from "expo-font";
 
-
-
-
+const { width, height } = Dimensions.get("window");
+const RF = (size) => size * (width / 390); 
 
 export default function HomeScreen() {
-
   const [fontsLoaded, setFontsLoaded] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const roteador = useRouter();
+  const router = useRouter();
 
-  function voltar() {
-    roteador.push('/Configuracoes');
-  }
+  const voltar = () => router.push('/Configuracoes');
 
   const loadFonts = async () => {
     await Font.loadAsync({
@@ -29,6 +25,7 @@ export default function HomeScreen() {
   };
 
   useEffect(() => {
+    loadFonts();
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 600,
@@ -36,132 +33,112 @@ export default function HomeScreen() {
     }).start();
   }, []);
 
-  useEffect(() => {
-    loadFonts();
-  }, []);
-
-  
-  
-  
   if (!fontsLoaded) {
     return (
-      <View style={styles.container}>
+      <View style={styles.loadingContainer}>
         <Text>Carregando fontes...</Text>
       </View>
     );
   }
+
   return (
     <LinearGradient colors={["#8000d5", "#f910a3", "#fdff00"]} style={{ flex: 1 }}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        >
-          <TouchableOpacity style={styles.backCircle} onPress={() => voltar()}>
-                        <AntDesign name="arrowleft" size={20} color="#fff" />
-                      </TouchableOpacity>
-              <Animated.View style={{ opacity: fadeAnim, alignItems: 'center', width: '100%' }}></Animated.View>
-
-              <View style={[styles.logoContainer]}>
-                  <Image
-                    style={[styles.Logo]}
-                    source={require('../assets/images/Logofundo.png')}
-                    accessibilityLabel="Logo do aplicativo"
-                  />
-                </View>
-    <View style={styles.container}>
-      <View>
-        <Text style={styles.titulo}>Aparência</Text>
-
-        <Text style={styles.subtitulo}>Cor do perfil</Text>
-      </View>
-      <View style={styles.row}>
-        <TouchableOpacity style={styles.button1}>
-
+        style={{ flex: 1, alignItems: 'center' }}
+      >
+       
+        <TouchableOpacity style={styles.backCircle} onPress={voltar} activeOpacity={0.8}>
+          <AntDesign name="arrowleft" size={RF(20)} color="#fff" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button2}>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button3}>
-        </TouchableOpacity>
-      </View>
-    </View>
-    </KeyboardAvoidingView>
+
+        
+        <Animated.View style={{ opacity: fadeAnim, alignItems: 'center', width: '100%', marginTop: RF(50) }}>
+          <Image
+            style={[styles.Logo, { width: RF(140), height: RF(140) }]}
+            source={require('../assets/images/Logofundo.png')}
+            accessibilityLabel="Logo do aplicativo"
+          />
+        </Animated.View>
+
+       
+        <View style={styles.content}>
+          <Text style={[styles.titulo, { fontSize: RF(24) }]}>Aparência</Text>
+          <Text style={[styles.subtitulo, { fontSize: RF(18) }]}>Cor do perfil</Text>
+
+          <View style={styles.row}>
+            <TouchableOpacity style={[styles.button, { backgroundColor: '#FDDF00' }]} />
+            <TouchableOpacity style={[styles.button, { backgroundColor: '#F910A3' }]} />
+            <TouchableOpacity style={[styles.button, { backgroundColor: '#8000D5' }]} />
+          </View>
+        </View>
+      </KeyboardAvoidingView>
     </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  logoContainer: {
-    alignSelf: 'center', 
-    marginTop: 30,
+  backCircle: {
+    width: RF(42),
+    height: RF(42),
+    borderRadius: RF(21),
+    backgroundColor: "rgba(255,255,255,0.18)",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    top: RF(20),
+    left: RF(20),
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
+    elevation: 5,
   },
-  Logo: { 
+  Logo: {
     resizeMode: 'contain',
-    width: 150, 
-    height: 150,
-    marginBottom: 30, 
+    marginBottom: RF(20),
+    borderRadius: RF(10),
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 6,
   },
-  subtitulo:{
-    fontSize: 20,
-    marginBottom: 30,
-    alignSelf: 'center',
+  content: {
+    alignItems: 'center',
+    marginTop: RF(30),
+  },
+  titulo: {
+    fontFamily: 'negrito',
+    color: '#fff',
+    marginBottom: RF(10),
+  },
+  subtitulo: {
     fontFamily: 'normal',
     color: '#fff',
-  },
-  backCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "rgba(255,255,255,0.18)",
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 12,
-    marginLeft: 2,
+    marginBottom: RF(20),
   },
   row: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 20,
+    justifyContent: 'space-around',
+    width: '80%',
+    marginTop: RF(10),
   },
-  titulo:{
-    fontSize: 24,
-    fontFamily: 'negrito',
-    marginBottom: 20,
-    alignSelf: 'center', 
-    color: '#fff',
-  },
-  button1:{
-    backgroundColor: '#FDDF00',
-    padding: 10,
-    margin: 20,
-    borderRadius: 15,
-    height: 63,
-    width: 63,
+  button: {
+    width: RF(63),
+    height: RF(63),
+    borderRadius: RF(15),
     borderWidth: 2,
-    borderColor: 'white',
-  },
-  button2:{
-    backgroundColor: '#F910A3',
-    padding: 10,
-    margin: 20,
-    borderRadius: 15,
-    height: 63,
-    width: 63,
-    borderWidth: 2,
-    borderColor: 'white',
-  },
-  button3:{
-    backgroundColor: '#8000D5',
-    padding: 10,
-    margin: 20,
-    borderRadius: 15,
-    height: 63,
-    width: 63,
-    borderWidth: 2,
-    borderColor: 'white',
+    borderColor: '#fff',
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
 });

@@ -19,7 +19,7 @@ def make_artist(**overrides):
         "latitude": 0.0,
         "longitude": 0.0,
         "type": "artist",
-        "created_at": "2025-01-01"
+        "created_at": "2025-01-01",
     }
     base.update(overrides)
     return base
@@ -28,6 +28,7 @@ def make_artist(**overrides):
 # ---------------------------
 #         TESTES
 # ---------------------------
+
 
 def test_get_artists():
     response = client.get("/api/artists/")
@@ -46,7 +47,6 @@ def test_create_artist():
     assert data["email"] == artist["email"]
     assert data["username"] == artist["username"]
     assert data["type"] == artist["type"]  # agora bate com o banco
-
 
 
 def test_get_artist_by_id():
