@@ -3,12 +3,9 @@ from app.main import app
 
 client = TestClient(app)
 
+
 def test_create_music():
-    music = {
-        "title": "Balada Nova",
-        "artist_id": 1,
-        "duration": 200
-    }
+    music = {"title": "Balada Nova", "artist_id": 1, "duration": 200}
 
     response = client.post("/api/musics/", json=music)
     assert response.status_code == 200

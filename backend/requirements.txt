@@ -8,3 +8,4 @@ python-dotenv
 supabase
 python-multipart
 flake8
+black

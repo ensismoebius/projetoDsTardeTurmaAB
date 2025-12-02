@@ -2,93 +2,127 @@
 Este módulo fornece uma função para recomendar músicas com base na proximidade geográfica
 dos artistas em relação ao usuário, utilizando o cliente Supabase.
 """
+
 import supabase as sb
 import haversine as hs
 
 url = "https://mflpegvqdnqdfvbvfdos.supabase.co"
 key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1mbHBlZ3ZxZG5xZGZ2YnZmZG9zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAwNDQ3ODEsImV4cCI6MjA3NTYyMDc4MX0.DLcfAc8u1dA91oISnOEMTIq1GxQZ7AAUXWiWmlf0Uo4"
 
+
 def recommendGeo(user, radius=10, limit=10):
-  """
-  Recomenda músicas com base na proximidade geográfica dos artistas.
+    """
+    Recomenda músicas com base na proximidade geográfica dos artistas.
 
-  Args:
-      user (int): O ID do usuário para quem as recomendações são geradas.
-      radius (int | float): O raio em quilômetros para buscar artistas próximos.
-      limit (int): O número máximo de recomendações a serem retornadas.
+    Args:
+        user (int): O ID do usuário para quem as recomendações são geradas.
+        radius (int | float): O raio em quilômetros para buscar artistas próximos.
+        limit (int): O número máximo de recomendações a serem retornadas.
 
-  Returns:
-      list: Uma lista de dicionários, onde cada dicionário possui: id, título da música e nome do artista.
-            Exemplo: [{'id': 1, 'title': 'Nome', 'artist_id': {'name': 'Nome do artista'}}]
-  """
-  try:
-    client = sb.create_client(url, key)
-  except Exception as e:
-    print(f"Init connection:\n{e}")
-    return
-  
-  try:
-    rawMusics = client.table("musics").select("title, artist_id").not_.in_("artist_id", [user]).execute()
-  except Exception as e:
-    print(f"Select musics:\n{e}")
-    return
-  
-  userIds = [user]
+    Returns:
+        list: Uma lista de dicionários, onde cada dicionário possui: id, título da música e nome do artista.
+              Exemplo: [{'id': 1, 'title': 'Nome', 'artist_id': {'name': 'Nome do artista'}}]
+    """
+    try:
+        client = sb.create_client(url, key)
+    except Exception as e:
+        print(f"Init connection:\n{e}")
+        return
 
-  for row in rawMusics.data:
-    if row["artist_id"] not in userIds:
-      userIds.append(row["artist_id"])
-  
-  try:
-    rawCoordinates = client.table("users").select("latitude, longitude").in_("id", userIds).execute()
-  except Exception as e:
-    print(f"Select locations:\n{e}")
-    return
-  
-  coordinates = rawCoordinates.data
-  default = coordinates[0]
-  distances = {}
-  index = 0
+    try:
+        rawMusics = (
+            client.table("musics")
+            .select("title, artist_id")
+            .not_.in_("artist_id", [user])
+            .execute()
+        )
+    except Exception as e:
+        print(f"Select musics:\n{e}")
+        return
 
-  for coordinate in coordinates:
-    distances[userIds[index]] = hs.haversine(default["latitude"], default["longitude"], coordinate["longitude"], coordinate["longitude"])
-    index += 1
-  
-  del index
-  del distances[user]
+    userIds = [user]
 
-  for i in list(distances.keys()):
-    if distances[i] > radius:
-      del distances[i]
-  
-  idsSearch = list(distances.keys())
-  
-  try:
-    rawRated = client.table("user_music_ratings").select("music_id").eq("user_id", user).execute()
-  except Exception as e:
-    print(f"Select rated musics:\n{e}")
-    return
-  
-  idsExcludedMusic = []
+    for row in rawMusics.data:
+        if row["artist_id"] not in userIds:
+            userIds.append(row["artist_id"])
 
-  for i in rawRated.data:
-    idsExcludedMusic.append(i["music_id"])
+    try:
+        rawCoordinates = (
+            client.table("users")
+            .select("latitude, longitude")
+            .in_("id", userIds)
+            .execute()
+        )
+    except Exception as e:
+        print(f"Select locations:\n{e}")
+        return
 
-  try:
-    rawNew = client.table("musics").select("id").in_("artist_id", idsSearch).not_.in_("id", idsExcludedMusic).execute()
-  except Exception as e:
-    print(f"Select new musics:\n{e}")
-    return
-  
-  idMusics = []
+    coordinates = rawCoordinates.data
+    default = coordinates[0]
+    distances = {}
+    index = 0
 
-  for i in rawNew.data:
-    idMusics.append(i["id"])
+    for coordinate in coordinates:
+        distances[userIds[index]] = hs.haversine(
+            default["latitude"],
+            default["longitude"],
+            coordinate["longitude"],
+            coordinate["longitude"],
+        )
+        index += 1
 
-  try:
-    lastQuery = client.table("musics").select("id, title, artist_id(name)").in_("id", idMusics).limit(limit).execute()
-  except Exception as e:
-    print(f"Last query:\n{e}")
-    return
-  
-  return lastQuery.data
+    del index
+    del distances[user]
+
+    for i in list(distances.keys()):
+        if distances[i] > radius:
+            del distances[i]
+
+    idsSearch = list(distances.keys())
+
+    try:
+        rawRated = (
+            client.table("user_music_ratings")
+            .select("music_id")
+            .eq("user_id", user)
+            .execute()
+        )
+    except Exception as e:
+        print(f"Select rated musics:\n{e}")
+        return
+
+    idsExcludedMusic = []
+
+    for i in rawRated.data:
+        idsExcludedMusic.append(i["music_id"])
+
+    try:
+        rawNew = (
+            client.table("musics")
+            .select("id")
+            .in_("artist_id", idsSearch)
+            .not_.in_("id", idsExcludedMusic)
+            .execute()
+        )
+    except Exception as e:
+        print(f"Select new musics:\n{e}")
+        return
+
+    idMusics = []
+
+    for i in rawNew.data:
+        idMusics.append(i["id"])
+
+    try:
+        lastQuery = (
+            client.table("musics")
+            .select("id, title, artist_id(name)")
+            .in_("id", idMusics)
+            .limit(limit)
+            .execute()
+        )
+    except Exception as e:
+        print(f"Last query:\n{e}")
+        return
+
+    return lastQuery.data
