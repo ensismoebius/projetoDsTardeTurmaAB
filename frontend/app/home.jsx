@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import {
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -81,7 +82,7 @@ const App = () => {
           <View style={styles.welcomeContent}>
             <View>
               <Text style={styles.welcomeGreeting}>Bem vindo, Fulano</Text>
-              <Text style={styles.welcomeSubtitle}>D'Town!</Text>
+              <Text style={styles.welcomeSubtitle}>D&apos;Town!</Text>
             </View>
           </View>
         </View>
