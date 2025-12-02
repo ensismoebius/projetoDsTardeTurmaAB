@@ -184,11 +184,11 @@ export default function SwipeMusic() {
                   </TouchableOpacity>
                 )}
              
-              <View style={styles.progressBar}>
-                <Animated.View
-                  style={[styles.progressFill, { width: progressWidth }]}
-                />
-              </View>
+                <View style={styles.progressBar}>
+                  <Animated.View
+                    style={[styles.progressFill, { width: progressWidth }]}
+                  />
+                </View>
 
                 <TouchableOpacity
                   onPress={() => {
@@ -269,44 +269,6 @@ export default function SwipeMusic() {
                       <Text style={styles.artistName}>{item.artist}</Text>
                       <Text style={styles.artistDesc}>{item.description}</Text>
                     </View>
-                  />
-                </View>
-
-                <LinearGradient
-                  colors={["#8000d5", "#f910a3"]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 0, y: 1 }}
-                  style={styles.musicBanner}
-                >
-                  <Text style={styles.musicTitle}>{item.music}</Text>
-                </LinearGradient>
-
-                <LinearGradient
-                  colors={["#ff00cc", "#ffcc00"]}
-                  style={styles.artistCard}
-                >
-                  <View style={styles.artistRow}>
-                    <Image
-                      source={{ uri: item.artistImage }}
-                      style={styles.artistImage}
-                    />
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.artistName}>{item.artist}</Text>
-                      <Text style={styles.artistDesc}>{item.description}</Text>
-                    </View>
-             
-              <LinearGradient
-                colors={["#ff00cc", "#ffcc00"]}
-                style={styles.artistCard}
-              >
-                <View style={styles.artistRow}>
-                  <Image
-                    source={{ uri: item.artistImage }}
-                    style={styles.artistImage}
-                  />
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.artistName}>{item.artist}</Text>
-                    <Text style={styles.artistDesc}>{item.description}</Text>
                   </View>
                 </LinearGradient>
 
@@ -320,16 +282,6 @@ export default function SwipeMusic() {
                 </TouchableOpacity>
               </LinearGradient>
             </Pressable>
-             
-              <TouchableOpacity
-                onPress={() => {
-                  setSelectedItem(item);
-                  setShowLyrics(true);
-                }}
-              >
-                <Text style={styles.lyricsText}>Ver Letra ↑</Text>
-              </TouchableOpacity>
-            </LinearGradient>
           </View>
         )}
       />

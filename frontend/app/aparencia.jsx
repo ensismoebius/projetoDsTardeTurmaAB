@@ -60,9 +60,9 @@ export default function HomeScreen() {
                       </TouchableOpacity>
               <Animated.View style={{ opacity: fadeAnim, alignItems: 'center', width: '100%' }}></Animated.View>
 
-              <View style={[styles.logoContainer]}>
+              <View style={styles.logoContainer}>
                   <Image
-                    style={[styles.Logo]}
+                    style={styles.Logo}
                     source={require('../assets/images/Logofundo.png')}
                     accessibilityLabel="Logo do aplicativo"
                   />

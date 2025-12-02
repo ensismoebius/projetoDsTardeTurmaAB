@@ -2,5 +2,9 @@
   "dependencies": {
     "expo": "^54.0.22",
     "npm": "^11.6.3"
+  },
+  "devDependencies": {
+    "@types/react": "~19.1.10",
+    "typescript": "~5.9.2"
   }
 }

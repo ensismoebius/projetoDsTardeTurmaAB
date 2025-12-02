@@ -6,6 +6,7 @@ from app.main import app  # ou de onde você importa sua FastAPI
 
 client = TestClient(app)
 
+
 def test_update_user():
     """Testa criação e atualização de um usuário"""
 
@@ -17,7 +18,7 @@ def test_update_user():
         "username": f"user_{unique_suffix}",
         "password_hash": "123456",
         "type": "normal",
-        "created_at": datetime.now(timezone.utc).isoformat()
+        "created_at": datetime.now(timezone.utc).isoformat(),
     }
 
     create_resp = client.post("/api/users/", json=new_user)
@@ -25,10 +26,7 @@ def test_update_user():
     user_id = create_resp.json()["id"]
 
     # Atualização do usuário
-    updated_data = {
-        "name": f"Usuário Atualizado {unique_suffix}",
-        "type": "normal"
-    }
+    updated_data = {"name": f"Usuário Atualizado {unique_suffix}", "type": "normal"}
     update_resp = client.put(f"/api/users/{user_id}", json=updated_data)
     assert update_resp.status_code == 200
 

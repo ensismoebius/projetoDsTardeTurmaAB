@@ -6,11 +6,8 @@ def try_import_models():
     """
     # You would typically import your actual models here, e.g.:
     # from app.models import User, Music, UserMusicRating
-    
+
     # For now, return mock objects to allow the code to run
     from unittest.mock import MagicMock
-    return {
-        "User": MagicMock(),
-        "Music": MagicMock(),
-        "UserMusicRating": MagicMock()
-    }
+
+    return {"User": MagicMock(), "Music": MagicMock(), "UserMusicRating": MagicMock()}

@@ -4,6 +4,7 @@ from app.db.supabase_client import get_supabase
 router = APIRouter()
 supabase = get_supabase()
 
+
 @router.get("/")
 def get_artists():
     """
@@ -11,6 +12,7 @@ def get_artists():
     """
     response = supabase.table("users").select("*").eq("type", "artist").execute()
     return response.data
+
 
 @router.get("/{artist_id}")
 def get_artist_by_id(artist_id: int):
