@@ -8,9 +8,14 @@ import {
   Image,
   Animated,
   Easing,
+  Dimensions,
+  PixelRatio,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { AntDesign } from "@expo/vector-icons";
+
+const { width } = Dimensions.get("window");
+const RF = (size) => Math.round(PixelRatio.roundToNearestPixel(size * (width / 390)));
 
 export default function PrivacidadeScreen() {
   const [visOpen, setVisOpen] = useState(false);
@@ -25,7 +30,7 @@ export default function PrivacidadeScreen() {
     setVisOpen(!visOpen);
     Animated.timing(visAnim, {
       toValue,
-      duration: 300,
+      duration: 250,
       easing: Easing.out(Easing.cubic),
       useNativeDriver: false,
     }).start();
@@ -36,16 +41,16 @@ export default function PrivacidadeScreen() {
     setContaOpen(!contaOpen);
     Animated.timing(contaAnim, {
       toValue,
-      duration: 300,
+      duration: 250,
       easing: Easing.out(Easing.cubic),
       useNativeDriver: false,
     }).start();
   };
 
-  const visHeight = visAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 90] });
+  const visHeight = visAnim.interpolate({ inputRange: [0, 1], outputRange: [0, RF(90)] });
   const visRotate = visAnim.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "180deg"] });
 
-  const contaHeight = contaAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 70] });
+  const contaHeight = contaAnim.interpolate({ inputRange: [0, 1], outputRange: [0, RF(70)] });
   const contaRotate = contaAnim.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "180deg"] });
 
   const toggleMensagens = () => setMensagensOn((v) => !v);
@@ -58,63 +63,65 @@ export default function PrivacidadeScreen() {
       style={styles.container}
     >
       <SafeAreaView style={styles.safe}>
-        {/* botão voltar */}
-        <TouchableOpacity style={styles.backCircle}>
-          <AntDesign name="arrowleft" size={20} color="#fff" />
+     
+        <TouchableOpacity style={[styles.backCircle, { width: RF(40), height: RF(40), borderRadius: RF(20), marginTop: RF(12) }]}>
+          <AntDesign name="arrowleft" size={RF(20)} color="#fff" />
         </TouchableOpacity>
 
-        {/* logo sem círculo */}
+        
         <View style={styles.logoWrap}>
           <Image
             source={require("../assets/images/Logofundo.png")}
-            style={styles.logo}
+            style={{ width: RF(140), height: RF(140) }}
             resizeMode="contain"
           />
         </View>
 
-        <Text style={styles.title}>Privacidade</Text>
+        <Text style={[styles.title, { fontSize: RF(20), marginTop: RF(12), marginBottom: RF(22) }]}>Privacidade</Text>
 
         <View style={styles.options}>
-          {/* Visibilidade */}
-          <TouchableOpacity style={styles.optionRow} activeOpacity={0.85} onPress={toggleVis}>
-            <Text style={styles.optionText}>Visibilidade</Text>
-            <View style={styles.chevronCircle}>
+  
+          <TouchableOpacity style={[styles.optionRow, { paddingVertical: RF(12), paddingHorizontal: RF(18), borderRadius: RF(28) }]} activeOpacity={0.85} onPress={toggleVis}>
+            <Text style={[styles.optionText, { fontSize: RF(16) }]}>Visibilidade</Text>
+            <View style={[styles.chevronCircle, { width: RF(36), height: RF(36), borderRadius: RF(18) }]}>
               <Animated.View style={{ transform: [{ rotate: visRotate }] }}>
-                <AntDesign name="down" size={14} color="#E1306C" />
+                <AntDesign name="down" size={RF(14)} color="#E1306C" />
               </Animated.View>
             </View>
           </TouchableOpacity>
 
           <Animated.View style={[styles.expandArea, { height: visHeight }]}>
-            <View style={styles.expandContent}>
-              <Text style={styles.expandText}>Público</Text>
-              <Text style={styles.expandText}>Amigos</Text>
-              <Text style={styles.expandText}>Apenas eu</Text>
+            <View style={{ paddingHorizontal: RF(22), paddingTop: RF(12) }}>
+              <Text style={[styles.expandText, { fontSize: RF(14), paddingVertical: RF(6) }]}>Público</Text>
+              <Text style={[styles.expandText, { fontSize: RF(14), paddingVertical: RF(6) }]}>Amigos</Text>
+              <Text style={[styles.expandText, { fontSize: RF(14), paddingVertical: RF(6) }]}>Apenas eu</Text>
             </View>
           </Animated.View>
 
-          {/* Conta Privada */}
-          <TouchableOpacity style={styles.optionRow} activeOpacity={0.85} onPress={toggleConta}>
-            <Text style={styles.optionText}>Conta Privada</Text>
-            <View style={styles.chevronCircle}>
+         
+          <TouchableOpacity style={[styles.optionRow, { paddingVertical: RF(12), paddingHorizontal: RF(18), borderRadius: RF(28) }]} activeOpacity={0.85} onPress={toggleConta}>
+            <Text style={[styles.optionText, { fontSize: RF(16) }]}>Conta Privada</Text>
+            <View style={[styles.chevronCircle, { width: RF(36), height: RF(36), borderRadius: RF(18) }]}>
               <Animated.View style={{ transform: [{ rotate: contaRotate }] }}>
-                <AntDesign name="down" size={14} color="#E1306C" />
+                <AntDesign name="down" size={RF(14)} color="#E1306C" />
               </Animated.View>
             </View>
           </TouchableOpacity>
 
           <Animated.View style={[styles.expandArea, { height: contaHeight }]}>
-            <View style={styles.expandContent}>
-              <Text style={styles.expandText}>Ao ativar, somente aprovados verão seu conteúdo</Text>
+            <View style={{ paddingHorizontal: RF(22), paddingTop: RF(12) }}>
+              <Text style={[styles.expandText, { fontSize: RF(14) }]}>
+                Ao ativar, somente aprovados verão seu conteúdo
+              </Text>
             </View>
           </Animated.View>
 
-          {/* Mensagens diretas */}
-          <View style={styles.optionRow}>
-            <Text style={styles.optionText}>Mensagens diretas</Text>
+         
+          <View style={[styles.optionRow, { paddingVertical: RF(12), paddingHorizontal: RF(18), borderRadius: RF(28) }]}>
+            <Text style={[styles.optionText, { fontSize: RF(16) }]}>Mensagens diretas</Text>
             <TouchableOpacity onPress={toggleMensagens} activeOpacity={0.8}>
-              <View style={[styles.switchTrack, mensagensOn && styles.switchTrackOn]}>
-                <Animated.View style={[styles.switchThumb, mensagensOn && styles.switchThumbOn]} />
+              <View style={[styles.switchTrack, mensagensOn && styles.switchTrackOn, { width: RF(56), height: RF(30), borderRadius: RF(30), padding: RF(3) }]}>
+                <Animated.View style={[styles.switchThumb, mensagensOn && styles.switchThumbOn, { width: RF(22), height: RF(22), borderRadius: RF(11) }]} />
               </View>
             </TouchableOpacity>
           </View>
@@ -128,31 +135,13 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   safe: { flex: 1, paddingHorizontal: 22 },
   backCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
     backgroundColor: "rgba(255,255,255,0.18)",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 12,
     marginLeft: -2,
   },
-  logoWrap: {
-    alignItems: "center",
-    marginTop: 20,
-  },
-  logo: {
-    width: 140,
-    height: 140,
-  },
-  title: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "700",
-    textAlign: "center",
-    marginTop: 12,
-    marginBottom: 22,
-  },
+  logoWrap: { alignItems: "center", marginTop: 20 },
+  title: { color: "#fff", fontWeight: "700", textAlign: "center" },
   options: { marginTop: 6 },
   optionRow: {
     flexDirection: "row",
@@ -160,17 +149,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     borderColor: "rgba(255,255,255,0.9)",
     borderWidth: 2,
-    borderRadius: 28,
-    paddingVertical: 12,
-    paddingHorizontal: 18,
-    marginVertical: 8,
     backgroundColor: "transparent",
+    marginVertical: 8,
   },
-  optionText: { color: "#fff", fontSize: 16, fontWeight: "600" },
+  optionText: { color: "#fff", fontWeight: "600" },
   chevronCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
@@ -178,21 +161,13 @@ const styles = StyleSheet.create({
     borderColor: "rgba(0,0,0,0.05)",
   },
   expandArea: { overflow: "hidden", marginHorizontal: 0 },
-  expandContent: { paddingHorizontal: 22, paddingTop: 12 },
-  expandText: { color: "rgba(255,255,255,0.95)", fontSize: 14, paddingVertical: 6 },
+  expandText: { color: "rgba(255,255,255,0.95)" },
   switchTrack: {
-    width: 56,
-    height: 30,
-    borderRadius: 30,
     backgroundColor: "rgba(255,255,255,0.22)",
-    padding: 3,
     justifyContent: "center",
   },
   switchTrackOn: { backgroundColor: "rgba(255,255,255,0.9)" },
   switchThumb: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
     backgroundColor: "#fff",
     alignSelf: "flex-start",
     shadowColor: "#000",
