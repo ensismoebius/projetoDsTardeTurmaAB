@@ -36,3 +36,7 @@ jobs:
       working-directory: backend
       run: |
         flake8 .
+    - name: Run Black Check
+      working-directory: backend
+      run: |
+        black . --check
