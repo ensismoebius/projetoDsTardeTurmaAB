@@ -1,8 +1,13 @@
-"use client"
-
-import { LinearGradient } from "expo-linear-gradient"
-import { useRouter } from "expo-router"
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView } from "react-native"
+import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
+import React from 'react';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 const App = () => {
   const router = useRouter()

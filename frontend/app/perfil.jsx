@@ -1,291 +1,323 @@
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { useMemo, useState, memo, useCallback } from 'react';
+import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
+import React from "react";
 import {
-  Image,
+  SafeAreaView,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  useWindowDimensions,
   View,
+  Image,
+  TouchableOpacity,
   ScrollView,
-  SafeAreaView,
-} from 'react-native';
-import { AntDesign } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+} from "react-native";
 
-const ProfileScreen = memo(() => {
-  const { width, height } = useWindowDimensions();
-  const [pressingLogout, setPressingLogout] = useState(false);
-  const navigation = useNavigation();
+const Perfil = () => {
+  const rout = useRouter();
 
-
-  const rf = useMemo(
-    () => (size) =>
-      Math.round(Math.max(size * 0.9, Math.min(size * 1.6, size * (width / 390)))),
-    [width]
-  );
-
-  const isSmallScreen = width < 360;
-
-  const statsData = useMemo(
-    () => 
-    []
-  );
-
-  const handlePressIn = useCallback(() => setPressingLogout(true), []);
-  const handlePressOut = useCallback(() => setPressingLogout(false), []);
-
- 
-  const artistImages = [
-    { name: 'Jackson do Pandeiro', uri: 'file:///mnt/data/af0b8202fb3538ef8eb954eeb5887240ed21766d.png' },
-    { name: 'Nirvana', uri: 'file:///mnt/data/af0b8202fb3538ef8eb954eeb5887240ed21766d.png' },
-    { name: 'Marilyn Manson', uri: 'file:///mnt/data/e8b42772e2b9f37b5a1ec70c5adea2cd233a35ff.png' },
-  ];
+  const goTo = (path) => rout.push(`/${path}`);
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <LinearGradient
-        colors={['#7F00D5', '#F910A2', '#FDDC00']}
-        start={{ x: 0.5, y: 0 }}
-        end={{ x: 0.5, y: 1 }}
-        style={styles.gradient}
-      >
+    <LinearGradient
+      colors={["#8a00d4", "#e60073", "#ff7a00"]}
+      style={styles.container}
+      start={{ x: 0.5, y: 0 }}
+      end={{ x: 0.5, y: 1 }}
+    >
+      <SafeAreaView style={{ flex: 1 }}>
+        
+        {/* SCROLLVIEW ADICIONADO AQUI */}
         <ScrollView
-          contentContainerStyle={{ alignItems: 'center', paddingBottom: rf(30) }}
           showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 40 }}
         >
-          {/* back button (posição absoluta para ficar no topo esquerdo) */}
-          <TouchableOpacity
-            style={[styles.backCircle, { top: rf(12), left: rf(10) }]}
-            onPress={() => navigation.goBack()}
-          >
-            <AntDesign name="arrowleft" size={rf(20)} color="#fff" />
-          </TouchableOpacity>
-
-          {/* AVATAR */}
-          <View style={{ width: '100%', alignItems: 'center', marginTop: height * 0.03 }}>
+          {/* BOTÃO DE VOLTAR */}
+          <TouchableOpacity style={styles.backButton} onPress={() => goTo("home")}>
             <Image
-              source={{ uri: 'https://cdn-icons-png.flaticon.com/512/149/149071.png' }}
-              style={{
-                width: rf(125),
-                height: rf(125),
-                borderRadius: rf(70),
-                marginBottom: rf(12),
-                borderWidth: 4,
-                borderColor: '#ffffff',
+              source={{
+                uri: "https://cdn-icons-png.flaticon.com/512/271/271220.png",
               }}
+              style={styles.backIcon}
             />
-          </View>
-
-          {/* NOME E INFOS */}
-          <View style={{ alignItems: 'center', marginBottom: rf(6) }}>
-            <Text style={[styles.username, { fontSize: rf(26) }]}>Fulano D’ Town</Text>
-            <Text style={[styles.email, { fontSize: rf(15) }]}>23 seguidores • 4 seguindo</Text>
-            <Text style={[styles.memberSince, { fontSize: rf(14) }]}>@yrcap     @naosouiphone</Text>
-          </View>
-
-          {/* CAIXA DE DESCRIÇÃO (centrada e com transparência pro gradiente iluminar) */}
-          <View style={[styles.descriptionContainer, { marginTop: rf(10) }]}>
-            <Text style={styles.descriptionText}>
-              eeeer amo ouçar musga{"\n"}amo tumati tamem
-            </Text>
-          </View>
-
-          {/* ESTATÍSTICAS */}
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              marginTop: rf(22),
-              gap: rf(24),
-              flexWrap: 'wrap',
-              width: '100%',
-              paddingHorizontal: rf(20),
-            }}
-          >
-            {statsData.map((item, i) => (
-              <View key={i} style={{ alignItems: 'center', minWidth: rf(100), marginBottom: rf(8) }}>
-                <Text style={[styles.statNumber, { fontSize: rf(28) }]}>{item.number}</Text>
-                <Text style={[styles.statLabel, { fontSize: rf(13) }]}>{item.label}</Text>
-              </View>
-            ))}
-          </View>
-
-          {/* TAGS DE GÊNERO */}
-          <View style={[styles.genreContainer, { marginTop: rf(18) }]}>
-            {["Rock", "Forró", "Metal industrial", "Glam Rock"].map((tag, i) => (
-              <TouchableOpacity key={i} style={styles.genreTag} activeOpacity={0.8}>
-                <Text style={styles.genreText}>{tag}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          {/* ARTISTAS MAIS OUVIDOS */}
-          <View style={styles.artistContainer}>
-            <Text style={styles.artistTitle}>Artistas mais ouvidos</Text>
-
-            {artistImages.map((artist, i) => (
-              <View key={i} style={styles.artistCard}>
-                <Image
-                  source={{ uri: artist.uri }}
-                  style={styles.artistImg}
-                  resizeMode="cover"
-                />
-                <Text style={styles.artistName}>{artist.name}</Text>
-              </View>
-            ))}
-          </View>
-
-          {/* BOTÃO SAIR */}
-          <TouchableOpacity
-            activeOpacity={0.9}
-            style={[
-              styles.logoutButton,
-              
-            ]}
-            onPressIn={handlePressIn}
-            onPressOut={handlePressOut}
-          >
-   
           </TouchableOpacity>
+
+          {/* FOTO + NOME */}
+          <View style={styles.headerBox}>
+            <Image
+              source={{
+                uri: "https://cdn-icons-png.flaticon.com/512/847/847969.png",
+              }}
+              style={styles.profileImage}
+            />
+
+            {/* Botão editar foto */}
+            <TouchableOpacity style={styles.editPhotoBtn}>
+              <Image
+                source={{
+                  uri: "https://cdn-icons-png.flaticon.com/512/1250/1250615.png",
+                }}
+                style={styles.editPhotoIcon}
+              />
+            </TouchableOpacity>
+
+            <Text style={styles.nome}>Nome-User</Text>
+            <Text style={styles.seguidores}>?? seguidores • ?? seguindo</Text>
+
+            {/* Tags */}
+            <View style={styles.deviceRow}>
+              <View style={styles.deviceTag}>
+                <Text style={styles.deviceText}>@INSTA</Text>
+              </View>
+
+              <View style={styles.deviceTag}>
+                <Text style={styles.deviceText}>@NAOSEI</Text>
+              </View>
+            </View>
+          </View>
+
+          {/* BIO */}
+          <View style={styles.bioBox}>
+            <Text style={styles.bioText}>
+              biografia {"\n"}do usuario
+            </Text>
+
+            <TouchableOpacity style={styles.bioEditBtn}>
+              <Image
+                source={{
+                  uri: "https://cdn-icons-png.flaticon.com/512/1250/1250615.png",
+                }}
+                style={styles.editPhotoIcon}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* GÊNEROS */}
+          <View style={styles.generosContainer}>
+            <View style={styles.generoTag}>
+              <Text style={styles.generoText}>Rock</Text>
+            </View>
+
+            <View style={styles.generoTag}>
+              <Text style={styles.generoText}>Metal industrial</Text>
+            </View>
+
+            <View style={styles.generoTag}>
+              <Text style={styles.generoText}>Forró</Text>
+            </View>
+
+            <View style={styles.generoTag}>
+              <Text style={styles.generoText}>Glam Rock</Text>
+            </View>
+
+            <TouchableOpacity style={styles.editGenerosBtn}>
+              <Text style={styles.editGenerosText}>Editar gêneros..</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* ARTISTAS */}
+          <Text style={styles.artistasTitulo}>Artistas mais ouvidos</Text>
+
+          <View style={styles.artistList}>
+            <View style={styles.artistItem}>
+              <Image
+                source={{ uri: "https://i.ibb.co/4Sk4G0M/person-placeholder.png" }}
+                style={styles.artistImage}
+              />
+              <Text style={styles.artistName}>Jackson do Pandeiro</Text>
+            </View>
+
+            <View style={styles.artistItem}>
+              <Image
+                source={{ uri: "https://i.ibb.co/4Sk4G0M/person-placeholder.png" }}
+                style={styles.artistImage}
+              />
+              <Text style={styles.artistName}>Nirvana</Text>
+            </View>
+
+            <View style={styles.artistItem}>
+              <Image
+                source={{ uri: "https://i.ibb.co/4Sk4G0M/person-placeholder.png" }}
+                style={styles.artistImage}
+              />
+              <Text style={styles.artistName}>Marilyn Manson</Text>
+            </View>
+          </View>
 
         </ScrollView>
-
-        {/* FOOTER com ícones/texto (fixo embaixo) */}
-      
-     
-      </LinearGradient>
-    </SafeAreaView>
+      </SafeAreaView>
+    </LinearGradient>
   );
-});
-
-ProfileScreen.displayName = 'ProfileScreen';
+};
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#ffd3e8' },
-  gradient: {
-    flex: 1,
-    width: "100%",
-    alignItems: "center",
+  container: { flex: 1 },
+
+  backButton: {
+    padding: 15,
+    marginTop: 10,
   },
-  backCircle: {
-    position: 'absolute',
-    width: 42,
-    height: 42,
-    borderRadius: 22,
-    backgroundColor: "rgba(255,255,255,0.18)",
+  backIcon: {
+    width: 28,
+    height: 28,
+    tintColor: "#fff",
+  },
+
+  headerBox: {
     alignItems: "center",
+    marginTop: -5,
+  },
+
+  profileImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 70,
+  },
+
+  editPhotoBtn: {
+    backgroundColor: "#ff2fb1",
+    width: 34,
+    height: 34,
+    borderRadius: 20,
     justifyContent: "center",
-    zIndex: 20,
-  },
-  username: {
-    fontWeight: '700',
-    color: '#ffffff',
-  },
-  email: {
-    color: 'rgba(255,255,255,0.90)',
-  },
-  memberSince: {
-    color: 'rgba(255,255,255,0.80)',
+    alignItems: "center",
+    position: "absolute",
+    top: 90,
+    right: 130,
   },
 
-  descriptionContainer: {
-    width: '84%',
-    backgroundColor: 'rgba(29, 20, 54, 0.45)',
-    paddingVertical: 14,
-    paddingHorizontal: 18,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    // sombra leve
-    shadowColor: '#000',
-    shadowOpacity: 0.10,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  descriptionText: {
-    // use rf inside your file where rf is available; simplified fallback:
-    fontSize: 16,
-    color: '#fff',
-    textAlign: 'center',
-    fontWeight: '500',
+  editPhotoIcon: {
+    width: 18,
+    height: 18,
+    tintColor: "#fff",
   },
 
-  statNumber: {
-    fontWeight: 'bold',
-    color: '#ffffff',
-  },
-  statLabel: {
-    color: 'rgba(255,255,255,0.6)',
-    textAlign: 'center',
+  nome: {
+    marginTop: 10,
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#fff",
   },
 
-  logoutButton: { alignItems: 'center' },
-  logoutText: { color: '#fff', fontWeight: 'bold' },
-
-  // Gêneros
-genreContainer: {
-  flexDirection: "row",
-  flexWrap: "wrap",
-  justifyContent: "center",
-  gap: 10, // espaçamento entre tags
-},
-
-genreTag: {
-  paddingVertical: 8,
-  paddingHorizontal: 16,
-  backgroundColor: "rgba(255, 255, 255, 0.18)", // igual ao fundo do botão do Figma
-  borderRadius: 20,
-  borderWidth: 1,
-  borderColor: "rgba(255,255,255,0.25)",
-},
-
-genreText: {
-  color: "#ffffff",
-  fontSize: 13,
-  fontWeight: "600",
-},
-
-
-  // Artistas
-  artistContainer: {
-    marginTop: 22,
-    width: "100%",
-    paddingHorizontal: 22,
-    marginBottom: 6,
+  seguidores: {
+    color: "#eee",
+    fontSize: 14,
+    marginTop: 2,
   },
-  artistTitle: {
+
+  deviceRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginTop: 10,
+  },
+
+  deviceTag: {
+    backgroundColor: "#ffffff33",
+    paddingVertical: 5,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#fff",
+  },
+
+  deviceText: {
+    color: "#fff",
+    fontSize: 13,
+  },
+
+  bioBox: {
+    backgroundColor: "#ffffff33",
+    marginTop: 20,
+    marginHorizontal: 15,
+    padding: 15,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: "#fff",
+    position: "relative",
+  },
+
+  bioText: {
+    color: "#fff",
+    fontSize: 15,
+    lineHeight: 20,
+  },
+
+  bioEditBtn: {
+    position: "absolute",
+    right: 10,
+    bottom: 10,
+  },
+
+  generosContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginTop: 15,
+    paddingHorizontal: 15,
+    gap: 8,
+  },
+
+  generoTag: {
+    backgroundColor: "#ffffff33",
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#fff",
+  },
+
+  generoText: {
+    color: "#fff",
+    fontSize: 14,
+  },
+
+  editGenerosBtn: {
+    backgroundColor: "#ffffff55",
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#fff",
+    marginTop: 5,
+  },
+
+  editGenerosText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+
+  artistasTitulo: {
     fontSize: 18,
     color: "#fff",
-    fontWeight: "700",
-    marginBottom: 12,
+    fontWeight: "bold",
+    marginTop: 25,
+    paddingHorizontal: 15,
   },
-  artistCard: {
+
+  artistList: {
+    marginTop: 10,
+    paddingHorizontal: 15,
+    gap: 10,
+  },
+
+  artistItem: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.20)",
-    padding: 12,
-    borderRadius: 16,
-    marginBottom: 10,
+    gap: 10,
+    backgroundColor: "#ffffff22",
+    padding: 10,
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.25)",
+    borderColor: "#fff",
   },
-  artistImg: {
-    width: 45,
-    height: 45,
-    borderRadius: 999,
-    marginRight: 12,
+
+  artistImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 25,
   },
+
   artistName: {
-    fontSize: 15,
     color: "#fff",
-    fontWeight: "600",
+    fontSize: 16,
   },
-
-
- 
 });
 
-export default ProfileScreen;
-
+export default Perfil;
