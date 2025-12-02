@@ -30,6 +30,11 @@ jobs:
       run: |
         npm install
 
+    - name: Run NPM Audit
+      working-directory: frontend
+      run: |
+        npm audit
+
     - name: Run ESLint
       working-directory: frontend
       run: |
