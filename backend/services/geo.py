@@ -2,34 +2,48 @@
 Este módulo fornece funcionalidades para recomendar músicas com base na localização geográfica dos usuários e artistas.
 Ele utiliza diferentes métodos de cálculo de distância, como Haversine e earth_distance, para encontrar músicas relevantes.
 """
-from typing import List, Dict, Any, Tuple
+
+from typing import List, Dict, Any, Tuple, Optional
 from peewee import fn
 import logging
 from services.popular import recommend_popular
 from utils.ramos_helper import try_import_models
 import backend.utils.geo
 
+try:
+    # prefer public API if available
+  from backend.utils.geo import haversine_km
+except Exception:
+  # fallback to module (may expose private name)
+  haversine_km = getattr(backend.utils.geo, "_haversine_km", None)
+
 logger = logging.getLogger(__name__)
+
+def _serialize_music(row, distance_km=None) -> Dict[str, Any]:
+  artist_id = getattr(row, "artist_id", None)
+  if artist_id is None:
+    artist = getattr(row, "artist", None)
+    artist_id = getattr(artist, "id", None) if artist is not None else None
+  return {
+    "id": getattr(row, "id", None),
+    "title": getattr(row, "title", None),
+    "artist_id": artist_id,
+    "distance_km": float(distance_km) if distance_km is not None else None,
+    "posted_at": getattr(row, "posted_at", None)
+  }
 
 def recommend_geo(User=None, Music=None, UserMusicRating=None, user_id: int = None, radius_km: float = 20.0, limit: int = 10, method: str = "haversine") -> List[Dict[str, Any]]:
   """
   Recomenda músicas com base na localização geográfica do usuário.
 
-  Args:
-      User: Modelo do usuário (Peewee).
-      Music: Modelo da música (Peewee).
-      UserMusicRating: Modelo de avaliação de música do usuário (Peewee).
-      user_id (int): O ID do usuário para quem as recomendações são geradas.
-      radius_km (float): O raio em quilômetros para buscar artistas próximos.
-      limit (int): O número máximo de recomendações a serem retornadas.
-      method (str): O método de cálculo de distância a ser usado ("haversine" ou "earth_distance").
+  
+  Módulo de recomendações geográficas de músicas.
 
-  Returns:
-      List[Dict[str, Any]]: Uma lista de dicionários, onde cada dicionário representa uma música recomendada
-                            com informações como ID, título, ID do artista, distância e data de postagem.
+  Escolhe entre dois métodos:
+  - 'earth_distance' (usa extensões Postgres: earthdistance/ll_to_earth)
+  - 'haversine' (cálculo em Python — fallback)
 
-  Raises:
-      RuntimeError: Se os modelos Peewee não forem fornecidos ou importados corretamente.
+  Se o usuário estiver sem coordenadas, retorna recomendações populares.
   """
   if not (User and Music and UserMusicRating):
     imported = try_import_models()
@@ -45,7 +59,25 @@ def recommend_geo(User=None, Music=None, UserMusicRating=None, user_id: int = No
   if not user or getattr(user, "latitude", None) is None or getattr(user, "longitude", None) is None:
     return recommend_popular(User=User, Music=Music, UserMusicRating=UserMusicRating, user_id=user_id, limit=limit)
 
-  q_limit = 1000
+  if user_id is None:
+    logger.debug("No user_id provided — returning popular recommendations.")
+    return recommend_popular(User=User, Music=Music, UserMusicRating=UserMusicRating, user_id=None, limit=limit)
+
+  user = User.get_or_none(User.id == user_id)
+  if not user or getattr(user, "latitude", None) is None or getattr(user, "longitude", None) is None:
+    logger.debug("User missing or without coordinates — falling back to popular.")
+    return recommend_popular(User=User, Music=Music, UserMusicRating=UserMusicRating, user_id=user_id, limit=limit)
+
+  sample_limit = 1000
+  # normalize inputs
+  method = (method or "haversine").lower()
+  limit = max(1, int(limit or 10))
+  if limit > 100:
+    limit = 100
+  if radius_km is None:
+    radius_km = 20.0
+  radius_km = float(radius_km)
+  sample_limit = 1000
 
   rated_subq = (
     UserMusicRating
@@ -61,12 +93,16 @@ def recommend_geo(User=None, Music=None, UserMusicRating=None, user_id: int = No
   elif method == "earth_distance":
     try:
       meter_limit = int(radius_km * 1000.0)
+      earth_expr = fn.earth_distance(
+        fn.ll_to_earth(User.latitude, User.longitude),
+        fn.ll_to_earth(user.latitude, user.longitude)
+      )
       q = (
         Music
-          .select(Music, fn.earth_distance(fn.ll_to_earth(User.latitude, User.longitude), fn.ll_to_earth(user.latitude, user.longitude)).alias("dist_m"))
+          .select(Music, earth_expr.alias("dist_m"))
           .join(User, on=(Music.artist == User.id))
-          .where((fn.earth_distance(fn.ll_to_earth(User.latitude, User.longitude), fn.ll_to_earth(user.latitude, user.longitude)) < meter_limit) & (Music.id.not_in(rated_subq)))
-          .order_by(fn.earth_distance(fn.ll_to_earth(User.latitude, User.longitude), fn.ll_to_earth(user.latitude, user.longitude)), Music.posted_at.desc())
+          .where((earth_expr < meter_limit) & (Music.id.not_in(rated_subq)))
+          .order_by(earth_expr, Music.posted_at.desc())
           .limit(limit)
       )
       
@@ -81,17 +117,17 @@ def recommend_geo(User=None, Music=None, UserMusicRating=None, user_id: int = No
         })
 
     except Exception as exc:
-      logger.warning("earth_distance approach failed (%s). Falling back to haversine.", exc)
-      method = "haversine" # Fallback to haversine if earth_distance fails
+      logger.exception("earth_distance approach failed — falling back to haversine.")
+      method = "haversine"
   
   if method == "haversine" and not out: # Only run haversine if earth_distance didn't already provide results or failed
     sample_q = (
       Music
-        .select(Music, User.latitude, User.longitude)
+        .select(Music.id, Music.title, Music.posted_at, User.latitude, User.longitude, Music.artist)
         .join(User, on=(Music.artist == User.id))
         .where((User.latitude.is_null(False)) & (User.longitude.is_null(False)) & (Music.id.not_in(rated_subq)))
         .order_by(Music.posted_at.desc())
-        .limit(q_limit)
+        .limit(sample_limit)
     )
 
     candidates: List[Tuple[float, Any]] = []
@@ -102,9 +138,21 @@ def recommend_geo(User=None, Music=None, UserMusicRating=None, user_id: int = No
         continue
       
       try:
-        dist_km = backend.utils.geo._haversine_km(float(user.latitude), float(user.longitude), float(row.latitude), float(row.longitude))
-      except Exception:
+        # ensure convertible to float
+        ulat = float(user.latitude)
+        ulon = float(user.longitude)
+        rlat = float(row.latitude)
+        rlon = float(row.longitude)
+        if haversine_km:
+          dist_km = float(haversine_km(ulat, ulon, rlat, rlon))
+        else:
+          dist_km = float(backend.utils.geo._haversine_km(ulat, ulon, rlat, rlon))
+      except (TypeError, ValueError):
+        logger.debug("Invalid lat/lon for candidate %s — skipping", getattr(row, "id", None))
         continue
+      else:
+        # last resort: call module private function
+        dist_km = float(backend.utils.geo._haversine_km(float(user.latitude), float(user.longitude), float(row.latitude), float(row.longitude)))
       
       if dist_km <= float(radius_km):
         candidates.append((dist_km, row))
@@ -122,7 +170,7 @@ def recommend_geo(User=None, Music=None, UserMusicRating=None, user_id: int = No
       })
 
   if len(out) < limit:
-    more = recommend_popular(user_id=user_id, limit=limit - len(out))
+    more = recommend_popular(User=User, Music=Music, UserMusicRating=UserMusicRating, user_id=user_id, limit=limit - len(out))
     existing = {x["id"] for x in out}
     
     for m in more:

@@ -54,6 +54,16 @@ export default function SwipeMusic() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [showPlayButton, setShowPlayButton] = useState(true);
 
+  useEffect(() => {
+    Animated.loop(
+      Animated.timing(progress, {
+        toValue: 1,
+        duration: 6000,
+        useNativeDriver: false,
+      })
+    ).start();
+  }, []);
+
   const progressWidth = progress.interpolate({
     inputRange: [0, 1],
     outputRange: ["0%", "100%"],
@@ -80,9 +90,8 @@ export default function SwipeMusic() {
     } else {
       setIsPlaying(true);
       startProgress();
-    }
+    }    
 
-    
     setShowPlayButton(true);
     hideButtonTimer.current && clearTimeout(hideButtonTimer.current);
     hideButtonTimer.current = setTimeout(() => {
@@ -137,6 +146,7 @@ export default function SwipeMusic() {
         snapToInterval={height}
         snapToAlignment="start"
         removeClippedSubviews={true}
+        contentContainerStyle={{ height }}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: true }
@@ -173,6 +183,12 @@ export default function SwipeMusic() {
                     </LinearGradient>
                   </TouchableOpacity>
                 )}
+             
+              <View style={styles.progressBar}>
+                <Animated.View
+                  style={[styles.progressFill, { width: progressWidth }]}
+                />
+              </View>
 
                 <TouchableOpacity
                   onPress={() => {
@@ -253,6 +269,44 @@ export default function SwipeMusic() {
                       <Text style={styles.artistName}>{item.artist}</Text>
                       <Text style={styles.artistDesc}>{item.description}</Text>
                     </View>
+                  />
+                </View>
+
+                <LinearGradient
+                  colors={["#8000d5", "#f910a3"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 0, y: 1 }}
+                  style={styles.musicBanner}
+                >
+                  <Text style={styles.musicTitle}>{item.music}</Text>
+                </LinearGradient>
+
+                <LinearGradient
+                  colors={["#ff00cc", "#ffcc00"]}
+                  style={styles.artistCard}
+                >
+                  <View style={styles.artistRow}>
+                    <Image
+                      source={{ uri: item.artistImage }}
+                      style={styles.artistImage}
+                    />
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.artistName}>{item.artist}</Text>
+                      <Text style={styles.artistDesc}>{item.description}</Text>
+                    </View>
+             
+              <LinearGradient
+                colors={["#ff00cc", "#ffcc00"]}
+                style={styles.artistCard}
+              >
+                <View style={styles.artistRow}>
+                  <Image
+                    source={{ uri: item.artistImage }}
+                    style={styles.artistImage}
+                  />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.artistName}>{item.artist}</Text>
+                    <Text style={styles.artistDesc}>{item.description}</Text>
                   </View>
                 </LinearGradient>
 
@@ -266,10 +320,20 @@ export default function SwipeMusic() {
                 </TouchableOpacity>
               </LinearGradient>
             </Pressable>
+             
+              <TouchableOpacity
+                onPress={() => {
+                  setSelectedItem(item);
+                  setShowLyrics(true);
+                }}
+              >
+                <Text style={styles.lyricsText}>Ver Letra ↑</Text>
+              </TouchableOpacity>
+            </LinearGradient>
           </View>
         )}
       />
-
+     
       <Modal visible={showLyrics} animationType="slide" transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalBox}>
@@ -299,6 +363,8 @@ const styles = StyleSheet.create({
   background: { ...StyleSheet.absoluteFillObject },
   gradient: {
     flex: 1,
+    width: "100%",
+    height: "100%",
     justifyContent: "flex-end",
     alignItems: "center",
     paddingBottom: 60,

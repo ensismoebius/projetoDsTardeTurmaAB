@@ -8,75 +8,154 @@ from app.db.supabase_client import get_supabase
 router = APIRouter()
 supabase = get_supabase()
 
-
 @router.get("/")
 def get_users():
     """
     Retorna uma lista de todos os usuários.
     """
-    response = supabase.table("users").select("*").execute()
-    return response.data
+    try:
+        response = supabase.table("users").select("*").execute()
 
+        if hasattr(response, "error") and response.error:
+            raise HTTPException(
+                status_code=500,
+                detail="Erro ao buscar usuários no banco de dados."
+            )
 
+        return response.data or []
+
+    except HTTPException:
+        raise
+
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="Erro interno ao tentar recuperar usuários."
+        )
+    
 @router.get("/{user_id}")
 def get_user_by_id(user_id: int):
     """
     Retorna um usuário específico pelo seu ID.
-
-    Args:
-        user_id (int): O ID do usuário a ser retornado.
-
-    Returns:
-        dict: Os dados do usuário.
-
-    Raises:
-        HTTPException: Se o usuário não for encontrado.
     """
-    response = supabase.table("users").select("*").eq("id", user_id).execute()
-    if not response.data:
-        raise HTTPException(status_code=404, detail="User not found")
-    return response.data[0]
+    try:
+        response = supabase.table("users").select("*").eq("id", user_id).execute()
 
+        if hasattr(response, "error") and response.error:
+            raise HTTPException(
+                status_code=500,
+                detail="Erro ao consultar o banco de dados."
+            )
+
+        if not response.data:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        return response.data[0]
+
+    except HTTPException:
+        raise
+
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="Erro interno ao tentar buscar o usuário."
+        )
 
 @router.post("/")
 def create_user(data: dict):
     """
     Cria um novo usuário.
-
-    Args:
-        data (dict): Os dados do usuário a ser criado.
-
-    Returns:
-        dict: Os dados do usuário criado.
-
-    Raises:
-        HTTPException: Se o e-mail já estiver registrado ou se o usuário não puder ser criado.
     """
-    # Evita duplicação de e-mails
-    existing = supabase.table("users").select("*").eq("email", data.get("email")).execute()
-    if existing.data:
-        raise HTTPException(status_code=400, detail="Email already registered")
+    try:
+        # Verifica duplicação de e-mail
+        existing = supabase.table("users").select("*").eq("email", data.get("email")).execute()
 
-    response = supabase.table("users").insert(data).execute()
+        if hasattr(existing, "error") and existing.error:
+            raise HTTPException(
+                status_code=500,
+                detail="Erro ao verificar e-mail no banco de dados."
+            )
 
-    if not response.data:
-        raise HTTPException(status_code=400, detail="User not created")
+        if existing.data:
+            raise HTTPException(status_code=400, detail="Email already registered")
 
-    # Retorna o usuário criado (necessário pro teste)
-    return response.data[0]
+        response = supabase.table("users").insert(data).execute()
+
+        if hasattr(response, "error") and response.error:
+            raise HTTPException(
+                status_code=500,
+                detail="Erro ao criar usuário no banco de dados."
+            )
+
+        if not response.data:
+            raise HTTPException(status_code=400, detail="User not created")
+
+        return response.data[0]
+
+    except HTTPException:
+        raise
+
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="Erro interno ao criar usuário."
+        )
 
 
 @router.put("/{user_id}")
 def update_user(user_id: int, data: dict):
-    response = supabase.table("users").update(data).eq("id", user_id).execute()
-    if not response.data:
-        raise HTTPException(status_code=404, detail="User not found")
-    return response.data[0]
+    """
+    Atualiza um usuário existente.
+    """
+    try:
+        response = supabase.table("users").update(data).eq("id", user_id).execute()
+
+        if hasattr(response, "error") and response.error:
+            raise HTTPException(
+                status_code=500,
+                detail="Erro ao atualizar usuário no banco de dados."
+            )
+
+        if not response.data:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        return response.data[0]
+
+    except HTTPException:
+        raise
+
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="Erro interno ao atualizar o usuário."
+        )
+
 
 
 @router.delete("/{user_id}")
 def delete_user(user_id: int):
-    response = supabase.table("users").delete().eq("id", user_id).execute()
-    if not response.data:
-        raise HTTPException(status_code=404, detail="User not found")
-    return {"message": "User deleted successfully", "id": user_id}
+    """
+    Deleta um usuário existente pelo seu ID.
+    """
+    try:
+        response = supabase.table("users").delete().eq("id", user_id).execute()
+
+        if hasattr(response, "error") and response.error:
+            raise HTTPException(
+                status_code=500,
+                detail="Erro ao deletar usuário no banco de dados."
+            )
+
+        if not response.data:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        return {"message": "User deleted successfully", "id": user_id}
+
+    except HTTPException:
+        raise
+
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail="Erro interno ao deletar o usuário."
+        )

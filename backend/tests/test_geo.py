@@ -7,20 +7,38 @@ from backend.services.geo import recommend_geo
 # -----------------------------
 #   UNIT TESTS – HAVERSINE
 # -----------------------------
-
 def test_haversine_km_same_location():
-    assert _haversine_km(0.0, 0.0, 0.0, 0.0) == 0.0
+    """
+    Distância entre coordenadas iguais deve ser zero.
+    """
+    d = _haversine_km(0.0, 0.0, 0.0, 0.0)
+    assert d == 0.0, f"Distância esperada: 0.0 km, obtida: {d}"
+
 
 
 def test_haversine_km_known_distance():
-    d = _haversine_km(0.0, 0.0, 0.0, 1.0)
-    assert abs(d - 111.319) < 0.2
+    """
+    Distância esperada entre 0° e 1° de longitude no equador ≈ 111.319 km.
+    """
+    result = _haversine_km(0.0, 0.0, 0.0, 1.0)
+    expected = 111.319  # distância conhecida
+    tolerance = 0.2
+    assert abs(result - expected) < tolerance, \
+        f"Distância esperada ~{expected} km, obtida {result:.4f} km"
+
 
 
 def test_haversine_km_antipodal_points():
-    half_circle = 6371 * 3.14159
-    d = _haversine_km(0.0, 0.0, 0.0, 180.0)
-    assert abs(d - half_circle) < 0.1
+    """
+    Pontos exatamente opostos no globo (antípodas) devem ter ~20015 km.
+    """
+    earth_radius_km = 6371
+    expected = earth_radius_km * 3.14159
+    result = _haversine_km(0.0, 0.0, 0.0, 180.0)
+
+    assert abs(result - expected) < 0.1, \
+        f"Esperado ~{expected:.2f} km, obtido {result:.2f} km"
+
 
 
 # -----------------------------
@@ -29,46 +47,76 @@ def test_haversine_km_antipodal_points():
 
 @pytest.fixture
 def mock_models():
-    User = MagicMock()
-    Music = MagicMock()
-    UserMusicRating = MagicMock()
-    return User, Music, UserMusicRating
+    """
+    Mocka modelos User, Music e UserMusicRating para uso em testes.
+    """
+    User = MagicMock(name="UserModel")
+    Music = MagicMock(name="MusicModel")
+    Rating = MagicMock(name="UserMusicRatingModel")
+    return User, Music, Rating
 
 
 @pytest.fixture
 def mock_user(mock_models):
+    """
+    Mocka um usuário fixo com coordenadas definidas e injeta no método User.get_or_none().
+    """
     User, _, _ = mock_models
-    u = MagicMock(id=1, latitude=34.052235, longitude=-118.243683)
-    User.get_or_none.return_value = u
-    return u
+
+    mocked_user = MagicMock(
+        id=1,
+        latitude=34.052235,
+        longitude=-118.243683,
+        name="Mocked User"
+    )
+
+    User.get_or_none.return_value = mocked_user
+    return mocked_user
+
 
 
 @pytest.fixture
 def mock_music_query(mock_models):
-    User, Music, _ = mock_models
+    """
+    Mocka uma consulta de músicas, retornando uma música próxima e outra distante.
+    Simula corretamente a chain do Peewee.
+    """
+    _, Music, _ = mock_models
 
     near = MagicMock(
-        id=101, title="Test Song", artist_id=2,
+        id=101,
+        title="Near Song",
+        artist_id=2,
         posted_at="2023-01-01",
-        latitude=34.052235, longitude=-118.243683
+        latitude=34.052235,
+        longitude=-118.243683
     )
 
     far = MagicMock(
-        id=102, title="Far Song", artist_id=3,
+        id=102,
+        title="Far Song",
+        artist_id=3,
         posted_at="2023-01-02",
-        latitude=35.0, longitude=-119.0
+        latitude=35.0,
+        longitude=-119.0
     )
 
     near.artist.latitude = near.latitude
     near.artist.longitude = near.longitude
-
     far.artist.latitude = far.latitude
     far.artist.longitude = far.longitude
 
     mock_result = MagicMock()
     mock_result.__iter__.return_value = [near, far]
 
-    Music.select.return_value.join.return_value.where.return_value.order_by.return_value.limit.return_value = mock_result
+    (
+        Music.select.return_value
+        .join.return_value
+        .where.return_value
+        .order_by.return_value
+        .limit.return_value
+    ) = mock_result
+
     return Music
 
 

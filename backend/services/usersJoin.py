@@ -3,7 +3,7 @@ Este módulo implementa um sistema de recomendação colaborativa baseado em usu
 Ele encontra usuários com gostos musicais semelhantes e recomenda músicas que esses usuários gostaram,
 mas que o usuário alvo ainda não ouviu.
 """
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Set
 from collections import defaultdict, Counter
 from app.db.supabase_client import get_supabase
 from fastapi import APIRouter, HTTPException, status
@@ -34,21 +34,25 @@ def recColab(
                        não houver candidatos para recomendação ou se o cálculo de Jaccard falhar.
     """
     try:
-        supabase = get_supabase()
+        if user_id is None:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="user_id is required")
 
-        if user_id is not None:
-            user = supabase.table("users").select("id").eq("id", user_id).execute()
-            if not user.data:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND, 
-                    detail="User not found"
-                )
+        supabase = get_supabase()
+        user_res = supabase.table("users").select("id").eq("id", user_id).execute()
+        if not (user_res.data):
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
         
-        target_likes_q = supabase.table("user_music_ratings").select("music_id").eq("user_id", user_id).execute()
-        target_likes = {r["music_id"] for r in (target_likes_q.data or [])}
-        if not target_likes: raise HTTPException( status_code=status.HTTP_404_NOT_FOUND, detail="Music Ratings not found ")
+        rated_res = supabase.table("user_music_ratings").select("music_id").eq("user_id", user_id).execute()
         
-        ids_str = f"({','.join(map(str, target_likes))})"
+        target_likes: Set[int] = {r["music_id"] for r in (rated_res.data or [])}
+        if not target_likes:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Music Ratings not found")
+
+        # helper to build PostgREST "in" clause (PostgREST expects parentheses)
+        def in_list(values):
+            return f"({','.join(map(str, values))})" if values else "(0)"
+
+        ids_str = in_list(target_likes)
         cdd_res = (
             supabase.table("user_music_ratings")
             .select("user_id")
@@ -58,38 +62,38 @@ def recColab(
             .execute()
         )
         user_counts = Counter(r["user_id"] for r in (cdd_res.data or []))
+        if not user_counts:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Candidates not found.")
+
+
         cdd_uid = [uid for uid, _ in user_counts.most_common(neigh_limit)]
-        
-        if not cdd_uid: 
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, 
-                detail="Candidates not found."
-            )
-        
-        likes_map = defaultdict(set)
-        ids_str_users = f"({','.join(map(str, cdd_uid))})" if cdd_uid else "(0)"
+
+        ids_users_str = in_list(cdd_uid)
         likes_res = (
             supabase.table("user_music_ratings")
             .select("user_id", "music_id")
-            .filter("user_id", "in", ids_str_users)
+            .filter("user_id", "in", ids_users_str)
             .eq("rating", 1)
             .execute()
         )
+
+        likes_map = defaultdict(set)
         for r in (likes_res.data or []):
             likes_map[r["user_id"]].add(r["music_id"])
 
-        def jaccard(a:set, b:set):
-            if not a and not b: return 0.0
-            inter = len(a & b) 
+        def jaccard(a: Set[int], b: Set[int]) -> float:
+            if not a and not b:
+                return 0.0
+            inter = len(a & b)
             union = len(a | b)
             return (inter / union) if union else 0.0
-        
-        sim_scores = {}
-        for uid, liked_set in likes_map.items():
-            sim = jaccard(set(target_likes), liked_set)
-            if sim > 0:
-                sim_scores[uid] = sim
-        if not sim_scores: 
+
+        sim_scores = {
+            uid: jaccard(target_likes, liked_set)
+            for uid, liked_set in likes_map.items()
+            if jaccard(target_likes, liked_set) > 0
+        }
+        if not sim_scores:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Jaccard failed.")
            
         track_scores = Counter()
@@ -98,28 +102,29 @@ def recColab(
                 if mid not in target_likes:
                     track_scores[mid] += sim
 
-        if not track_scores: raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tracker failed.")
-        
+        if not track_scores:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tracker failed.")
+
         top = track_scores.most_common(limit)
         music_ids = [m for m, _ in top]
+        ids_music_str = in_list(music_ids)
 
-        ids_str_music = f"({','.join(map(str, music_ids))})" if music_ids else "(0)"
-        musics_q = supabase.table("musics").select("*").filter("id", "in", ids_str_music).execute()
-        
-        musics = []
+        musics_q = supabase.table("musics").select("*").filter("id", "in", ids_music_str).execute()
+
         score_map = {m: s for m, s in top}
-        for m in (musics_q.data or []):
-            musics.append({
+        musics = [
+            {
                 "id": m["id"],
                 "title": m.get("title"),
                 "artist_id": m.get("artist_id"),
                 "score": float(score_map.get(m["id"], 0.0))
-            })
-            
+            }
+            for m in (musics_q.data or [])
+        ]
         musics.sort(key=lambda x: x["score"], reverse=True)
         return musics
+
+    except HTTPException:
+        raise
     except Exception as e:
-        return JSONResponse(
-            status_code=500,
-            content={"detail": str(e)}
-        )
+        return JSONResponse(status_code=500, content={"detail": str(e)})
