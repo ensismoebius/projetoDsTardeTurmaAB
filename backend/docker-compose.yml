@@ -1,11 +1,32 @@
-version: '3.7'
+version: '3.8' # Use a more recent version of docker-compose syntax
 
 services:
   db:
-    image: postgres
+    image: postgres:14-alpine # Pin to a specific, slim version
     restart: always
-    shm_size: 128mb    
-    ports: 
-    - 2222:5432
     environment:
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${POSTGRES_DB:-mydatabase} # Use environment variable, default if not set
+      POSTGRES_USER: ${POSTGRES_USER:-myuser} # Use environment variable
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mypassword} # Use environment variable with a strong default/override
+    volumes:
+      - pgdata:/var/lib/postgresql/data # Persist data with a named volume
+    ports:
+      - "2222:5432" # External:Internal port mapping
+
+  app:
+    build: . # Build the image from the Dockerfile in the current directory (backend/)
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-myuser}:${POSTGRES_PASSWORD:-mypassword}@db:5432/${POSTGRES_DB:-mydatabase}
+      # Add other environment variables required by your FastAPI app
+    ports:
+      - "8000:8000" # Expose the FastAPI port
+    depends_on:
+      - db # Ensure db starts before app
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"] # Explicitly run uvicorn
+    # If your app needs a .env file, you can specify it:
+    # env_file:
+    #   - .env
+
+volumes:
+  pgdata: # Define the named volume for PostgreSQL data
