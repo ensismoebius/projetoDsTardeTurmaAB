@@ -10,29 +10,45 @@ import {
   TouchableOpacity,
   ScrollView,
   Animated,
-  useWindowDimensions,
+  Dimensions,
+  PixelRatio,
 } from "react-native";
+
+const { width, height } = Dimensions.get("window");
+
+
+const RF = (size) => {
+  const scale = width / 390;         
+  const newSize = size * scale;
+  return Math.round(PixelRatio.roundToNearestPixel(newSize));
+};
 
 const Perfil = () => {
   const rout = useRouter();
 
+  
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(20)).current;
-
-  const { width } = useWindowDimensions();
-
-  const rf = (v) => Math.round(v * (width / 390)); // responsividade
+  const translateAnim = useRef(new Animated.Value(25)).current;
+  const scaleAnim = useRef(new Animated.Value(0.9)).current;
 
   useEffect(() => {
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 550,
+        duration: 650,
+        easing: (t) => t,
         useNativeDriver: true,
       }),
-      Animated.timing(slideAnim, {
+      Animated.timing(translateAnim, {
         toValue: 0,
-        duration: 600,
+        duration: 650,
+        easing: (t) => Math.sqrt(t),
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 6,
+        tension: 90,
         useNativeDriver: true,
       }),
     ]).start();
@@ -48,29 +64,39 @@ const Perfil = () => {
       end={{ x: 0.5, y: 1 }}
     >
       <SafeAreaView style={{ flex: 1 }}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          {/* ANIMATE VIEW */}
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          bounces={true}
+          contentContainerStyle={{ paddingBottom: RF(40) }}
+        >
           <Animated.View
             style={{
               opacity: fadeAnim,
-              transform: [{ translateY: slideAnim }],
-              paddingBottom: 40,
+              transform: [
+                { translateY: translateAnim },
+                { scale: scaleAnim },
+              ],
             }}
           >
-            {/* Voltar */}
+           
             <TouchableOpacity style={styles.backButton} onPress={() => goTo("home")}>
               <Image
                 source={{ uri: "https://cdn-icons-png.flaticon.com/512/271/271220.png" }}
-                style={[styles.backIcon, { width: rf(26), height: rf(26) }]}
+                style={[styles.backIcon, { width: RF(26), height: RF(26) }]}
               />
             </TouchableOpacity>
 
-            {/* HEADER */}
+           
             <View style={styles.headerBox}>
               <View style={styles.photoWrapper}>
                 <Image
-                  source={{ uri: "https://cdn-icons-png.flaticon.com/512/847/847969.png" }}
-                  style={[styles.profileImage, { width: rf(130), height: rf(130) }]}
+                  source={{
+                    uri: "https://cdn-icons-png.flaticon.com/512/847/847969.png",
+                  }}
+                  style={[
+                    styles.profileImage,
+                    { width: RF(140), height: RF(140) },
+                  ]}
                 />
 
                 <TouchableOpacity style={styles.editPhotoBtn}>
@@ -78,29 +104,29 @@ const Perfil = () => {
                     source={{
                       uri: "https://cdn-icons-png.flaticon.com/512/1250/1250615.png",
                     }}
-                    style={styles.editPhotoIcon}
+                    style={[styles.editPhotoIcon, { width: RF(16), height: RF(16) }]}
                   />
                 </TouchableOpacity>
               </View>
 
-              <Text style={[styles.nome, { fontSize: rf(24) }]}>Nome-User</Text>
-              <Text style={[styles.seguidores, { fontSize: rf(14) }]}>
+              <Text style={[styles.nome, { fontSize: RF(25) }]}>Nome-User</Text>
+              <Text style={[styles.seguidores, { fontSize: RF(14) }]}>
                 ?? seguidores • ?? seguindo
               </Text>
 
-              {/* TAGS */}
+             
               <View style={styles.deviceRow}>
                 {["@INSTA", "@NAOSEI"].map((t) => (
                   <View style={styles.deviceTag} key={t}>
-                    <Text style={[styles.deviceText, { fontSize: rf(13) }]}>{t}</Text>
+                    <Text style={[styles.deviceText, { fontSize: RF(13) }]}>{t}</Text>
                   </View>
                 ))}
               </View>
             </View>
 
-            {/* BIO */}
+           
             <View style={styles.bioBox}>
-              <Text style={[styles.bioText, { fontSize: rf(15) }]}>
+              <Text style={[styles.bioText, { fontSize: RF(15) }]}>
                 Biografia do usuário aqui...
               </Text>
 
@@ -109,26 +135,28 @@ const Perfil = () => {
                   source={{
                     uri: "https://cdn-icons-png.flaticon.com/512/1250/1250615.png",
                   }}
-                  style={[styles.editPhotoIcon, { width: rf(16), height: rf(16) }]}
+                  style={[styles.editPhotoIcon, { width: RF(16), height: RF(16) }]}
                 />
               </TouchableOpacity>
             </View>
 
-            {/* GÊNEROS */}
+            
             <View style={styles.generosContainer}>
               {["Rock", "Metal Industrial", "Forró", "Glam Rock"].map((g) => (
                 <View style={styles.generoTag} key={g}>
-                  <Text style={[styles.generoText, { fontSize: rf(14) }]}>{g}</Text>
+                  <Text style={[styles.generoText, { fontSize: RF(14) }]}>{g}</Text>
                 </View>
               ))}
 
               <TouchableOpacity style={styles.editGenerosBtn}>
-                <Text style={styles.editGenerosText}>Editar gêneros</Text>
+                <Text style={[styles.editGenerosText, { fontSize: RF(14) }]}>
+                  Editar gêneros
+                </Text>
               </TouchableOpacity>
             </View>
 
-            {/* ARTISTAS */}
-            <Text style={[styles.artistasTitulo, { fontSize: rf(20) }]}>
+           
+            <Text style={[styles.artistasTitulo, { fontSize: RF(20) }]}>
               Artistas mais ouvidos
             </Text>
 
@@ -145,9 +173,9 @@ const Perfil = () => {
                     source={{
                       uri: "https://i.ibb.co/4Sk4G0M/person-placeholder.png",
                     }}
-                    style={[styles.artistImage, { width: rf(45), height: rf(45) }]}
+                    style={[styles.artistImage, { width: RF(45), height: RF(45) }]}
                   />
-                  <Text style={[styles.artistName, { fontSize: rf(16) }]}>{a}</Text>
+                  <Text style={[styles.artistName, { fontSize: RF(16) }]}>{a}</Text>
                 </View>
               ))}
             </View>
@@ -158,113 +186,105 @@ const Perfil = () => {
   );
 };
 
-/* ---------------- ESTILOS MELHORADOS ---------------- */
+
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
 
   backButton: {
-    padding: 15,
-    marginLeft: 5,
-    marginTop: 10,
-    width: 70,
+    paddingVertical: RF(12),
+    paddingHorizontal: RF(15),
+    marginLeft: RF(5),
+    marginTop: RF(10),
   },
-  backIcon: {
-    tintColor: "#fff",
-  },
+  backIcon: { tintColor: "#fff" },
 
-  /* HEADER */
   headerBox: {
     alignItems: "center",
-    marginTop: -10,
+    marginTop: RF(-5),
   },
 
-  photoWrapper: {
-    position: "relative",
-  },
+  photoWrapper: { position: "relative" },
 
   profileImage: {
-    borderRadius: 100,
+    borderRadius: 200,
     borderWidth: 3,
     borderColor: "#ffffff80",
   },
 
   editPhotoBtn: {
     backgroundColor: "#ff2fb1",
-    width: 38,
-    height: 38,
-    borderRadius: 22,
+    width: RF(40),
+    height: RF(40),
+    borderRadius: RF(25),
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
-    bottom: 0,
-    right: -5,
+    bottom: 2,
+    right: RF(-8),
   },
 
-  editPhotoIcon: { width: 18, height: 18, tintColor: "#fff" },
+  editPhotoIcon: { tintColor: "#fff" },
 
   nome: {
-    marginTop: 12,
+    marginTop: RF(12),
     color: "#fff",
-    fontFamily: "negrito",
+    fontWeight: "700",
   },
 
   seguidores: {
     color: "#f1f1f1",
-    marginTop: 3,
+    marginTop: RF(3),
   },
 
-  /* TAGS */
   deviceRow: {
     flexDirection: "row",
-    gap: 10,
-    marginTop: 12,
+    gap: RF(10),
+    marginTop: RF(12),
   },
 
   deviceTag: {
     backgroundColor: "#ffffff33",
-    paddingVertical: 6,
-    paddingHorizontal: 14,
-    borderRadius: 20,
+    paddingVertical: RF(5),
+    paddingHorizontal: RF(14),
+    borderRadius: RF(20),
     borderWidth: 1,
     borderColor: "#fff",
   },
 
   deviceText: { color: "#fff" },
 
-  /* BIO */
   bioBox: {
     backgroundColor: "#ffffff22",
-    marginTop: 25,
-    marginHorizontal: 20,
-    padding: 18,
-    borderRadius: 15,
+    marginTop: RF(25),
+    marginHorizontal: RF(20),
+    padding: RF(18),
+    borderRadius: RF(15),
     borderWidth: 1,
     borderColor: "#ffffff70",
   },
 
-  bioText: { color: "#fff", lineHeight: 20 },
+  bioText: { color: "#fff", lineHeight: RF(20) },
 
   bioEditBtn: {
     position: "absolute",
-    right: 10,
-    bottom: 10,
+    right: RF(10),
+    bottom: RF(10),
   },
 
-  /* GENEROS */
   generosContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    marginTop: 20,
-    paddingHorizontal: 20,
-    gap: 10,
+    marginTop: RF(20),
+    paddingHorizontal: RF(20),
+    gap: RF(10),
   },
 
   generoTag: {
     backgroundColor: "#ffffff33",
-    paddingVertical: 6,
-    paddingHorizontal: 14,
-    borderRadius: 20,
+    paddingVertical: RF(6),
+    paddingHorizontal: RF(14),
+    borderRadius: RF(20),
     borderWidth: 1,
     borderColor: "#fff",
   },
@@ -273,9 +293,9 @@ const styles = StyleSheet.create({
 
   editGenerosBtn: {
     backgroundColor: "#ffffff33",
-    paddingVertical: 7,
-    paddingHorizontal: 14,
-    borderRadius: 20,
+    paddingVertical: RF(7),
+    paddingHorizontal: RF(14),
+    borderRadius: RF(20),
     borderWidth: 1,
     borderColor: "#fff",
   },
@@ -285,34 +305,31 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 
-  /* ARTISTAS */
   artistasTitulo: {
     color: "#fff",
-    marginTop: 30,
-    marginBottom: 10,
-    paddingHorizontal: 20,
-    fontFamily: "negrito",
+    marginTop: RF(30),
+    marginBottom: RF(10),
+    paddingHorizontal: RF(20),
+    fontWeight: "700",
   },
 
   artistList: {
-    paddingHorizontal: 20,
-    gap: 12,
+    paddingHorizontal: RF(20),
+    gap: RF(12),
   },
 
   artistItem: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    gap: RF(12),
     backgroundColor: "#ffffff25",
-    padding: 12,
-    borderRadius: 12,
+    padding: RF(12),
+    borderRadius: RF(12),
     borderWidth: 1,
     borderColor: "#ffffff70",
   },
 
-  artistImage: {
-    borderRadius: 30,
-  },
+  artistImage: { borderRadius: 50 },
 
   artistName: { color: "#fff" },
 });
