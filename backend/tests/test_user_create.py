@@ -1,42 +1,46 @@
-import uuid
+import pytest
+from uuid import uuid4
+from datetime import datetime, timezone
 from fastapi.testclient import TestClient
-from backend.app.main import app
+from app.main import app  
 
 client = TestClient(app)
 
+@pytest.fixture
+def cleanup_users():
+    """Lista de usuários criados durante o teste para eventual limpeza futura."""
+    created_users = []
+    yield created_users
+    for user_id in created_users:
+        pass  
 
-def test_create_user():
-    """Testa a criação de um usuário (POST /api/users/)"""
-    
-    payload = {
-        "email": f"user_{uuid.uuid4().hex[:6]}@gmail.com",
-        "username": f"user_{uuid.uuid4().hex[:4]}",
-        "name": "Usuário Teste",
-        "password_hash": "senha123",
-        "latitude": 0.0,
-        "longitude": 0.0,
-        "type": "normal",
-        "created_at": "2025-01-01"
+
+def test_create_user(cleanup_users):
+    """Testa criação de usuário via endpoint /api/users/"""
+
+    # Gera sufixo único para email/username
+    unique_suffix = uuid4().hex[:8]
+
+    # Payload do usuário
+    new_user = {
+        "name": f"Usuário Teste {unique_suffix}",
+        "email": f"user_{unique_suffix}@mail.com",
+        "username": f"user_{unique_suffix}",
+        "password_hash": "123456",
+        "type": "normal",  
+        "created_at": datetime.now(timezone.utc).isoformat()  
     }
 
-    response = client.post("/api/users/", json=payload)
+    print("Payload enviado:", new_user)
 
-    # Verifica se a rota existe
-    assert response.status_code != 404, (
-        f"\n❌ ERRO 404 — Rota /api/users/ não encontrada.\n"
-        f"Resposta: {response.text}"
-    )
+    response = client.post("/api/users/", json=new_user)
+    assert response.status_code == 200, f"Erro: {response.json()}"
 
-    # Verifica se a requisição foi bem-sucedida
-    assert response.status_code == 200, (
-        f"\n❌ Código inesperado: {response.status_code}\n"
-        f"Resposta: {response.text}"
-    )
+    
+    created_user = response.json()
+    cleanup_users.append(created_user.get("id"))
 
-    data = response.json()
-
-    # Validações do resultado
-    assert "id" in data, "A resposta não contém o campo 'id'."
-    assert data.get("email") == payload["email"], "O e-mail retornado está incorreto."
-    assert data.get("username") == payload["username"], "O username retornado está incorreto."
-    assert data.get("type") == payload["type"], "O tipo retornado está incorreto."
+    
+    assert created_user["email"] == new_user["email"]
+    assert created_user["username"] == new_user["username"]
+    assert created_user["type"] == new_user["type"]
