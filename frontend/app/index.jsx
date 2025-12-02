@@ -38,13 +38,13 @@ export default function Index() {
       duration: 600,
       useNativeDriver: true,
     }).start()
-  }, [])
+  }, [fadeAnim])
 
   function cadastro() {
     router.push("/cadastrar");
   }
   function entrar() {
-    router.push("/uploadMusic")
+    router.push("/home")
   }
 
   const dynamicStyles = useMemo(
@@ -64,7 +64,7 @@ export default function Index() {
       titulo: { fontSize: rf(26), marginBottom: rf(20) },
       linkText: { fontSize: rf(15), marginTop: rf(15) },
     }),
-    [width, rf],
+    [rf],
   )
 
   return (
@@ -81,7 +81,7 @@ export default function Index() {
               keyboardShouldPersistTaps="handled"
             >
               <Animated.View style={{ opacity: fadeAnim, alignItems: "center", width: "100%" }}>
-                <View style={[styles.logoContainer]}>
+                <View style={styles.logoContainer}>
                   <Image
                     style={[styles.Logo, dynamicStyles.logo]}
                     source={require("../assets/images/Logofundo.png")}
@@ -89,11 +89,11 @@ export default function Index() {
                   />
                 </View>
 
-                <View style={[styles.formContainer]}>
-                  <Text style={[styles.titulo]}>Login</Text>
+                <View style={styles.formContainer}>
+                  <Text style={styles.titulo}>Login</Text>
 
                   <TextInput
-                    style={[styles.input]}
+                    style={styles.input}
                     placeholder="E-mail"
                     placeholderTextColor="#FFF"
                     value={email}
@@ -103,7 +103,7 @@ export default function Index() {
                   />
 
                   <TextInput
-                    style={[styles.input]}
+                    style={styles.input}
                     placeholder="Senha"
                     placeholderTextColor="#FFF"
                     value={senha}
@@ -121,11 +121,11 @@ export default function Index() {
                     onPressOut={() => setIsPressing(false)}
                     onPress={entrar}
                   >
-                    <Text style={[styles.textoBotao]}>Entrar</Text>
+                    <Text style={styles.textoBotao}>Entrar</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity onPress={cadastro}>
-                    <Text style={[styles.linkText]}>Não possui conta?</Text>
+                    <Text style={styles.linkText}>Não possui conta?</Text>
                   </TouchableOpacity>
                 </View>
               </Animated.View>

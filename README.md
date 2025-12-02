@@ -1,3 +1,8 @@
+# Auto-avaliação:
+(https://docs.google.com/forms/d/e/1FAIpQLSdq8WTgo9QAmbRjRLHoOIysiGwSFNF3bL4BU9Micqs964mS_Q/viewform?usp=publish-editor)[https://docs.google.com/forms/d/e/1FAIpQLSdq8WTgo9QAmbRjRLHoOIysiGwSFNF3bL4BU9Micqs964mS_Q/viewform?usp=publish-editor]
+
+
+
 # 🎨🎶 SingerSwipe – Descubra novos artistas de forma divertida
 
 ## 📌 Introdução
@@ -24,7 +29,7 @@ A proposta é oferecer uma experiência envolvente e intuitiva, ajudando os usu�
 
 - **Backend:** [Python](https://www.python.org/) + [FastAPI](https://fastapi.tiangolo.com/)  
 - **Frontend Mobile:** [React Native](https://reactnative.dev/) com [Expo](https://expo.dev/)  
-- **Banco de Dados:** [PostgreSQL](https://postgresql.org/)   
+- **Banco de Dados:** [PostgreSQL](https://postgresql.org/)
 - **Autenticação:** JWT ou OAuth2 (planejado)  
 - **Outros:** Integrações com APIs externas (ex.: Spotify API)  
 
@@ -35,16 +40,17 @@ A proposta é oferecer uma experiência envolvente e intuitiva, ajudando os usu�
 O projeto utiliza **PostgreSQL** rodando no SUPABASE.  
 
 ## Tutorial no youtube de como utilizar
-https://youtu.be/vXIJ2t6O8QU?si=11NeaYQ7K9PGJ7cp
+
+<https://youtu.be/vXIJ2t6O8QU?si=11NeaYQ7K9PGJ7cp>
 
 ### 🔹 Backend (FastAPI)
 
 1. Clone o repositório:
   
   ```cmd
-  $ git clone https://github.com/ensismoebius/projetoDsTardeTurmaAB.git
+  git clone https://github.com/ensismoebius/projetoDsTardeTurmaAB.git
   
-  $ cd projetoDsTardeTurmaAB/backend
+  cd projetoDsTardeTurmaAB/backend
   ```
 
 <br>
@@ -52,9 +58,9 @@ https://youtu.be/vXIJ2t6O8QU?si=11NeaYQ7K9PGJ7cp
 2. Ative o ambiente virtual:
 
   ```cmd
-  $ python -m venv venv
+  python -m venv venv
 
-  $ ./venv/Scripts/Activate.ps1
+  ./venv/Scripts/Activate.ps1
   ```
 
 <br>
@@ -62,9 +68,8 @@ https://youtu.be/vXIJ2t6O8QU?si=11NeaYQ7K9PGJ7cp
 3. Instale as dependências:
 
   ```cmd
-  $ pip install -r requirements.txt
+  pip install -r requirements.txt
   ```
-
 
 <br>
 
@@ -101,9 +106,9 @@ https://youtu.be/vXIJ2t6O8QU?si=11NeaYQ7K9PGJ7cp
 
 ## 📚 Referências Bibliográficas
 
-- **TIAÑOLO**, Sebastián Ramírez. FastAPI Documentation. Disponível em: https://fastapi.tiangolo.com/
-- **EXPO. Getting Started with Expo.** Disponível em: https://docs.expo.dev/
-- **REACT NATIVE. Official Documentation.** Disponível em: https://reactnative.dev/
+- **TIAÑOLO**, Sebastián Ramírez. FastAPI Documentation. Disponível em: <https://fastapi.tiangolo.com/>
+- **EXPO. Getting Started with Expo.** Disponível em: <https://docs.expo.dev/>
+- **REACT NATIVE. Official Documentation.** Disponível em: <https://reactnative.dev/>
 
 ## 👨‍💻 Créditos
 
