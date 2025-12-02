@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import {
   Text,
   TouchableOpacity,
@@ -7,23 +7,78 @@ import {
   Image,
   View,
   ScrollView,
+  Animated,
+  useWindowDimensions,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 
 const GENEROS = [
-  "Pop", "Rock industrial", "Metal", "MPB",
-  "Sertanejo", "Hip Hop", "Hyperpop",
-  "Forró", "Trap", "Gospel", "EDM", "Indie",
-  "Blues", "Soul", "Funk", "Pagode"
+  "Pop", "Rock industrial", "Metal", "MPB", "Sertanejo",
+  "Hip Hop", "Hyperpop", "Forró", "Trap", "Gospel",
+  "EDM", "Indie", "Blues", "Soul", "Funk", "Pagode"
 ];
 
 const GeneroSelector = () => {
   const [selecionados, setSelecionados] = useState([]);
   const navigation = useNavigation();
 
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(20)).current;
+  const tapAnim = useRef(new Animated.Value(1)).current;
+
+  const { width } = useWindowDimensions();
+
+  
+  const rf = (size) => Math.round(size * (width / 390));
+
+  const dyn = useMemo(
+    () => ({
+      iconSize: rf(110),
+      titleSize: rf(22),
+      chipFont: rf(15),
+      continueFont: rf(18),
+      chipPaddingV: rf(8),
+      chipPaddingH: rf(16),
+      backBtn: rf(40),
+      backIcon: rf(20),
+    }),
+    [width]
+  );
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 700,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 700,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
+  const animateTap = () => {
+    Animated.sequence([
+      Animated.timing(tapAnim, {
+        toValue: 0.93,
+        duration: 80,
+        useNativeDriver: true,
+      }),
+      Animated.timing(tapAnim, {
+        toValue: 1,
+        duration: 80,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
   const toggleGenero = (genero) => {
+    animateTap();
     setSelecionados((prev) =>
       prev.includes(genero)
         ? prev.filter((g) => g !== genero)
@@ -35,66 +90,95 @@ const GeneroSelector = () => {
     <LinearGradient
       colors={["#8A00D4", "#E60073", "#FF7A00"]}
       style={styles.container}
-      start={{ x: 0.5, y: 0 }}
-      end={{ x: 0.5, y: 1 }}
     >
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.scrollBox}>
 
-          {/* Botão voltar */}
+          
           <TouchableOpacity
-            style={styles.backCircle}
+            style={[
+              styles.backCircle,
+              {
+                width: dyn.backBtn,
+                height: dyn.backBtn,
+                borderRadius: dyn.backBtn / 2,
+              },
+            ]}
             onPress={() => navigation.goBack()}
           >
-            <AntDesign name="arrowleft" size={20} color="#fff" />
+            <AntDesign name="arrowleft" size={dyn.backIcon} color="#fff" />
           </TouchableOpacity>
 
-          {/* Ícone ilustrativo */}
-          <Image
-            source={require("../assets/images/Logofundo.png")}
-            accessibilityLabel="Logo do aplicativo"
-            style={styles.icone}
-          />
+        
+          <Animated.View
+            style={{
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
+            <Image
+              source={require("../assets/images/Logofundo.png")}
+              accessibilityLabel="Logo do aplicativo"
+              style={[styles.icone, { width: dyn.iconSize, height: dyn.iconSize }]}
+            />
 
-          <Text style={styles.titulo}>
-            Selecione seus gêneros{"\n"}musicais preferidos:
-          </Text>
+            <Text style={[styles.titulo, { fontSize: dyn.titleSize }]}>
+              Selecione seus gêneros{"\n"}musicais preferidos:
+            </Text>
 
-          {/* Chips */}
-          <View style={styles.generosContainer}>
-            {GENEROS.map((genero) => {
-              const selected = selecionados.includes(genero);
-              return (
-                <TouchableOpacity
-                  key={genero}
-                  onPress={() => toggleGenero(genero)}
-                  style={[
-                    styles.generoBotao,
-                    selected && styles.generoSelecionado,
-                  ]}
-                >
-                  <Text
+          
+            <Animated.View
+              style={[
+                styles.generosContainer,
+                { transform: [{ scale: tapAnim }] },
+              ]}
+            >
+              {GENEROS.map((genero) => {
+                const selected = selecionados.includes(genero);
+
+                return (
+                  <TouchableOpacity
+                    key={genero}
+                    onPress={() => toggleGenero(genero)}
                     style={[
-                      styles.generoTexto,
-                      selected && styles.generoTextoSelecionado,
+                      styles.generoBotao,
+                      {
+                        paddingVertical: dyn.chipPaddingV,
+                        paddingHorizontal: dyn.chipPaddingH,
+                      },
+                      selected && styles.generoSelecionado,
                     ]}
                   >
-                    {genero}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
+                    <Text
+                      style={[
+                        styles.generoTexto,
+                        { fontSize: dyn.chipFont },
+                        selected && styles.generoTextoSelecionado,
+                      ]}
+                    >
+                      {genero}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </Animated.View>
 
-          {/* Botão Prosseguir sem cor + borda branca */}
-          <TouchableOpacity
-            style={styles.botaoContinuar}
-            disabled={selecionados.length === 0}
-            onPress={() => console.log("Selecionados:", selecionados)}
-          >
-            <Text style={styles.textoContinuar}>Prosseguir</Text>
-          </TouchableOpacity>
-
+         
+            <TouchableOpacity
+              style={[
+                styles.botaoContinuar,
+                selecionados.length === 0 && { opacity: 0.4 },
+              ]}
+              disabled={selecionados.length === 0}
+              onPress={() => console.log("Selecionados:", selecionados)}
+            >
+              <Text style={[styles.textoContinuar, { fontSize: dyn.continueFont }]}>
+                Prosseguir
+              </Text>
+            </TouchableOpacity>
+          </Animated.View>
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
@@ -106,32 +190,27 @@ const styles = StyleSheet.create({
 
   scrollBox: {
     alignItems: "center",
-    paddingBottom: 40,
+    paddingBottom: 50,
   },
 
   backCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
     backgroundColor: "#ffffff33",
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
     marginTop: 10,
-    marginRight: "auto",
     marginLeft: 15,
+    alignSelf: "flex-start",
   },
 
   icone: {
-    width: 90,
-    height: 90,
-    marginTop: 10,
+    resizeMode: "contain",
+    marginTop: 15,
   },
 
   titulo: {
-    fontSize: 20,
-    fontWeight: "bold",
     color: "#fff",
     textAlign: "center",
+    fontWeight: "bold",
     marginVertical: 20,
   },
 
@@ -141,15 +220,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: "90%",
     gap: 10,
+    marginBottom: 30,
   },
 
   generoBotao: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
     borderRadius: 30,
     borderWidth: 2,
-    borderColor: "#ffffff88",
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: "#ffffff66",
+    backgroundColor: "rgba(255, 255, 255, 0.18)",
   },
 
   generoSelecionado: {
@@ -159,29 +237,27 @@ const styles = StyleSheet.create({
 
   generoTexto: {
     color: "#fff",
-    fontSize: 15,
   },
 
   generoTextoSelecionado: {
-    fontWeight: "bold",
     color: "#fff",
+    fontWeight: "bold",
   },
 
   botaoContinuar: {
     width: "80%",
     paddingVertical: 14,
-    borderRadius: 30,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 25,
+    borderRadius: 30,
     borderWidth: 1,
     borderColor: "#fff",
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    marginTop: 10,
   },
 
   textoContinuar: {
     color: "#fff",
-    fontSize: 18,
     fontWeight: "bold",
   },
 });
