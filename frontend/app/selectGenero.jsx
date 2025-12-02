@@ -88,9 +88,7 @@ const GeneroSelector = () => {
 
           {/* Botão Prosseguir sem cor + borda branca */}
           <TouchableOpacity
-            style={[
-              styles.botaoContinuar,
-            ]}
+            style={styles.botaoContinuar}
             disabled={selecionados.length === 0}
             onPress={() => console.log("Selecionados:", selecionados)}
           >
