@@ -1,17 +1,17 @@
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRef, useState, useEffect } from "react";
+import { useEffect, useRef, useState, memo } from "react";
 import {
   Animated,
   Dimensions,
   Image,
+  Modal,
+  Pressable,
+  Share,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Modal,
-  Share,
-  Pressable,
 } from "react-native";
 
 const { height, width } = Dimensions.get("window");
@@ -21,10 +21,8 @@ const DATA = [
     id: "1",
     music: "Nome da Música",
     artist: "Nome do Artista",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit...",
-    lyrics:
-      "Letra da música...\nLorem ipsum dolor sit amet...\nMais verso...",
+    description: "Lorem ipsum dolor sit amet...",
+    lyrics: "Letra...\nMais versos...",
     image: "https://i.imgur.com/Nc3uQ2W.png",
     artistImage: "https://i.pravatar.cc/100",
   },
@@ -32,17 +30,60 @@ const DATA = [
     id: "2",
     music: "Outra Música",
     artist: "Outro Artista",
-    description:
-      "Ut enim ad minim veniam, quis nostrud exercitation...",
-    lyrics:
-      "Outra letra...\nMais versos...",
+    description: "Ut enim ad minim veniam...",
+    lyrics: "Outra letra...",
     image: "https://i.imgur.com/Nc3uQ2W.png",
     artistImage: "https://i.pravatar.cc/101",
   },
 ];
 
+
+
+const HeartAnimation = memo(({ anim, id }) => {
+  const scale = anim.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: [0, 1.2, 0],
+  });
+
+  const opacity = anim.interpolate({
+    inputRange: [0, 0.7, 1],
+    outputRange: [1, 1, 0],
+  });
+
+  const translateY = anim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, -80],
+  });
+
+  return (
+    <Animated.View
+      style={{
+        position: "absolute",
+        top: height * 0.64,
+        right: 300,
+        transform: [{ scale }, { translateY }],
+        opacity,
+      }}
+    >
+      <Ionicons name="heart" size={25} color="#ff0049" />
+    </Animated.View>
+  );
+});
+
+
+const PlayButton = memo(({ isPlaying, onPress }) => (
+  <TouchableOpacity style={styles.playButton} onPress={onPress}>
+    <LinearGradient colors={["#fddf00", "#f910a3"]} style={styles.playCircle}>
+      <Ionicons name={isPlaying ? "pause" : "play"} size={50} color="#fff" />
+    </LinearGradient>
+  </TouchableOpacity>
+));
+
+
+
 export default function SwipeMusic() {
   const scrollY = useRef(new Animated.Value(0)).current;
+
   const progress = useRef(new Animated.Value(0)).current;
   const animationRef = useRef(null);
   const hideButtonTimer = useRef(null);
@@ -54,6 +95,7 @@ export default function SwipeMusic() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [showPlayButton, setShowPlayButton] = useState(true);
 
+
   useEffect(() => {
     Animated.loop(
       Animated.timing(progress, {
@@ -64,17 +106,15 @@ export default function SwipeMusic() {
     ).start();
   }, []);
 
-  const progressWidth = progress.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["0%", "100%"],
-  });
-
   const startProgress = () => {
+    const current = progress.__getValue();
+
     animationRef.current = Animated.timing(progress, {
       toValue: 1,
-      duration: (1 - progress._value) * 120000, 
+      duration: (1 - current) * 120000,
       useNativeDriver: false,
     });
+
     animationRef.current.start(({ finished }) => {
       if (finished) {
         setIsPlaying(false);
@@ -90,30 +130,27 @@ export default function SwipeMusic() {
     } else {
       setIsPlaying(true);
       startProgress();
-    }    
+    }
 
-    setShowPlayButton(true);
-    hideButtonTimer.current && clearTimeout(hideButtonTimer.current);
-    hideButtonTimer.current = setTimeout(() => {
-      setShowPlayButton(false);
-    }, 3000);
+    showControls();
   };
 
-  const shareMusic = async (music) => {
-    await Share.share({
-      message: `Estou ouvindo: ${music.music} - ${music.artist}`,
-    });
+  const showControls = () => {
+    setShowPlayButton(true);
+    clearTimeout(hideButtonTimer.current);
+
+    hideButtonTimer.current = setTimeout(() => {
+      if (isPlaying) setShowPlayButton(false);
+    }, 3000);
   };
 
   const addHeart = () => {
     const id = Math.random().toString();
-    const newHeart = {
-      id,
-      animation: new Animated.Value(0),
-    };
-    setHearts((prev) => [...prev, newHeart]);
+    const anim = new Animated.Value(0);
 
-    Animated.timing(newHeart.animation, {
+    setHearts((prev) => [...prev, { id, anim }]);
+
+    Animated.timing(anim, {
       toValue: 1,
       duration: 1000,
       useNativeDriver: true,
@@ -122,18 +159,17 @@ export default function SwipeMusic() {
     });
   };
 
-  const handlePressIn = () => {
-    setShowPlayButton(true);
-    hideButtonTimer.current && clearTimeout(hideButtonTimer.current);
+  const shareMusic = async (item) => {
+    await Share.share({
+      message: `Estou ouvindo: ${item.music} - ${item.artist}`,
+    });
   };
 
-  const handlePressOut = () => {
-    if (isPlaying) {
-      hideButtonTimer.current = setTimeout(() => {
-        setShowPlayButton(false);
-      }, 3000);
-    }
-  };
+  const progressWidth = progress.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0%", "100%"],
+  });
+
 
   return (
     <View style={styles.container}>
@@ -142,22 +178,15 @@ export default function SwipeMusic() {
         keyExtractor={(item) => item.id}
         pagingEnabled
         showsVerticalScrollIndicator={false}
-        decelerationRate={0.98}
         snapToInterval={height}
-        snapToAlignment="start"
-        removeClippedSubviews={true}
-        contentContainerStyle={{ height }}
+        decelerationRate="fast"
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: true }
         )}
         renderItem={({ item }) => (
           <View style={styles.card}>
-            <Pressable
-              onPressIn={handlePressIn}
-              onPressOut={handlePressOut}
-              style={{ flex: 1, width: "100%", alignItems: "center" }}
-            >
+            <Pressable style={{ flex: 1 }} onPress={showControls}>
               <Image source={{ uri: item.image }} style={styles.background} />
 
               <LinearGradient
@@ -167,21 +196,7 @@ export default function SwipeMusic() {
                 <View style={styles.playFrame} />
 
                 {showPlayButton && (
-                  <TouchableOpacity
-                    style={styles.playButton}
-                    onPress={togglePlay}
-                  >
-                    <LinearGradient
-                      colors={["#fddf00", "#f910a3"]}
-                      style={styles.playCircle}
-                    >
-                      <Ionicons
-                        name={isPlaying ? "pause" : "play"}
-                        size={50}
-                        color="#fff"
-                      />
-                    </LinearGradient>
-                  </TouchableOpacity>
+                  <PlayButton isPlaying={isPlaying} onPress={togglePlay} />
                 )}
              
                 <View style={styles.progressBar}>
@@ -190,6 +205,14 @@ export default function SwipeMusic() {
                   />
                 </View>
 
+                
+                <View style={styles.progressContainer}>
+                  <Animated.View
+                    style={[styles.progressFill, { width: progressWidth }]}
+                  />
+                </View>
+
+             
                 <TouchableOpacity
                   onPress={() => {
                     setLiked(!liked);
@@ -204,6 +227,7 @@ export default function SwipeMusic() {
                   />
                 </TouchableOpacity>
 
+               
                 <TouchableOpacity
                   onPress={() => shareMusic(item)}
                   style={styles.shareButton}
@@ -211,51 +235,20 @@ export default function SwipeMusic() {
                   <Ionicons name="share-social" size={35} color="#fff" />
                 </TouchableOpacity>
 
-                {hearts.map((heart) => {
-                  const scale = heart.animation.interpolate({
-                    inputRange: [0, 0.5, 1],
-                    outputRange: [0, 1.2, 0],
-                  });
-                  const opacity = heart.animation.interpolate({
-                    inputRange: [0, 0.7, 1],
-                    outputRange: [1, 1, 0],
-                  });
-                  const translateY = heart.animation.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, -80],
-                  });
+                
+                {hearts.map((h) => (
+                  <HeartAnimation key={h.id} anim={h.anim} />
+                ))}
 
-                  return (
-                    <Animated.View
-                      key={heart.id}
-                      style={{
-                        position: "absolute",
-                        top: height * 0.638,
-                        right: 320,
-                        transform: [{ scale }, { translateY }],
-                        opacity,
-                      }}
-                    >
-                      <Ionicons name="heart" size={25} color="#ff0049" />
-                    </Animated.View>
-                  );
-                })}
-
-                <View style={styles.progressContainer}>
-                  <Animated.View
-                    style={[styles.progressFill, { width: progressWidth }]}
-                  />
-                </View>
-
+            
                 <LinearGradient
                   colors={["#8000d5", "#f910a3"]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 0, y: 1 }}
                   style={styles.musicBanner}
                 >
                   <Text style={styles.musicTitle}>{item.music}</Text>
                 </LinearGradient>
 
+              
                 <LinearGradient
                   colors={["#ff00cc", "#ffcc00"]}
                   style={styles.artistCard}
@@ -265,13 +258,14 @@ export default function SwipeMusic() {
                       source={{ uri: item.artistImage }}
                       style={styles.artistImage}
                     />
-                    <View style={{ flex: 1 }}>
+                    <View>
                       <Text style={styles.artistName}>{item.artist}</Text>
                       <Text style={styles.artistDesc}>{item.description}</Text>
                     </View>
                   </View>
                 </LinearGradient>
 
+                
                 <TouchableOpacity
                   onPress={() => {
                     setSelectedItem(item);
@@ -285,7 +279,8 @@ export default function SwipeMusic() {
           </View>
         )}
       />
-     
+
+      
       <Modal visible={showLyrics} animationType="slide" transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalBox}>
@@ -309,16 +304,16 @@ export default function SwipeMusic() {
 }
 
 
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#000" },
-  card: { width, height, alignItems: "center", justifyContent: "center" },
+  card: { width, height },
   background: { ...StyleSheet.absoluteFillObject },
+
   gradient: {
     flex: 1,
-    width: "100%",
-    height: "100%",
-    justifyContent: "flex-end",
     alignItems: "center",
+    justifyContent: "flex-end",
     paddingBottom: 60,
   },
 
@@ -331,9 +326,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
     borderWidth: 4,
     borderColor: "#000",
-    zIndex: -1,
-    alignSelf: "center",
   },
+
   playButton: { position: "absolute", top: height * 0.25 },
   playCircle: {
     width: 120,
@@ -341,15 +335,14 @@ const styles = StyleSheet.create({
     borderRadius: 60,
     justifyContent: "center",
     alignItems: "center",
-    elevation: 10,
   },
-  likeButton: { position: "absolute", top: height * 0.638, right: 320 },
-  shareButton: { position: "absolute", top: height * 0.640, right: 25 },
+
+  likeButton: { position: "absolute", top: height * 0.64, right: 300 },
+  shareButton: { position: "absolute", top: height * 0.64, right: 25 },
 
   progressContainer: {
     position: "absolute",
     top: height * 0.60,
-    right: 25,
     width: 330,
     height: 6,
     backgroundColor: "#ffffff40",
@@ -364,37 +357,61 @@ const styles = StyleSheet.create({
   musicBanner: {
     width: "110%",
     top: height * 0.45,
-    height: height * 0.50,
+    height: height * 0.5,
     borderRadius: 20,
-    marginBottom: 20,
     borderWidth: 2,
     borderColor: "#55004cff",
     alignItems: "center",
     justifyContent: "flex-start",
     paddingTop: 10,
-    overflow: "hidden",
   },
+
   musicTitle: {
     fontSize: 22,
     color: "#fff",
     fontWeight: "700",
     position: "absolute",
     top: 10,
-    textAlign: "center",
-    width: "100%",
   },
 
-  artistCard: { width: "87%", borderRadius: 20, padding: 12 },
+  artistCard: {
+    width: "87%",
+    borderRadius: 20,
+    padding: 12,
+    marginTop: 20,
+  },
   artistRow: { flexDirection: "row", alignItems: "center" },
   artistImage: { width: 50, height: 50, borderRadius: 25, marginRight: 12 },
-  artistName: { fontSize: 16, fontWeight: "bold", color: "#fff", marginBottom: 5 },
+
+  artistName: { fontSize: 16, fontWeight: "bold", color: "#fff" },
   artistDesc: { color: "#fff", fontSize: 12 },
 
-  lyricsText: { marginTop: 20, fontSize: 14, color: "#fff", opacity: 0.8 },
+  lyricsText: {
+    marginTop: 18,
+    fontSize: 14,
+    color: "#fff",
+    opacity: 0.8,
+  },
 
-  modalContainer: { flex: 1, backgroundColor: "#000a", justifyContent: "flex-end" },
-  modalBox: { backgroundColor: "#222", padding: 20, borderTopLeftRadius: 25, borderTopRightRadius: 25, maxHeight: height * 0.7 },
-  modalTitle: { color: "#fff", fontSize: 22, fontWeight: "bold", marginBottom: 10 },
-  modalLyrics: { color: "#ddd", fontSize: 16, marginBottom: 20 },
-  modalClose: { backgroundColor: "#f910a3", padding: 12, alignItems: "center", borderRadius: 10 },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: "#0008",
+    justifyContent: "flex-end",
+  },
+  modalBox: {
+    backgroundColor: "#222",
+    padding: 20,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    maxHeight: height * 0.7,
+  },
+  modalTitle: { fontSize: 22, fontWeight: "bold", color: "#fff" },
+  modalLyrics: { color: "#ddd", fontSize: 16, marginVertical: 20 },
+
+  modalClose: {
+    backgroundColor: "#f910a3",
+    padding: 12,
+    alignItems: "center",
+    borderRadius: 10,
+  },
 });

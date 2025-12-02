@@ -35,7 +35,8 @@ const Notificacoes = () => {
         >
           <Ionicons name="chevron-back" size={RF(28)} color="#fff" />
         </TouchableOpacity>
-
+             </View>
+        
         <View style={styles.headerContainer}>
           <Image
             source={require("../assets/images/Logofundo.png")}
@@ -46,8 +47,8 @@ const Notificacoes = () => {
         </View>
 
        
-        <View style={[styles.box, { width: RF(320), padding: RF(16), borderRadius: RF(20) }]}>
-         
+        <View style={styles.box}>
+          
           <View style={styles.notifItem}>
             <Image source={{ uri: "" }} style={[styles.avatar, { width: RF(50), height: RF(50) }]} />
             <Text style={[styles.notifText, { fontSize: RF(16) }]}>
@@ -55,7 +56,7 @@ const Notificacoes = () => {
             </Text>
           </View>
 
-         
+          
           <View style={styles.notifItem}>
             <Image source={{ uri: "" }} style={[styles.avatar, { width: RF(50), height: RF(50) }]} />
             <Text style={[styles.notifText, { fontSize: RF(16) }]}>
@@ -63,7 +64,7 @@ const Notificacoes = () => {
             </Text>
           </View>
 
-      
+         
           <View style={styles.notifItem}>
             <Image source={{ uri: "" }} style={[styles.avatar, { width: RF(50), height: RF(50) }]} />
             <Text style={[styles.notifText, { fontSize: RF(16) }]}>
@@ -97,6 +98,8 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 5,
   },
+
+  
   headerContainer: {
     alignItems: "center",
     marginTop: RF(80),
@@ -111,6 +114,8 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 6,
   },
+
+  
   box: {
     backgroundColor: "rgba(29,20,54,0.6)",
     shadowColor: "#000",

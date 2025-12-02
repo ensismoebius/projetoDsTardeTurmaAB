@@ -1,6 +1,6 @@
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
-import { LinearGradient } from 'expo-linear-gradient';
-import { useEffect, useRef, useState } from 'react';
+import { LinearGradient } from "expo-linear-gradient";
+import { useEffect, useRef, useState } from "react";
 import {
   AccessibilityInfo,
   Animated,
@@ -11,192 +11,188 @@ import {
   Text,
   TouchableOpacity,
   useWindowDimensions,
-  View
-} from 'react-native';
+  View,
+} from "react-native";
+
+const useReducedMotion = () => {
+  const [reduceMotion, setReduceMotion] = useState(false);
+  useEffect(() => {
+    if (Platform.OS === "ios" || Platform.OS === "android") {
+      AccessibilityInfo.isReduceMotionEnabled().then(setReduceMotion);
+    }
+  }, []);
+  return reduceMotion;
+};
 
 const App = ({ navigation = { goBack: () => {} } }) => {
   const scaleAnim = useRef(new Animated.Value(1)).current;
-  const [showParticles, setShowParticles] = useState(false);
+  const particles = Array.from({ length: 3 }, () => useRef(new Animated.Value(0)).current);
+
   const { width, height } = useWindowDimensions();
-  const [reduceMotionEnabled, setReduceMotionEnabled] = useState(false);
-
-  useEffect(() => {
-    if (Platform.OS === 'ios' || Platform.OS === 'android') {
-      AccessibilityInfo.isReduceMotionEnabled().then((result) => {
-        setReduceMotionEnabled(result);
-      });
-    }
-  }, []);
-
-  const particles = [
-    useRef(new Animated.Value(0)).current,
-    useRef(new Animated.Value(0)).current,
-    useRef(new Animated.Value(0)).current,
-  ];
-
-  const handlePress = () => {
-    if (reduceMotionEnabled) return;
-
-    Animated.sequence([
-      Animated.timing(scaleAnim, {
-        toValue: 1.3,
-        duration: 150,
-        useNativeDriver: true,
-      }),
-      Animated.timing(scaleAnim, {
-        toValue: 1,
-        duration: 150,
-        useNativeDriver: true,
-      }),
-    ]).start();
-
-    setShowParticles(true);
-    particles.forEach((particle, index) => {
-      particle.setValue(0);
-      Animated.timing(particle, {
-        toValue: 1,
-        duration: 600,
-        delay: index * 100,
-        useNativeDriver: true,
-      }).start(() => {
-        if (index === particles.length - 1) {
-          setShowParticles(false);
-        }
-      });
-    });
-  };
+  const reduceMotion = useReducedMotion();
+  const [showParticles, setShowParticles] = useState(false);
 
   const isPortrait = height >= width;
 
-  const headerFontSize = Math.min(Math.max(width * 0.06, 18), 28);
-  const mainHeartSize = Math.min(Math.max(width * 0.25, 80), 130);
-  const particleSize = Math.min(Math.max(width * 0.045, 15), 22);
-  const contentTitleSize = Math.min(Math.max(width * 0.055, 17), 24);
-  const contentDescSize = Math.min(Math.max(width * 0.038, 13), 18);
-  const navFontSize = Math.min(Math.max(width * 0.04, 14), 20);
-  const iconButtonPadding = Math.min(Math.max(width * 0.04, 12), 20);
-  const iconButtonBorderRadius = Math.min(Math.max(width * 0.3, 50), 90);
+ 
+  const sizes = {
+    header: Math.min(Math.max(width * 0.065, 18), 28),
+    mainHeart: Math.min(Math.max(width * 0.23, 80), 140),
+    particle: Math.min(Math.max(width * 0.045, 14), 22),
+    title: Math.min(Math.max(width * 0.054, 18), 26),
+    description: Math.min(Math.max(width * 0.04, 13), 18),
+    nav: Math.min(Math.max(width * 0.038, 14), 20),
+  };
+
+  const handlePress = () => {
+    if (reduceMotion) return;
+
+    Animated.parallel([
+      Animated.sequence([
+        Animated.timing(scaleAnim, {
+          toValue: 1.25,
+          duration: 160,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scaleAnim, {
+          toValue: 1,
+          duration: 160,
+          useNativeDriver: true,
+        }),
+      ]),
+      Animated.stagger(
+        120,
+        particles.map((p) =>
+          Animated.timing(p, {
+            toValue: 1,
+            duration: 650,
+            useNativeDriver: true,
+          })
+        )
+      ),
+    ]).start(() => {
+      particles.forEach((p) => p.setValue(0));
+      setShowParticles(false);
+    });
+
+    setShowParticles(true);
+  };
+
+  const renderParticles = () =>
+    !reduceMotion &&
+    showParticles &&
+    particles.map((anim, i) => {
+      const translateY = anim.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, -100 - i * 18],
+      });
+
+      const translateX = anim.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, (i % 2 === 0 ? -1 : 1) * (35 + i * 10)],
+      });
+
+      const opacity = anim.interpolate({
+        inputRange: [0, 1],
+        outputRange: [1, 0],
+      });
+
+      const colors = ["#ff007f", "#ffa200", "#ffee00"];
+
+      return (
+        <Animated.View
+          key={i}
+          style={{
+            position: "absolute",
+            top: height * 0.42,
+            transform: [{ translateX }, { translateY }],
+            opacity,
+          }}
+        >
+          <FontAwesome name="heart" size={sizes.particle} color={colors[i]} />
+        </Animated.View>
+      );
+    });
 
   return (
     <LinearGradient
-    colors={['#962fbf', '#d62976', '#fa7e1e', '#feda75',]} 
-    style={styles.container}
-    start={{ x: 0.5, y: 0 }}    
-    end={{ x: 0.5, y: 1 }}     
-  >
-  
-
-      <SafeAreaView style={{ flex: 1 }}>
-        <View style={[styles.header, { paddingVertical: height * 0.035 }]}>
-          <Text
-            accessible
-            accessibilityRole="header"
-            accessibilityLabel="Título Suas Curtidas"
-            style={[styles.headerText, { fontSize: headerFontSize }]}
+      colors={["#962fbf", "#d62976", "#fa7e1e", "#feda75"]}
+      style={styles.container}
+    >
+      <SafeAreaView style={styles.safe}>
+      
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}
+            accessibilityLabel="Voltar"
           >
+            <AntDesign name="arrowleft" size={22} color="#fff" />
+          </TouchableOpacity>
+
+          <Text style={[styles.headerText, { fontSize: sizes.header }]}>
             Suas Curtidas
           </Text>
         </View>
-         <TouchableOpacity style={styles.backCircle} onPress={() => navigation.goBack()}>
-          <AntDesign name="arrowleft" size={20} color="#fff" />
-        </TouchableOpacity>
 
+      
         <View
           style={[
-            styles.iconContainer,
-            { marginTop: height * 0.03, flexDirection: isPortrait ? 'column' : 'row' },
+            styles.centerArea,
+            { flexDirection: isPortrait ? "column" : "row" },
           ]}
         >
           <Pressable
             onPress={handlePress}
             accessibilityRole="button"
-            accessibilityLabel="Botão de Curtir"
-            accessibilityHint="Ativa animação de coração"
-            disabled={reduceMotionEnabled}
+            disabled={reduceMotion}
           >
             <Animated.View
               style={[
-                styles.iconButton,
+                styles.heartButton,
                 {
                   transform: [{ scale: scaleAnim }],
-                  padding: iconButtonPadding,
-                  borderRadius: iconButtonBorderRadius,
-                  shadowOffset: { width: 0, height: 6 },
-                  shadowOpacity: 0.35,
-                  shadowRadius: 7,
-                  elevation: 10,
+                  shadowOffset: { width: 0, height: 8 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 12,
+                  elevation: 8,
                 },
               ]}
             >
-              <FontAwesome name="heart" size={mainHeartSize} color="#fff" style={styles.backHeart} />
-              <FontAwesome name="heart" size={mainHeartSize * 0.9} color="#ffd900" />
+              <FontAwesome
+                name="heart"
+                size={sizes.mainHeart}
+                color="#fff5"
+                style={styles.backHeart}
+              />
+              <FontAwesome
+                name="heart"
+                size={sizes.mainHeart * 0.92}
+                color="#ffda00"
+              />
             </Animated.View>
           </Pressable>
 
-          {!reduceMotionEnabled && showParticles &&
-            particles.map((anim, i) => {
-              const translateY = anim.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0, -90 - i * 15],
-              });
-
-              const translateX = anim.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0, (i % 2 === 0 ? -1 : 1) * (25 + i * 12)],
-              });
-
-              const opacity = anim.interpolate({
-                inputRange: [0, 1],
-                outputRange: [1, 0],
-              });
-
-              const colors = ['#cc00ff', '#ff9900', '#ffe600'];
-
-              return (
-                <Animated.View
-                  key={i}
-                  style={{
-                    position: 'absolute',
-                    top: height * 0.4,
-                    transform: [{ translateY }, { translateX }],
-                    opacity,
-                  }}
-                >
-                  <FontAwesome name="heart" size={particleSize} color={colors[i % colors.length]} />
-                </Animated.View>
-              );
-            })}
+          {renderParticles()}
         </View>
 
-        <View style={[styles.content, { paddingHorizontal: width * 0.1 }]}>
-          <Text
-            accessible
-            accessibilityRole="text"
-            accessibilityLabel="Mensagem principal ainda sem curtidas"
-            style={[styles.contentText1, { fontSize: contentTitleSize }]}
-          >
+       
+        <View style={styles.textArea}>
+          <Text style={[styles.title, { fontSize: sizes.title }]}>
             Ainda sem curtidas
           </Text>
-          <Text
-            accessible
-            accessibilityRole="text"
-            accessibilityLabel="Descrição para começar a descobrir músicas"
-            style={[styles.contentText2, { fontSize: contentDescSize, marginTop: 12 }]}
-          >
-            Comece a descobrir músicas para ver suas curtidas aqui!
+
+          <Text style={[styles.description, { fontSize: sizes.description }]}>
+            Explore músicas e toque no coração para curtir!
           </Text>
         </View>
 
-        <View style={[styles.nav, { paddingVertical: height * 0.025 }]}>
-          {['Player', 'Curtidas', 'Perfil'].map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[styles.navItem, { paddingHorizontal: width * 0.06 }]}
-              activeOpacity={0.7}
-              accessibilityRole="button"
-              accessibilityLabel={`Navegar para ${item}`}
-            >
-              <Text style={[styles.navText1, { fontSize: navFontSize }]}>{item}</Text>
+        <View style={styles.nav}>
+          {["Player", "Curtidas", "Perfil"].map((item) => (
+            <TouchableOpacity key={item} style={styles.navItem}>
+              <Text style={[styles.navText, { fontSize: sizes.nav }]}>
+                {item}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -206,71 +202,80 @@ const App = ({ navigation = { goBack: () => {} } }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
+  safe: { flex: 1 },
+
+
   header: {
-    padding: 20,
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingTop: 4,
+    justifyContent: "center",
   },
   headerText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
   },
-  iconContainer: {
-    flex: 1.5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
-  },
-  backCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+  backButton: {
+    position: "absolute",
+    left: 16,
     backgroundColor: "rgba(255,255,255,0.18)",
-    alignItems: "center",
+    width: 42,
+    height: 42,
+    borderRadius: 21,
     justifyContent: "center",
-    marginTop: 12,
-    marginLeft: -2,
+    alignItems: "center",
   },
-  
-  iconButton: {
-    borderRadius: 50,
-    padding: 10,
-    elevation: 5,
+
+ 
+  centerArea: {
+    flex: 1.6,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  nav: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    backgroundColor: '#000000',
-    paddingVertical: 10,
-    marginBottom: '0%',
-    marginLeft: '0%',
-    marginRight: '0%',
-  },
-  navItem: {
-    padding: 10,
+  heartButton: {
+    padding: 14,
+    borderRadius: 100,
   },
   backHeart: {
-    position: 'absolute',
-    top: 5,
-    left: 5,
+    position: "absolute",
+    top: 6,
+    left: 6,
   },
-  content: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+
+
+  textArea: {
+    flex: 0.9,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 28,
   },
-  contentText1: {
-    color: '#ffffff',
-    textAlign: 'center',
+  title: {
+    color: "#fff",
+    fontWeight: "600",
+    textAlign: "center",
   },
-  contentText2: {
-    color: '#ffffff',
-    textAlign: 'center',
+  description: {
+    color: "#fff",
+    marginTop: 10,
+    opacity: 0.85,
+    textAlign: "center",
   },
-  navText1: {
-    color: '#ff3cf5',
+
+ 
+  nav: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    backgroundColor: "#000000bb",
+    paddingVertical: 16,
+  },
+  navItem: {
+    paddingHorizontal: 10,
+  },
+  navText: {
+    color: "#ff3cf5",
+    fontWeight: "500",
   },
 });
 
