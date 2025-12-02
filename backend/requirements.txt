@@ -9,3 +9,4 @@ supabase
 python-multipart
 flake8
 black
+mypy
