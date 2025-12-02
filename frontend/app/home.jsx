@@ -10,142 +10,240 @@ import {
 } from 'react-native';
 
 const App = () => {
-  const rout = useRouter();
+  const router = useRouter()
 
-  
-  const goTo = (path) => {
-    rout.push(`/${path}`);
-  };
+  const artists = [
+    {
+      id: 1,
+      name: "Soundgarden",
+      posts: 24,
+      description: "Lançou: Like Suicide - 03:12",
+      avatar: "🎵",
+    },
+    {
+      id: 2,
+      name: "Marina Sena",
+      posts: 24,
+      description: "Lançou um álbum: Coisas Naturais\nDesmistificar - 2:54\nCoisas Naturais - 2:35\nMágico - 3:27",
+      avatar: "🎤",
+    },
+    {
+      id: 3,
+      name: "Hole",
+      posts: 24,
+      description: "Biografia - Hole\nHole foi uma banda americana de rock alternativo...",
+      avatar: "🎸",
+    },
+  ]
+
+  const handleCall = (artistName) => {
+    router.push(`/call/${artistName}`)
+  }
+
+  const handleMusic = (artistName) => {
+    router.push(`/uploadMusic`)
+  }
+
+  const handleHome = () => {
+    router.push(`/home`)
+  }
+
+  const handleLike = (artistName) => {
+    router.push(`/curtidas`)
+  }
+
+  const handleMore = (artistName) => {
+    router.push(`/perfilArtista`)
+  }
+
+  const handleProfilePress = () => {
+    router.push(`/perfil`)
+  }
 
   return (
     <LinearGradient
-      colors={['#962fbf', '#d62976', '#fa7e1e', '#feda75', '#4f5bd5']}
+      colors={["#962fbf", "#d62976"]}
       style={styles.container}
       start={{ x: 0.5, y: 0 }}
       end={{ x: 0.5, y: 1 }}
     >
       <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.header}>
-          <Text style={styles.headerText}>Bem Vindo!! </Text>
+          <Text style={styles.headerText}>Menu principal</Text>
+          <TouchableOpacity style={styles.profileButton} onPress={handleProfilePress}>
+            <View style={styles.headerAvatar}>
+              <Text style={styles.headerAvatarText}>👤</Text>
+            </View>
+          </TouchableOpacity>
         </View>
 
-        <View style={styles.fundoPost}>
-          <View style={styles.postagem}>
-            <Text style={styles.titulo}>Título da Postagem</Text>
-            <Text style={styles.conteudo}>
-              Este é o conteúdo da sua postagem. Você pode colocar texto, imagens ou qualquer outro componente aqui.
-            </Text>
-          </View>
-          <View style={styles.postagem}>
-            <Text style={styles.titulo}>Título da Postagem</Text>
-            <Text style={styles.conteudo}>
-              Este é o conteúdo da sua postagem. Você pode colocar texto, imagens ou qualquer outro componente aqui.
-            </Text>
-          </View>
-          <View style={styles.postagem}>
-            <Text style={styles.titulo}>Título da Postagem</Text>
-            <Text style={styles.conteudo}>
-              Este é o conteúdo da sua postagem. Você pode colocar texto, imagens ou qualquer outro componente aqui.
-            </Text>
+        <View style={styles.welcomeCard}>
+          <View style={styles.welcomeContent}>
+            <View>
+              <Text style={styles.welcomeGreeting}>Bem vindo, Fulano</Text>
+              <Text style={styles.welcomeSubtitle}>D'Town!</Text>
+            </View>
           </View>
         </View>
 
-      
-        <View style={styles.nav}>
-          <TouchableOpacity style={styles.navItem} onPress={() => goTo('Configuracoes')}>
-            <Text style={styles.navText1}>Configurações</Text>
+        <ScrollView style={styles.fundoPost} showsVerticalScrollIndicator={false}>
+          {artists.map((artist) => (
+            <View key={artist.id} style={styles.artistCard}>
+              <View style={styles.cardHeader}>
+                <View style={styles.artistInfo}>
+                  <View style={styles.smallAvatar}>
+                    <Text style={styles.smallAvatarText}>{artist.avatar}</Text>
+                  </View>
+                  <View style={styles.artistDetails}>
+                    <Text style={styles.artistName}>{artist.name}</Text>
+                    <Text style={styles.postsCount}>{artist.posts} fev.</Text>
+                  </View>
+                </View>
+              </View>
+
+              <Text style={styles.description}>{artist.description}</Text>
+            </View>
+          ))}
+        </ScrollView>
+
+        <View style={styles.footer}>
+          <TouchableOpacity style={styles.footerButton} onPress={() => router.push("/uploadMusic")}>
+            <Text style={styles.footerIcon}>♪</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.navItem} onPress={() => goTo('avatarperfil')}>
-            <Text style={styles.navText1}>Avatar-Perfil</Text>
+          <TouchableOpacity style={styles.footerButton} onPress={() => router.push("/curtidas")}>
+            <Text style={styles.footerIcon}>❤️</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.navItem} onPress={() => goTo('home')}>
-            <Text style={styles.navText1}>Home</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.navItem} onPress={() => goTo('curtidas')}>
-            <Text style={styles.navText1}>Curtidas</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.navItem} onPress={() => goTo('perfil')}>
-            <Text style={styles.navText1}>Perfil</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.navItem} onPress={() => goTo('selectGenero')}>
-            <Text style={styles.navText1}>SelecionarGenero</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.navItem} onPress={() => goTo('Swipes')}>
-            <Text style={styles.navText1}>Swipes</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem} onPress={() => goTo('perfilartista')}>
-            <Text style={styles.navText1}>PerfilArtista</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem} onPress={() => goTo('uploadMusic')}>
-            <Text style={styles.navText1}>UploadMusic</Text>
+          <TouchableOpacity style={styles.footerButton} onPress={() => router.push("/perfilartista")}>
+            <Text style={styles.footerIcon}>⚙️</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
     </LinearGradient>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
   },
   header: {
-    padding: 20,
-    alignItems: 'center',
-    borderRadius: 10,
-    marginBottom: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 5,
   },
   headerText: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold',
+    color: "#999",
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  profileButton: {
+    padding: 0,
+  },
+  headerAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  headerAvatarText: {
+    fontSize: 22,
+  },
+  welcomeCard: {
+    backgroundColor: "#b535d4",
+    borderRadius: 15,
+    marginHorizontal: 15,
+    marginVertical: 10,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.3)",
+  },
+  welcomeContent: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  welcomeGreeting: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  welcomeSubtitle: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginTop: 4,
   },
   fundoPost: {
-    height: 400,
+    flex: 1,
+    paddingHorizontal: 15,
   },
-  postagem: {
-    backgroundColor: 'rgba(128, 128, 128, 0.45)',
-    borderRadius: 10,
+  artistCard: {
+    backgroundColor: "rgba(100, 50, 150, 0.6)",
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: 'white',
-    padding: 16,
-    width: '100%',
-    maxWidth: 400,
-    marginBottom: 10,
+    borderColor: "#ff1493",
+    padding: 14,
+    marginBottom: 12,
   },
-  titulo: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 8,
+  cardHeader: {
+    marginBottom: 12,
   },
-  conteudo: {
+  artistInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  smallAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 10,
+  },
+  smallAvatarText: {
+    fontSize: 20,
+  },
+  artistDetails: {
+    flex: 1,
+  },
+  artistName: {
+    color: "#fff",
     fontSize: 16,
-    color: '#f0f0f0',
+    fontWeight: "600",
   },
-  nav: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    backgroundColor: '#1d1436',
-    borderRadius: 10,
-    paddingVertical: 10,
-    marginBottom: 2,
+  postsCount: {
+    color: "#ddd",
+    fontSize: 12,
+    marginTop: 2,
   },
-  navItem: {
-    padding: 10,
+  description: {
+    color: "#f0f0f0",
+    fontSize: 13,
+    lineHeight: 18,
   },
-  navText1: {
-    fontSize: 16,
-    color: '#ff3cf5',
+  footer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255, 255, 255, 0.1)",
   },
-});
+  footerButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  footerIcon: {
+    fontSize: 24,
+  },
+})
 
-export default App;
+export default App

@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
 
   musicTitle: {
     fontSize: 22,
-    color: "#fff",
+    color: "#ffffff",
     fontWeight: "700",
     textAlign: "center",
     marginBottom: 25,
