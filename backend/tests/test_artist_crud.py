@@ -4,7 +4,11 @@ from backend.app.main import app
 
 client = TestClient(app)
 
+
 def make_artist_payload():
+    """
+    Gera um payload válido e único para criação de artista.
+    """
     return {
         "email": f"artist_{uuid.uuid4().hex[:6]}@example.com",
         "username": f"art_{uuid.uuid4().hex[:4]}",
@@ -15,24 +19,44 @@ def make_artist_payload():
         "type": "artist",
         "created_at": "2025-01-01"
     }
-
-def test_artist_crud_flow():
-    # create
+def test_create_and_get_artist():
+    """
+    Testa criação e leitura de artista.
+    """
     payload = make_artist_payload()
-    c = client.post("/api/artists/", json=payload)
-    assert c.status_code == 200, c.text
-    aid = c.json()["id"]
 
-    # get
-    g = client.get(f"/api/artists/{aid}")
-    assert g.status_code == 200
-    assert g.json()["id"] == aid
+    # CREATE
+    create_res = client.post("/api/artists/", json=payload)
+    assert create_res.status_code == 200, f"Erro ao criar artista: {create_res.text}"
 
-    # update
-    up = client.put(f"/api/artists/{aid}", json={"name": "Novo Nome"})
-    assert up.status_code == 200
-    assert up.json().get("name") == "Novo Nome"
+    artist_id = create_res.json()["id"]
+    assert isinstance(artist_id, int)
 
-    # delete
-    d = client.delete(f"/api/artists/{aid}")
-    assert d.status_code == 200
+    # GET
+    get_res = client.get(f"/api/artists/{artist_id}")
+    assert get_res.status_code == 200, f"Erro ao buscar artista: {get_res.text}"
+    assert get_res.json()["id"] == artist_id
+
+def test_update_and_delete_artist():
+    """
+    Testa atualização e exclusão de artista.
+    """
+    payload = make_artist_payload()
+
+    # CREATE for update/delete flow
+    create_res = client.post("/api/artists/", json=payload)
+    assert create_res.status_code == 200
+    artist_id = create_res.json()["id"]
+
+    # UPDATE
+    update_res = client.put(f"/api/artists/{artist_id}", json={"name": "Novo Nome"})
+    assert update_res.status_code == 200, update_res.text
+    assert update_res.json().get("name") == "Novo Nome"
+
+    # DELETE
+    delete_res = client.delete(f"/api/artists/{artist_id}")
+    assert delete_res.status_code == 200, delete_res.text
+
+    # CHECK DELETED
+    verify_res = client.get(f"/api/artists/{artist_id}")
+    assert verify_res.status_code == 404
