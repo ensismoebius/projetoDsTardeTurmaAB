@@ -44,3 +44,7 @@ jobs:
       working-directory: backend
       run: |
         mypy .
+    - name: Run Pip Audit
+      working-directory: backend
+      run: |
+        pip-audit

@@ -10,3 +10,4 @@ python-multipart
 flake8
 black
 mypy
+pip-audit
