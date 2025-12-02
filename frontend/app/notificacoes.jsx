@@ -17,7 +17,7 @@ const Notificacoes = () => {
           <Ionicons name="chevron-back" size={32} color="#fff" />
         </TouchableOpacity>
              </View>
-        {/* 💛 LOGO GRANDE + TÍTULO */}
+        
         <View style={styles.headerContainer}>
           <Image
             source={require("../assets/images/Logofundo.png")}
@@ -26,9 +26,9 @@ const Notificacoes = () => {
           <Text style={styles.title}>Notificações</Text>
         </View>
 
-        {/* 🔔 LISTA DE NOTIFICAÇÕES */}
+       
         <View style={styles.box}>
-          {/* Notificação 1 */}
+          
           <View style={styles.notifItem}>
             <Image
               source={{ uri: "" }}
@@ -37,7 +37,7 @@ const Notificacoes = () => {
             <Text style={styles.notifText}><Text style={styles.nome}>Fulano</Text> Seguiu você</Text>
           </View>
 
-          {/* Notificação 2 */}
+          
           <View style={styles.notifItem}>
             <Image
               source={{ uri: "" }}
@@ -46,7 +46,7 @@ const Notificacoes = () => {
             <Text style={styles.notifText}><Text style={styles.nome}>Nirvana</Text> Lançou uma música</Text>
           </View>
 
-          {/* Notificação 3 */}
+         
           <View style={styles.notifItem}>
             <Image
               source={{ uri: "" }}
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     padding: 5,
   },
 
-  /* 💛 HEADER */
+  
   headerContainer: {
     alignItems: "center",
     marginBottom: 20,
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
 
-  /* 🔔 BOX DE NOTIFICAÇÕES */
+  
   box: {
     width: "58%",
 	height: "100%",
