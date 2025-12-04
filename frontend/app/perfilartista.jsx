@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import React, { useState, useEffect } from "react";
+import * as Font from "expo-font";
 
 const { width, height } = Dimensions.get("window");
 
@@ -31,6 +33,28 @@ const songs = [
 ];
 
 export default function ArtistProfile() {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  const loadFonts = async () => {
+      await Font.loadAsync({
+        normal: require("../assets/fonts/Inter_18pt-Regular.ttf"),
+        negrito: require("../assets/fonts/Inter_18pt-Bold.ttf"),
+        fino: require("../assets/fonts/Inter_18pt-Thin.ttf"),
+      });
+      setFontsLoaded(true);
+    };
+
+  useEffect(() => {
+    loadFonts();
+  }, []);
+
+  if (!fontsLoaded) {
+      return (
+        <View style={styles.loadingContainer}>
+          <Text>Carregando fontes...</Text>
+        </View>
+      );
+    }
   return (
     <LinearGradient
       colors={["#8A00D4", "#E60073", "#FF7A00"]}
@@ -138,7 +162,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: "#fff",
-    fontWeight: "600",
+    fontFamily: "negrito",
   },
 
   artistImageContainer: {
@@ -155,7 +179,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: RF(12),
     left: RF(16),
-    fontWeight: "bold",
+    fontFamily: "negrito",
     color: "#fff",
     textShadowColor: "#000",
     textShadowRadius: 6,
@@ -174,7 +198,7 @@ const styles = StyleSheet.create({
     borderColor: "#fff",
     backgroundColor: "rgba(255,255,255,0.15)",
   },
-  followText: { color: "#fff", fontWeight: "600" },
+  followText: { color: "#fff", fontFamily: "negrito" },
   circleIcon: {
     backgroundColor: "rgba(255,255,255,0.25)",
     alignItems: "center",
@@ -188,12 +212,12 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "rgba(255, 255, 255, 0.3)",
   },
-  popularTitle: { color: "#fff", fontWeight: "bold", marginBottom: RF(12) },
+  popularTitle: { color: "#fff", fontFamily:"negrito", marginBottom: RF(12) },
 
   songItem: { flexDirection: "row", alignItems: "center" },
   songThumbnail: { backgroundColor: "rgba(255,255,255,0.25)" },
-  songTitle: { color: "#fff" },
+  songTitle: { color: "#fff", fontFamily: "negrito" },
 
   discographyButton: { alignSelf: "center", backgroundColor: "rgba(255,255,255,0.3)" },
-  discographyText: { color: "#fff", fontWeight: "bold" },
+  discographyText: { color: "#fff", fontFamily: "negrito" },
 });
