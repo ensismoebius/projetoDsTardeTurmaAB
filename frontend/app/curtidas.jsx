@@ -13,6 +13,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
+import * as Font from "expo-font";
 
 const useReducedMotion = () => {
   const [reduceMotion, setReduceMotion] = useState(false);
@@ -25,6 +26,7 @@ const useReducedMotion = () => {
 };
 
 const App = ({ navigation = { goBack: () => {} } }) => {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const particles = Array.from({ length: 3 }, () => useRef(new Animated.Value(0)).current);
 
@@ -33,6 +35,27 @@ const App = ({ navigation = { goBack: () => {} } }) => {
   const [showParticles, setShowParticles] = useState(false);
 
   const isPortrait = height >= width;
+
+  const loadFonts = async () => {
+      await Font.loadAsync({
+        normal: require("../assets/fonts/Inter_18pt-Regular.ttf"),
+        negrito: require("../assets/fonts/Inter_18pt-Bold.ttf"),
+        fino: require("../assets/fonts/Inter_18pt-Thin.ttf"),
+      });
+      setFontsLoaded(true);
+    };
+
+  useEffect(() => {
+    loadFonts();
+  }, []);
+
+  if (!fontsLoaded) {
+      return (
+        <View style={styles.loadingContainer}>
+          <Text>Carregando fontes...</Text>
+        </View>
+      );
+    }
 
  
   const sizes = {
@@ -215,7 +238,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     color: "#fff",
-    fontWeight: "bold",
+    fontFamily: "negrito",
   },
   backButton: {
     position: "absolute",
@@ -253,7 +276,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "#fff",
-    fontWeight: "600",
+    fontFamily: "negrito",
     textAlign: "center",
   },
   description: {
@@ -261,6 +284,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     opacity: 0.85,
     textAlign: "center",
+    fontFamily: "normal",
   },
 
  
@@ -275,7 +299,7 @@ const styles = StyleSheet.create({
   },
   navText: {
     color: "#ff3cf5",
-    fontWeight: "500",
+    fontFamily: "normal",
   },
 });
 
