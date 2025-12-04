@@ -39,3 +39,12 @@ def update_ratings(user_music_ratings_id: int, User_music_ratings: User_music_ra
     if response.data:
         return {"message": "ratings updated successfully"}
     return {"error": "rating not found"}
+
+@router.delete("/user_music_ratings/{user_music_ratings_id}")
+def delete_ratings(user_music_ratings_id: int):
+    supabase = get_supabase()
+    response = supabase.table("user_music_ratings").delete().eq("id", user_music_ratings_id).execute()
+    if response.data:
+        return {"message": "rating deleted successfully"}
+    return {"error": "rating not found"}
+    
