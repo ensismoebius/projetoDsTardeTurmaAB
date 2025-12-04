@@ -42,13 +42,7 @@ const DATA = [
 
     
 
-    if (!fontsLoaded) {
-      return (
-        <View style={styles.loadingContainer}>
-          <Text>Carregando fontes...</Text>
-        </View>
-      );
-    }
+    
 
 const HeartAnimation = memo(({ anim, id }) => {
   const scale = anim.interpolate({
