@@ -1,6 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -13,6 +13,7 @@ import {
   Dimensions,
   PixelRatio,
 } from "react-native";
+import * as Font from "expo-font";
 
 const { width, height } = Dimensions.get("window");
 
@@ -25,13 +26,23 @@ const RF = (size) => {
 
 const Perfil = () => {
   const rout = useRouter();
-
+  const [fontsLoaded, setFontsLoaded] = useState(false);
   
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const translateAnim = useRef(new Animated.Value(25)).current;
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
 
+  const loadFonts = async () => {
+      await Font.loadAsync({
+        normal: require("../assets/fonts/Inter_18pt-Regular.ttf"),
+        negrito: require("../assets/fonts/Inter_18pt-Bold.ttf"),
+        fino: require("../assets/fonts/Inter_18pt-Thin.ttf"),
+      });
+      setFontsLoaded(true);
+    };
+
   useEffect(() => {
+    loadFonts();
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -53,6 +64,14 @@ const Perfil = () => {
       }),
     ]).start();
   }, []);
+
+  if (!fontsLoaded) {
+      return (
+        <View style={styles.loadingContainer}>
+          <Text>Carregando fontes...</Text>
+        </View>
+      );
+    }
 
   const goTo = (p) => rout.push(`/${p}`);
 
@@ -229,7 +248,7 @@ const styles = StyleSheet.create({
   nome: {
     marginTop: RF(12),
     color: "#fff",
-    fontWeight: "700",
+    fontFamily: "negrito",
   },
 
   seguidores: {
@@ -252,7 +271,7 @@ const styles = StyleSheet.create({
     borderColor: "#fff",
   },
 
-  deviceText: { color: "#fff" },
+  deviceText: { color: "#fff", fontFamily: "normal" },
 
   bioBox: {
     backgroundColor: "#ffffff22",
@@ -264,7 +283,7 @@ const styles = StyleSheet.create({
     borderColor: "#ffffff70",
   },
 
-  bioText: { color: "#fff", lineHeight: RF(20) },
+  bioText: { color: "#fff", lineHeight: RF(20), fontFamily: "normal" },
 
   bioEditBtn: {
     position: "absolute",
@@ -289,7 +308,7 @@ const styles = StyleSheet.create({
     borderColor: "#fff",
   },
 
-  generoText: { color: "#fff" },
+  generoText: { color: "#fff", fontFamily: "normal" },
 
   editGenerosBtn: {
     backgroundColor: "#ffffff33",
@@ -302,7 +321,7 @@ const styles = StyleSheet.create({
 
   editGenerosText: {
     color: "#fff",
-    fontWeight: "bold",
+    fontFamily: "negrito",
   },
 
   artistasTitulo: {
@@ -310,7 +329,7 @@ const styles = StyleSheet.create({
     marginTop: RF(30),
     marginBottom: RF(10),
     paddingHorizontal: RF(20),
-    fontWeight: "700",
+    fontFamily: "negrito",
   },
 
   artistList: {
@@ -331,7 +350,7 @@ const styles = StyleSheet.create({
 
   artistImage: { borderRadius: 50 },
 
-  artistName: { color: "#fff" },
+  artistName: { color: "#fff", fontFamily: "negrito" },
 });
 
 export default Perfil;

@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import React, { useEffect, useRef, useMemo } from "react";
+import React, { useEffect, useRef, useMemo, useState } from "react";
 import {
   Animated,
   Image,
@@ -15,8 +15,10 @@ import {
   useWindowDimensions,
 } from "react-native";
 import Logofundo from "../assets/images/Logofundo.png";
+import * as Font from "expo-font";
 
 const Configuracoes = React.memo(() => {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
   const router = useRouter();
   const navigation = useNavigation();
 
@@ -27,6 +29,15 @@ const Configuracoes = React.memo(() => {
 
   
   const rf = (size) => Math.round(size * (width / 390));
+
+  const loadFonts = async () => {
+      await Font.loadAsync({
+        normal: require("../assets/fonts/Inter_18pt-Regular.ttf"),
+        negrito: require("../assets/fonts/Inter_18pt-Bold.ttf"),
+        fino: require("../assets/fonts/Inter_18pt-Thin.ttf"),
+      });
+      setFontsLoaded(true);
+    };
 
   const dyn = useMemo(
     () => ({
@@ -42,12 +53,21 @@ const Configuracoes = React.memo(() => {
   );
 
   useEffect(() => {
+    loadFonts();
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 650,
       useNativeDriver: true,
     }).start();
   }, []);
+
+  if (!fontsLoaded) {
+      return (
+        <View style={styles.loadingContainer}>
+          <Text>Carregando fontes...</Text>
+        </View>
+      );
+    }
 
   const animatePress = () => {
     Animated.sequence([

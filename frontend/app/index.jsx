@@ -19,8 +19,10 @@ import {
   View,
   useWindowDimensions
 } from "react-native"
+import * as Font from "expo-font";
 
 export default function Index() {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
   const { width } = useWindowDimensions()
 
   const clamp = useCallback((val, min, max) => Math.max(min, Math.min(max, val)), [])
@@ -32,13 +34,31 @@ export default function Index() {
 
   const fadeAnim = useRef(new Animated.Value(0)).current
 
+  const loadFonts = async () => {
+      await Font.loadAsync({
+        normal: require("../assets/fonts/Inter_18pt-Regular.ttf"),
+        negrito: require("../assets/fonts/Inter_18pt-Bold.ttf"),
+        fino: require("../assets/fonts/Inter_18pt-Thin.ttf"),
+      });
+      setFontsLoaded(true);
+    };
+
   useEffect(() => {
+    loadFonts();
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 600,
       useNativeDriver: true,
     }).start()
   }, [fadeAnim])
+
+  if (!fontsLoaded) {
+      return (
+        <View style={styles.loadingContainer}>
+          <Text>Carregando fontes...</Text>
+        </View>
+      );
+    }
 
   function cadastro() {
     router.push("/cadastrar");
@@ -174,7 +194,6 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     height: 50,
     margin: 10,
-  
   },
   textoBotao: { color: "#FFF", fontFamily: "negrito" },
   linkText: {

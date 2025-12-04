@@ -11,8 +11,10 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
+import * as Font from "expo-font";
 
 export default function Upload() {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
   const navigation = useNavigation();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
@@ -26,6 +28,15 @@ export default function Upload() {
   const rf = (size) => Math.round(size * (width / 390));
 
   const genres = ["Pop", "Rock", "Hip Hop", "Eletronic", "Indie", "Jaxx"];
+
+  const loadFonts = async () => {
+      await Font.loadAsync({
+        normal: require("../assets/fonts/Inter_18pt-Regular.ttf"),
+        negrito: require("../assets/fonts/Inter_18pt-Bold.ttf"),
+        fino: require("../assets/fonts/Inter_18pt-Thin.ttf"),
+      });
+      setFontsLoaded(true);
+    };
 
   const dyn = useMemo(
     () => ({
@@ -42,6 +53,7 @@ export default function Upload() {
 
  
   useEffect(() => {
+    loadFonts();
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -55,6 +67,14 @@ export default function Upload() {
       }),
     ]).start();
   }, []);
+
+  if (!fontsLoaded) {
+      return (
+        <View style={styles.loadingContainer}>
+          <Text>Carregando fontes...</Text>
+        </View>
+      );
+    }
 
   const handleSelectGenre = (genre) => {
     setSelectedGenre(genre);
@@ -234,7 +254,7 @@ const styles = StyleSheet.create({
   backArrow: { color: "#FFF", fontWeight: "bold" },
 
   title: { color: "#FFF", fontFamily: "negrito" },
-  subtitle: { color: "#FFF", opacity: 0.9 },
+  subtitle: { color: "#FFF", opacity: 0.9, fontFamily:"fino" },
 
   form: {
     width: "92%",
@@ -256,6 +276,7 @@ const styles = StyleSheet.create({
     color: "#FFF",
     paddingHorizontal: 20,
     paddingVertical: 14,
+    fontFamily: "normal",
   },
 
   textArea: {
@@ -311,6 +332,7 @@ const styles = StyleSheet.create({
   dropdownText: {
     color: "#FFF",
     textAlign: "center",
+    fontFamily: "normal",
   },
 
   
@@ -347,5 +369,6 @@ const styles = StyleSheet.create({
   infoText: {
     color: "#FFF",
     marginBottom: 6,
+    fontFamily: "fino",
   },
 });

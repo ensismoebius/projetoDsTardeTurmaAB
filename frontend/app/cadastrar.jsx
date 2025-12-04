@@ -25,8 +25,10 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import * as Font from "expo-font";
 
 const Cadastro = () => {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
   const navigation = useNavigation();
   const { width } = useWindowDimensions();
 
@@ -49,13 +51,31 @@ const Cadastro = () => {
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
+  const loadFonts = async () => {
+      await Font.loadAsync({
+        normal: require("../assets/fonts/Inter_18pt-Regular.ttf"),
+        negrito: require("../assets/fonts/Inter_18pt-Bold.ttf"),
+        fino: require("../assets/fonts/Inter_18pt-Thin.ttf"),
+      });
+      setFontsLoaded(true);
+    };
+
   useEffect(() => {
+    loadFonts();
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 600,
       useNativeDriver: true,
     }).start();
   }, []);
+
+  if (!fontsLoaded) {
+      return (
+        <View style={styles.loadingContainer}>
+          <Text>Carregando fontes...</Text>
+        </View>
+      );
+    }
 
   
   const validateFields = useCallback(() => {
@@ -316,6 +336,7 @@ const styles = StyleSheet.create({
     marginTop: 3,
     marginLeft: 8,
     fontSize: 14,
+    fontFamily: "fino",
   },
 
   botao: {

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect ,useRef, useState } from "react";
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { AntDesign } from "@expo/vector-icons";
+import * as Font from "expo-font";
 
 const { width } = Dimensions.get("window");
 const RF = (size) => Math.round(PixelRatio.roundToNearestPixel(size * (width / 390)));
@@ -21,6 +22,7 @@ export default function PrivacidadeScreen() {
   const [visOpen, setVisOpen] = useState(false);
   const [contaOpen, setContaOpen] = useState(false);
   const [mensagensOn, setMensagensOn] = useState(false);
+  const [fontsLoaded, setFontsLoaded] = useState(false);
 
   const visAnim = useRef(new Animated.Value(0)).current;
   const contaAnim = useRef(new Animated.Value(0)).current;
@@ -35,6 +37,28 @@ export default function PrivacidadeScreen() {
       useNativeDriver: false,
     }).start();
   };
+
+  const loadFonts = async () => {
+      await Font.loadAsync({
+        normal: require("../assets/fonts/Inter_18pt-Regular.ttf"),
+        negrito: require("../assets/fonts/Inter_18pt-Bold.ttf"),
+        fino: require("../assets/fonts/Inter_18pt-Thin.ttf"),
+      });
+      setFontsLoaded(true);
+    };
+  
+  useEffect(() => {
+    loadFonts();
+  }, []);
+
+  if (!fontsLoaded) {
+      return (
+        <View style={styles.loadingContainer}>
+          <Text>Carregando fontes...</Text>
+        </View>
+      );
+    }
+
 
   const toggleConta = () => {
     const toValue = contaOpen ? 0 : 1;
@@ -141,7 +165,7 @@ const styles = StyleSheet.create({
     marginLeft: -2,
   },
   logoWrap: { alignItems: "center", marginTop: 20 },
-  title: { color: "#fff", fontWeight: "700", textAlign: "center" },
+  title: { color: "#fff", fontFamily:"negrito", textAlign: "center" },
   options: { marginTop: 6 },
   optionRow: {
     flexDirection: "row",
@@ -152,7 +176,10 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     marginVertical: 8,
   },
-  optionText: { color: "#fff", fontWeight: "600" },
+  optionText: { 
+    color: "#fff",
+    fontFamily:"negrito", 
+  },
   chevronCircle: {
     backgroundColor: "#fff",
     alignItems: "center",
@@ -161,7 +188,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(0,0,0,0.05)",
   },
   expandArea: { overflow: "hidden", marginHorizontal: 0 },
-  expandText: { color: "rgba(255,255,255,0.95)" },
+  expandText: { color: "rgba(255,255,255,0.95)", fontFamily:"normal" },
   switchTrack: {
     backgroundColor: "rgba(255,255,255,0.22)",
     justifyContent: "center",
