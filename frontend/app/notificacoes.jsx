@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {
   View,
   Text,
@@ -12,12 +12,33 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import * as Font from "expo-font";
 
 const { width, height } = Dimensions.get("window");
 const RF = (size) => Math.round(PixelRatio.roundToNearestPixel(size * (width / 390)));
 
 const Notificacoes = () => {
   const navigation = useNavigation();
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  const loadFonts = async () => {
+      await Font.loadAsync({
+        normal: require("../assets/fonts/Inter_18pt-Regular.ttf"),
+        negrito: require("../assets/fonts/Inter_18pt-Bold.ttf"),
+        fino: require("../assets/fonts/Inter_18pt-Thin.ttf"),
+      });
+      setFontsLoaded(true);
+    };
+
+    loadFonts();
+
+    if (!fontsLoaded) {
+      return (
+        <View style={styles.loadingContainer}>
+          <Text>Carregando fontes...</Text>
+        </View>
+      );
+    }
 
   return (
     <LinearGradient
@@ -35,7 +56,7 @@ const Notificacoes = () => {
         >
           <Ionicons name="chevron-back" size={RF(28)} color="#fff" />
         </TouchableOpacity>
-             </View>
+             
         
         <View style={styles.headerContainer}>
           <Image
@@ -106,7 +127,7 @@ const styles = StyleSheet.create({
     marginBottom: RF(20),
   },
   title: {
-    fontWeight: "bold",
+    fontFamily: "negrito",
     color: "#fff",
     marginTop: RF(10),
     textAlign: "center",
@@ -139,9 +160,10 @@ const styles = StyleSheet.create({
   notifText: {
     color: "#fff",
     flexShrink: 1,
+    fontFamily: "normal",
   },
   nome: {
-    fontWeight: "bold",
+    fontFamily: "negrito",
   },
 });
 
