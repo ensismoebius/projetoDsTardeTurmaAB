@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import * as Font from "expo-font";
 
 const { height, width } = Dimensions.get("window");
 
@@ -38,6 +39,16 @@ const DATA = [
 ];
 
 
+
+    
+
+    if (!fontsLoaded) {
+      return (
+        <View style={styles.loadingContainer}>
+          <Text>Carregando fontes...</Text>
+        </View>
+      );
+    }
 
 const HeartAnimation = memo(({ anim, id }) => {
   const scale = anim.interpolate({
@@ -94,9 +105,22 @@ export default function SwipeMusic() {
   const [hearts, setHearts] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [showPlayButton, setShowPlayButton] = useState(true);
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+const loadFonts = async () => {
+      await Font.loadAsync({
+        normal: require("../assets/fonts/Inter_18pt-Regular.ttf"),
+        negrito: require("../assets/fonts/Inter_18pt-Bold.ttf"),
+        fino: require("../assets/fonts/Inter_18pt-Thin.ttf"),
+      });
+      setFontsLoaded(true);
+    };
+
+
 
 
   useEffect(() => {
+    loadFonts();
     Animated.loop(
       Animated.timing(progress, {
         toValue: 1,
@@ -105,6 +129,14 @@ export default function SwipeMusic() {
       })
     ).start();
   }, []);
+
+  if (!fontsLoaded) {
+      return (
+        <View style={styles.loadingContainer}>
+          <Text>Carregando fontes...</Text>
+        </View>
+      );
+    }
 
   const startProgress = () => {
     const current = progress.__getValue();
@@ -369,7 +401,7 @@ const styles = StyleSheet.create({
   musicTitle: {
     fontSize: 22,
     color: "#fff",
-    fontWeight: "700",
+    fontFamily: "negrito",
     position: "absolute",
     top: 10,
   },
@@ -383,7 +415,7 @@ const styles = StyleSheet.create({
   artistRow: { flexDirection: "row", alignItems: "center" },
   artistImage: { width: 50, height: 50, borderRadius: 25, marginRight: 12 },
 
-  artistName: { fontSize: 16, fontWeight: "bold", color: "#fff" },
+  artistName: { fontSize: 16, fontFamily:"negrito", color: "#fff" },
   artistDesc: { color: "#fff", fontSize: 12 },
 
   lyricsText: {
@@ -391,6 +423,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#fff",
     opacity: 0.8,
+    fontFamily: "normal",
   },
 
   modalContainer: {
@@ -405,8 +438,8 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 25,
     maxHeight: height * 0.7,
   },
-  modalTitle: { fontSize: 22, fontWeight: "bold", color: "#fff" },
-  modalLyrics: { color: "#ddd", fontSize: 16, marginVertical: 20 },
+  modalTitle: { fontSize: 22, fontFamily: "negrito", color: "#fff" },
+  modalLyrics: { color: "#ddd", fontSize: 16, marginVertical: 20, fontFamily: "normal" },
 
   modalClose: {
     backgroundColor: "#f910a3",
