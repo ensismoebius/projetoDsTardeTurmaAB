@@ -9,9 +9,10 @@ def get_ratings():
     return response.data  
 
 @router.get("/styles/{user_music_ratings_id}")
-def get_styles_by_id(User_music_ratings_id: int):
+def get_styles_by_id(user_music_ratings_id: int):
     supabase = get_supabase()
-    response = supabase.table("styles").select("*").eq("id", User_music_ratings_id).execute()
+    response = supabase.table("styles").select("*").eq("id", user_music_ratings_id).execute()
     if response.data:
         return response.data[0]
-    return {"error": "style not found"}
+    return {"error": "rating not found"}
+
