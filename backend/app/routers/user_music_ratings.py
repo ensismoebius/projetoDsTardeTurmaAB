@@ -28,4 +28,14 @@ def create_rating(user_music_ratings: User_music_ratings):
         return response.data[0]
     return {"error": "Failed to create rating"} 
 
-
+@router.put("/user_music_ratings/{user_music_ratings_id}")
+def update_ratings(user_music_ratings_id: int, User_music_ratings: User_music_ratings):
+    supabase = get_supabase()
+    updated_data = {
+        "rating": user_music_ratings.rating,
+        
+    }
+    response = supabase.table("User_music_ratings").update(updated_data).eq("id", User_music_ratings_id).execute()
+    if response.data:
+        return {"message": "ratings updated successfully"}
+    return {"error": "rating not found"}
