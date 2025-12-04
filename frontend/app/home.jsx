@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -9,9 +9,34 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import * as Font from "expo-font";
+
 
 const App = () => {
   const router = useRouter()
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+
+  const loadFonts = async () => {
+      await Font.loadAsync({
+        normal: require("../assets/fonts/Inter_18pt-Regular.ttf"),
+        negrito: require("../assets/fonts/Inter_18pt-Bold.ttf"),
+        fino: require("../assets/fonts/Inter_18pt-Thin.ttf"),
+      });
+      setFontsLoaded(true);
+    };
+
+  useEffect(() => {
+    loadFonts();
+  } , []);
+
+  if (!fontsLoaded) {
+      return (
+        <View style={styles.loadingContainer}>
+          <Text>Carregando fontes...</Text>
+        </View>
+      );
+    }
 
   const artists = [
     {
@@ -141,7 +166,7 @@ const styles = StyleSheet.create({
   headerText: {
     color: "#999",
     fontSize: 14,
-    fontWeight: "500",
+    fontFamily: "normal",
   },
   profileButton: {
     padding: 0,
@@ -156,6 +181,7 @@ const styles = StyleSheet.create({
   },
   headerAvatarText: {
     fontSize: 22,
+    fontFamily: "normal",
   },
   welcomeCard: {
     backgroundColor: "#b535d4",
@@ -174,12 +200,12 @@ const styles = StyleSheet.create({
   welcomeGreeting: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: "negrito",
   },
   welcomeSubtitle: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: "normal",
     marginTop: 4,
   },
   fundoPost: {
@@ -212,6 +238,7 @@ const styles = StyleSheet.create({
   },
   smallAvatarText: {
     fontSize: 20,
+    fontFamily: "normal",
   },
   artistDetails: {
     flex: 1,
@@ -219,17 +246,19 @@ const styles = StyleSheet.create({
   artistName: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: "normal",
   },
   postsCount: {
     color: "#ddd",
     fontSize: 12,
     marginTop: 2,
+    fontFamily: "normal",
   },
   description: {
     color: "#f0f0f0",
     fontSize: 13,
     lineHeight: 18,
+    fontFamily: "fino",
   },
   footer: {
     flexDirection: "row",
@@ -245,6 +274,7 @@ const styles = StyleSheet.create({
   },
   footerIcon: {
     fontSize: 24,
+    fontFamily: "negrito",
   },
 })
 
