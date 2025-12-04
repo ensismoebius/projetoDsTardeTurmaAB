@@ -13,6 +13,7 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
+import * as Font from "expo-font";
 
 const GENEROS = [
   "Pop", "Rock industrial", "Metal", "MPB", "Sertanejo",
@@ -27,11 +28,21 @@ const GeneroSelector = () => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
   const tapAnim = useRef(new Animated.Value(1)).current;
+  const [fontsLoaded, setFontsLoaded] = useState(false);
 
   const { width } = useWindowDimensions();
 
   
   const rf = (size) => Math.round(size * (width / 390));
+
+  const loadFonts = async () => {
+      await Font.loadAsync({
+        normal: require("../assets/fonts/Inter_18pt-Regular.ttf"),
+        negrito: require("../assets/fonts/Inter_18pt-Bold.ttf"),
+        fino: require("../assets/fonts/Inter_18pt-Thin.ttf"),
+      });
+      setFontsLoaded(true);
+    };
 
   const dyn = useMemo(
     () => ({
@@ -48,6 +59,7 @@ const GeneroSelector = () => {
   );
 
   useEffect(() => {
+    loadFonts();
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -61,6 +73,14 @@ const GeneroSelector = () => {
       }),
     ]).start();
   }, []);
+
+  if (!fontsLoaded) {
+      return (
+        <View style={styles.loadingContainer}>
+          <Text>Carregando fontes...</Text>
+        </View>
+      );
+    }
 
   const animateTap = () => {
     Animated.sequence([
@@ -210,7 +230,7 @@ const styles = StyleSheet.create({
   titulo: {
     color: "#fff",
     textAlign: "center",
-    fontWeight: "bold",
+    fontFamily: "negrito",
     marginVertical: 20,
   },
 
@@ -237,11 +257,12 @@ const styles = StyleSheet.create({
 
   generoTexto: {
     color: "#fff",
+    fontFamily: "normal",
   },
 
   generoTextoSelecionado: {
     color: "#fff",
-    fontWeight: "bold",
+    fontFamily: "negrito",
   },
 
   botaoContinuar: {
@@ -258,7 +279,7 @@ const styles = StyleSheet.create({
 
   textoContinuar: {
     color: "#fff",
-    fontWeight: "bold",
+    fontFamily: "negrito",  
   },
 });
 
